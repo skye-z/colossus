@@ -37,9 +37,19 @@
         </div>
         <n-scrollbar id="host-scrollbar">
             <div id="host-list" class="pl-10 pt-10">
-                <div class="host-item">
-                    <div class="host-name line1">服务器名称</div>
+                <div class="host-item" @click="openHost()">
+                    <div class="host-name line1">测试服务器(广州)</div>
                     <div class="host-address line1">192.168.123.223</div>
+                    <div class="mt-10">
+                        <n-tag size="small" :bordered="false" type="info">Linux</n-tag>
+                        <n-tag size="small" :bordered="false" type="success">CentOS</n-tag>
+                        <n-tag size="small" :bordered="false" type="warning">亚洲</n-tag>
+                        <n-tag size="small" :bordered="false" type="error">3天后过期</n-tag>
+                    </div>
+                </div>
+                <div class="host-item">
+                    <div class="host-name line1">个人测试服务器</div>
+                    <div class="host-address line1">ces.hangzhou.e3.aliyun.com</div>
                     <div class="mt-10">
                         <n-tag size="small" :bordered="false" type="info">Linux</n-tag>
                         <n-tag size="small" :bordered="false" type="success">CentOS</n-tag>
@@ -222,11 +232,14 @@ export default {
                 usage: '',
                 period: ''
             }
+        },
+        openHost(){
+            this.$router.push('/host')
         }
     }
 };
 </script>
-<style>
+<style scoped>
 #search,
 #btn-add-host {
     border-radius: 0;

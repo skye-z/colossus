@@ -65,7 +65,7 @@ export default {
     }
 };
 </script>
-<style>
+<style scoped>
 #left-bar {
     border-right: rgba(255, 255, 255, 0.12) 1px solid;
     height: 100vh;
