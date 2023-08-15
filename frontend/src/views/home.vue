@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <n-input-group>
+    <div id="app-home">
+        <n-input-group class="no-drag">
             <n-input id="search" v-model:value="screen.keyword" type="text" placeholder="搜索主机名称或地址...">
                 <template #prefix>
                     <n-icon>
@@ -35,8 +35,8 @@
             <n-button class="float-right" size="tiny" type="error" strong secondary round
                 @click="cleanScreen">清除所有条件</n-button>
         </div>
-        <n-scrollbar id="host-scrollbar">
-            <div id="host-list" class="pl-10 pt-10">
+        <n-scrollbar>
+            <div id="host-list" class="pl-10 pt-10 no-select">
                 <div class="host-item" @click="openHost()">
                     <div class="host-name line1">测试服务器(广州)</div>
                     <div class="host-address line1">192.168.123.223</div>
@@ -245,8 +245,10 @@ export default {
     border-radius: 0;
 }
 
-#host-scrollbar {
-    height: calc(100vh - 77px);
+#app-home:deep(.n-scrollbar) {
+    max-height: calc(100vh - 77px) !important;
+    height: calc(100vh - 77px) !important;
+    --wails-draggable: no-drag;
 }
 
 #host-list {
