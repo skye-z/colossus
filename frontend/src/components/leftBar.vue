@@ -1,7 +1,7 @@
 <template>
     <div id="left-bar" class="no-select">
         <div id="logo">Colossus_</div>
-        <n-button id="btn-add" class="no-drag" strong secondary type="primary">
+        <n-button id="btn-add" class="no-drag" strong secondary type="primary" @click="jump('home')">
             <n-icon size="28">
                 <InsertLinkOutlined />
             </n-icon>
@@ -59,7 +59,9 @@ export default {
         ]
     }),
     methods: {
-
+        jump(path){
+            this.$router.push('/'+path)
+        }
     }
 };
 </script>

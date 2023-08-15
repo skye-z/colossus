@@ -1,8 +1,7 @@
 import {createApp} from 'vue'
-// 等宽字体
-// import 'vfonts/FiraCode.css'
+import router from './plugins/router'
 // 非等宽字体
 import 'vfonts/FiraSans.css'
 import App from './App.vue'
 
-createApp(App).mount('#app')
+createApp(App).use(router).mount('#app')

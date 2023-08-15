@@ -3,10 +3,14 @@
     <n-dialog-provider>
       <n-message-provider>
         <global-api />
-        <left-bar/>
+        <div class="flex">
+          <left-bar />
+          <div id="main">
+            <router-view />
+          </div>
+        </div>
       </n-message-provider>
     </n-dialog-provider>
-    <router-view />
   </n-config-provider>
 </template>
 
@@ -18,7 +22,7 @@ import theme from './theme.json'
 
 export default {
   name: "App",
-  components: { GlobalApi,LeftBar },
+  components: { GlobalApi, LeftBar },
   data: () => ({
     theme,
     darkTheme,
@@ -32,3 +36,9 @@ export default {
   }
 };
 </script>
+<style>
+#main {
+  width: calc(100vw - 181px);
+  height: 100vh;
+}
+</style>
