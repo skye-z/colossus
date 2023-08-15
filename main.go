@@ -6,11 +6,16 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/mac"
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
 // 引入静态资源
 // go:embed all:frontend/dist
 var assets embed.FS
+
+// go:embed build/appicon.png
+var icon []byte
 
 func main() {
 	// 创建应用程序实例
@@ -32,7 +37,25 @@ func main() {
 			Assets: assets,
 		},
 		// 背景颜色
-		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
+		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 0},
+		Windows: &windows.Options{
+			WebviewIsTransparent: true,
+			WindowIsTranslucent:  true,
+			DisableWindowIcon:    true,
+			BackdropType:         windows.Mica,
+			Theme:                windows.Dark,
+		},
+		Mac: &mac.Options{
+			WebviewIsTransparent: true,
+			WindowIsTranslucent:  true,
+			TitleBar:             mac.TitleBarHiddenInset(),
+			Appearance:           mac.NSAppearanceNameDarkAqua,
+			About: &mac.AboutInfo{
+				Title:   "Colossus",
+				Message: "© 2023 Skye Zhang",
+				Icon:    icon,
+			},
+		},
 		// 应用启动事件
 		OnStartup:     app.startup,
 		OnBeforeClose: app.beforeClose,

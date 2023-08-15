@@ -1,21 +1,34 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'</script>
-
 <template>
-  <img id="logo" alt="Wails logo" src="./assets/images/logo-universal.png"/>
-  <HelloWorld/>
+  <n-config-provider :theme="darkTheme" :locale="i18n.main" :date-locale="i18n.date" :theme-overrides="theme">
+    <n-dialog-provider>
+      <n-message-provider>
+        <global-api />
+        <left-bar/>
+      </n-message-provider>
+    </n-dialog-provider>
+    <router-view />
+  </n-config-provider>
 </template>
 
-<style>
-#logo {
-  display: block;
-  width: 50%;
-  height: 50%;
-  margin: auto;
-  padding: 10% 0 0;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  background-origin: content-box;
-}
-</style>
+<script>
+import { darkTheme, zhCN, dateZhCN } from 'naive-ui'
+import GlobalApi from './components/globalApi.vue'
+import LeftBar from './components/leftBar.vue'
+import theme from './theme.json'
+
+export default {
+  name: "App",
+  components: { GlobalApi,LeftBar },
+  data: () => ({
+    theme,
+    darkTheme,
+    i18n: {
+      main: zhCN,
+      date: dateZhCN
+    }
+  }),
+  methods: {
+
+  }
+};
+</script>
