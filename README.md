@@ -10,3 +10,6 @@
 ├── main.go             应用入口
 └── wails.json          客户端配置
 ```
+
+## 参考
+https://blog.csdn.net/liuwang61147371/article/details/123449579

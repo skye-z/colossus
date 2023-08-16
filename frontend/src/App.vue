@@ -32,7 +32,12 @@ export default {
     }
   }),
   methods: {
-
+    init(){
+      this.$router.push('/home')
+    }
+  },
+  mounted(){
+    this.init()
   }
 };
 </script>
