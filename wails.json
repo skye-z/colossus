@@ -1,7 +1,7 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
   "name": "Colossus",
-  "outputfilename": "colossus",
+  "outputfilename": "Colossus",
   "frontend:install": "yarn install",
   "frontend:build": "yarn run build",
   "frontend:dev:watcher": "yarn run dev",
@@ -9,5 +9,12 @@
   "author": {
     "name": "skye",
     "email": "skai-zhang@hotmail.com"
+  },
+  "info": {
+    "companyName": "BetaX Dev Group",
+    "productName": "Colossus",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright 2023 SkyeZhang",
+    "comments": "Crafted by Skye with care. (https://github.com/skye-z/colossus)"
   }
 }
