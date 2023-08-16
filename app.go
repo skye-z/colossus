@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/skye-z/colossus/backend"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -21,6 +22,7 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	backend.Start()
 }
 
 // Greet returns a greeting for the given name

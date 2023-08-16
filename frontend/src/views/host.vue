@@ -16,7 +16,7 @@
             </n-tabs>
         </div>
         <div v-show="tab === 'shell'">
-            <div id="xterm" class="xterm"></div>
+            <host-terminal ref="terminal" />
         </div>
         <div v-show="tab === 'file'">
             文件
@@ -32,44 +32,28 @@
   
 <script>
 import "xterm/css/xterm.css";
-import { Terminal } from "xterm";
-import { FitAddon } from "xterm-addon-fit";
+import HostTerminal from "../components/hostTerminal.vue";
 
 export default {
     name: "Host",
+    components: { HostTerminal },
     data: () => ({
-        tab: 'shell',
-        term: null,
-        prefix: "[root@colossus ~]# "
+        tab: 'shell'
     }),
+    beforeDestroy() {
+        if (this.$refs.terminal)
+            this.$refs.terminal.close()
+    },
     methods: {
-        updateTab(e){
+        updateTab(e) {
             this.tab = e
         },
-        initTerm() {
-            let fitAddon = new FitAddon();
-            this.term = new Terminal({
-                fontSize: 14,
-                cursorBlink: true,
-                allowProposedApi: true,
-                disableStdin: false,
-                LogLevel: "debug"
-            });
-            this.term.loadAddon(fitAddon);
-
-            this.term.open(document.getElementById("xterm"));
-            this.term.writeln("\x1b[1;1;32mwellcom to colossus!\x1b[0m");
-            this.term.write(this.prefix);
-
-            setTimeout(() => {
-                fitAddon.fit();
-            }, 5)
-        },
+        initTerminal() {
+            this.$refs.terminal.init()
+        }
     },
     mounted() {
-        setTimeout(() => {
-            this.initTerm()
-        }, 500);
+        this.initTerminal()
     }
 };
 </script>
@@ -87,13 +71,5 @@ export default {
     margin-left: calc(100% - 250px);
     --wails-draggable: no-drag;
     padding: 3.5px 0;
-}
-
-#xterm {
-    height: calc(100vh - 50px);
-}
-
-#xterm:deep(.terminal) {
-    height: calc(100vh - 50px);
 }
 </style>
