@@ -1,21 +1,49 @@
 <template>
-    <div id="app-home">
-        <host-search />
-        <n-scrollbar>
-            <div id="host-list" class="pl-10 pt-10 no-select">
-                <host-item v-for="item in list" :info="item" />
-            </div>
-        </n-scrollbar>
+    <div>
+        <n-input-group class="no-drag">
+            <n-input id="search" v-model:value="screen.keyword" type="text" placeholder="搜索主机名称或地址...">
+                <template #prefix>
+                    <n-icon>
+                        <Search />
+                    </n-icon>
+                </template>
+            </n-input>
+            <n-button strong secondary>搜索</n-button>
+            <n-button id="btn-add-host" type="primary" tertiary>
+                <n-icon size="20">
+                    <Add12Regular />
+                </n-icon>
+                <div class="ml-5">新增主机</div>
+            </n-button>
+        </n-input-group>
+        <div class="pa-10 border-bottom">
+            <n-popselect v-model:value="screen.platform" :options="options.platform" trigger="click">
+                <n-button size="tiny" round>平台: {{ screen.platform || 'All' }}</n-button>
+            </n-popselect>
+            <n-popselect v-model:value="screen.system" :options="options.system" trigger="click">
+                <n-button class="ml-10" size="tiny" round>系统: {{ screen.system || 'All' }}</n-button>
+            </n-popselect>
+            <n-popselect v-model:value="screen.region" :options="options.region" trigger="click">
+                <n-button class="ml-10" size="tiny" round>区域: {{ screen.region || 'All' }}</n-button>
+            </n-popselect>
+            <n-popselect v-model:value="screen.usage" :options="options.usage" trigger="click">
+                <n-button class="ml-10" size="tiny" round>用途: {{ screen.usage || 'All' }}</n-button>
+            </n-popselect>
+            <n-popselect v-model:value="screen.period" :options="options.period" trigger="click">
+                <n-button class="ml-10" size="tiny" round>有效期: {{ screen.period || 'All' }}</n-button>
+            </n-popselect>
+            <n-button class="float-right" size="tiny" type="error" strong secondary round
+                @click="cleanScreen">清除所有条件</n-button>
+        </div>
     </div>
 </template>
-  
 <script>
-import HostSearch from '../components/hostSearch.vue'
-import HostItem from '../components/hostItem.vue'
+import { Add12Regular } from '@vicons/fluent'
+import { Search } from '@vicons/tabler'
 
 export default {
-    name: "Home",
-    components: { HostSearch, HostItem },
+    name: "HostSearch",
+    components: { Search, Add12Regular },
     data: () => ({
         screen: {
             keyword: '',
@@ -168,41 +196,25 @@ export default {
                     value: "近30天过期"
                 },
             ]
-        },
-        list:[
-            {
-                id: 1,
-                name: '测试服务器(广州)',
-                address: '192.168.123.223',
-                platform: 'Linux',
-                system: 'CentOS',
-                region: '亚洲',
-                usage: '企业测试',
-                period: '3天后过期'
-            },
-            {
-                id: 2,
-                name: '个人学习服务器',
-                address: 'ces.hangzhou.e3.aliyun.com',
-                platform: 'Linux',
-                system: 'CentOS',
-                usage: '个人学习'
-            }
-        ]
+        }
     }),
     methods: {
+        cleanScreen() {
+            this.screen = {
+                keyword: '',
+                platform: '',
+                system: '',
+                region: '',
+                usage: '',
+                period: ''
+            }
+        }
     }
 };
 </script>
 <style scoped>
-#app-home:deep(.n-scrollbar) {
-    max-height: calc(100vh - 77px) !important;
-    height: calc(100vh - 77px) !important;
-    --wails-draggable: no-drag;
-}
-
-#host-list {
-    flex-wrap: wrap;
-    display: flex;
+#search,
+#btn-add-host {
+    border-radius: 0;
 }
 </style>

@@ -8,15 +8,24 @@
                 <n-tag size="small" :bordered="false" type="warning">亚洲</n-tag>
                 <n-tag size="small" :bordered="false" type="error">3天后过期</n-tag>
             </div>
-            <n-tabs id="host-tabs" type="line" animated>
+            <n-tabs id="host-tabs" type="line" @update:value="updateTab" animated>
                 <n-tab name="shell">终端</n-tab>
                 <n-tab name="file">文件</n-tab>
                 <n-tab name="tool">工具</n-tab>
-                <n-tab name="setting">配置</n-tab>
+                <n-tab name="config">配置</n-tab>
             </n-tabs>
         </div>
-        <div>
+        <div v-show="tab === 'shell'">
             <div id="xterm" class="xterm"></div>
+        </div>
+        <div v-show="tab === 'file'">
+            文件
+        </div>
+        <div v-if="tab === 'tool'">
+            工具
+        </div>
+        <div v-else-if="tab === 'config'">
+            配置
         </div>
     </div>
 </template>
@@ -24,15 +33,21 @@
 <script>
 import "xterm/css/xterm.css";
 import { Terminal } from "xterm";
+import { FitAddon } from "xterm-addon-fit";
 
 export default {
     name: "Host",
     data: () => ({
+        tab: 'shell',
         term: null,
         prefix: "[root@colossus ~]# "
     }),
     methods: {
+        updateTab(e){
+            this.tab = e
+        },
         initTerm() {
+            let fitAddon = new FitAddon();
             this.term = new Terminal({
                 fontSize: 14,
                 cursorBlink: true,
@@ -40,16 +55,21 @@ export default {
                 disableStdin: false,
                 LogLevel: "debug"
             });
+            this.term.loadAddon(fitAddon);
 
             this.term.open(document.getElementById("xterm"));
             this.term.writeln("\x1b[1;1;32mwellcom to colossus!\x1b[0m");
             this.term.write(this.prefix);
+
+            setTimeout(() => {
+                fitAddon.fit();
+            }, 5)
         },
     },
     mounted() {
         setTimeout(() => {
             this.initTerm()
-        }, 1500);
+        }, 500);
     }
 };
 </script>
@@ -69,13 +89,11 @@ export default {
     padding: 3.5px 0;
 }
 
-#xterm{
+#xterm {
     height: calc(100vh - 50px);
 }
 
-#xterm:deep(.terminal){
+#xterm:deep(.terminal) {
     height: calc(100vh - 50px);
 }
-
-
 </style>
