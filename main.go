@@ -2,22 +2,28 @@ package main
 
 import (
 	"embed"
+	"fmt"
+	"os"
 
 	"github.com/wailsapp/wails/v2"
+	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
-// 引入静态资源
-// go:embed all:frontend/dist
+//go:embed all:frontend/dist
 var assets embed.FS
 
-// go:embed build/appicon.png
+//go:embed build/appicon.png
 var icon []byte
 
 func main() {
+	cacheDir, _ := os.UserCacheDir()
+	logPath := fmt.Sprintf("%s/%s", cacheDir, "colossus.log")
+	fmt.Println("Log path: " + logPath)
+	fileLogger := NewFileLogger(logPath)
 	// 创建应用程序实例
 	app := NewApp()
 	// 运行应用程序
@@ -32,6 +38,12 @@ func main() {
 		MinWidth: 1024,
 		// 最小高度
 		MinHeight: 700,
+		// 日志记录器
+		Logger: fileLogger,
+		// 开发日志级别
+		LogLevel: logger.DEBUG,
+		// 生产日志级别
+		LogLevelProduction: logger.ERROR,
 		// 静态资源服务
 		AssetServer: &assetserver.Options{
 			Assets: assets,
@@ -69,6 +81,6 @@ func main() {
 	})
 
 	if err != nil {
-		println("Error:", err.Error())
+		fileLogger.Print("Error:" + err.Error())
 	}
 }
