@@ -63,7 +63,8 @@ func (s *SSHService) Connect(client *ssh.Client) (*ssh.Session, error) {
 	}
 
 	modes := ssh.TerminalModes{
-		ssh.ECHO:          0,
+		// 开启回显(不开自动补全功能就没了)
+		ssh.ECHO:          1,
 		ssh.TTY_OP_ISPEED: 14400,
 		ssh.TTY_OP_OSPEED: 14400,
 	}
