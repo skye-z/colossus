@@ -5,6 +5,9 @@ import {
 
 const Home = () => import('../views/home.vue')
 const Host = () => import('../views/host.vue')
+const Cert = () => import('../views/cert.vue')
+const Code = () => import('../views/code.vue')
+const Setting = () => import('../views/setting.vue')
 
 const router = createRouter({
     history: createWebHistory(),
@@ -18,6 +21,21 @@ const router = createRouter({
             name: 'Host',
             path: '/host',
             component: Host
+        },
+        {
+            name: 'Cert',
+            path: '/cert',
+            component: Cert
+        },
+        {
+            name: 'Code',
+            path: '/code',
+            component: Code
+        },
+        {
+            name: 'Setting',
+            path: '/setting',
+            component: Setting
         }
     ],
 })

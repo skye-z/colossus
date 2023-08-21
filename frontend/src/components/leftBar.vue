@@ -1,13 +1,13 @@
 <template>
     <div id="left-bar" class="no-select">
-        <div id="logo" :class="{macos:macOS}">Colossus_</div>
+        <div id="logo" :class="{ macos: macOS }">Colossus_</div>
         <n-button id="btn-add" class="no-drag" strong secondary type="primary" @click="jump('home')">
             <n-icon size="28">
                 <InsertLinkOutlined />
             </n-icon>
             <div>创建连接</div>
         </n-button>
-        <div id="connect-list">
+        <div id="connect-list" :class="{ macos: macOS }">
             <div class="connect-item no-drag" v-for="item in connect">
                 <div class="line1 connect-name">{{ item.name }}</div>
                 <div class="line1 connect-address">{{ item.address }}</div>
@@ -15,21 +15,21 @@
         </div>
         <div class="flex align-center justify-between pl-10 no-drag">
             <n-button-group>
-                <n-button round>
+                <n-button round @click="jump('cert')">
                     <template #icon>
                         <n-icon size="22">
                             <Key16Regular />
                         </n-icon>
                     </template>
                 </n-button>
-                <n-button round>
+                <n-button round @click="jump('code')">
                     <template #icon>
                         <n-icon size="22">
                             <Code16Filled />
                         </n-icon>
                     </template>
                 </n-button>
-                <n-button round>
+                <n-button round @click="jump('setting')">
                     <template #icon>
                         <n-icon size="22">
                             <Settings16Regular />
@@ -86,7 +86,7 @@ export default {
     padding: 5px 0;
 }
 
-#logo.macos{
+#logo.macos {
     padding: 30px 0 5px 0;
 }
 
@@ -96,7 +96,11 @@ export default {
 }
 
 #connect-list {
+    height: calc(100vh - 155px);
     padding: 0 10px 10px 10px;
+}
+
+#connect-list.macos {
     height: calc(100vh - 180px);
 }
 
