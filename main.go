@@ -51,11 +51,8 @@ func main() {
 		// 背景颜色
 		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 0},
 		Windows: &windows.Options{
-			WebviewIsTransparent: true,
-			WindowIsTranslucent:  true,
-			DisableWindowIcon:    true,
-			BackdropType:         windows.Mica,
-			Theme:                windows.Dark,
+			DisableWindowIcon: true,
+			Theme:             windows.Dark,
 		},
 		Mac: &mac.Options{
 			WebviewIsTransparent: true,
