@@ -2,7 +2,8 @@ package main
 
 import (
 	"context"
-	"fmt"
+
+	local "runtime"
 
 	"github.com/skye-z/colossus/backend"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -26,9 +27,8 @@ func (a *App) startup(ctx context.Context) {
 	backend.Start()
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
+func (a *App) GetOSName() string {
+	return local.GOOS
 }
 
 func (a *App) beforeClose(ctx context.Context) (prevent bool) {
@@ -44,5 +44,6 @@ func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 	if err != nil {
 		return false
 	}
-	return dialog != "确认"
+
+	return dialog != "确认" && dialog != "是" && dialog != "Yes"
 }

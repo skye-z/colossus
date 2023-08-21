@@ -4,7 +4,7 @@
       <n-message-provider>
         <global-api />
         <div class="flex">
-          <left-bar />
+          <left-bar :macOS="isMacOS" />
           <div id="main">
             <div class="loading flex align-center justify-center" v-if="loading">
               <n-spin size="small" />
@@ -33,10 +33,14 @@ export default {
       main: zhCN,
       date: dateZhCN
     },
-    loading: true
+    loading: true,
+    isMacOS: false
   }),
   methods: {
     init() {
+      this.$goOSName().then(res => {
+        this.isMacOS = res == 'darwin'
+      });
       setTimeout(() => {
         this.$router.push('/home')
       }, 100)

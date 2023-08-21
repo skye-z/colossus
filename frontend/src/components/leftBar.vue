@@ -1,6 +1,6 @@
 <template>
     <div id="left-bar" class="no-select">
-        <div id="logo">Colossus_</div>
+        <div id="logo" :class="{macos:macOS}">Colossus_</div>
         <n-button id="btn-add" class="no-drag" strong secondary type="primary" @click="jump('home')">
             <n-icon size="28">
                 <InsertLinkOutlined />
@@ -47,6 +47,12 @@ import { InsertLinkOutlined } from '@vicons/material'
 export default {
     name: "LeftBar",
     components: { InsertLinkOutlined, Key16Regular, Code16Filled, Settings16Regular },
+    props: {
+        macOS: {
+            type: Boolean,
+            default: false
+        }
+    },
     data: () => ({
         connect: [
             {
@@ -59,8 +65,8 @@ export default {
         ]
     }),
     methods: {
-        jump(path){
-            this.$router.push('/'+path)
+        jump(path) {
+            this.$router.push('/' + path)
         }
     }
 };
@@ -73,11 +79,15 @@ export default {
 }
 
 #logo {
-    padding: 30px 0 5px 0;
     text-align: center;
     font-weight: bold;
     font-size: 28px;
     cursor: default;
+    padding: 5px 0;
+}
+
+#logo.macos{
+    padding: 30px 0 5px 0;
 }
 
 #btn-add {
