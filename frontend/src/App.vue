@@ -6,6 +6,9 @@
         <div class="flex">
           <left-bar />
           <div id="main">
+            <div class="loading flex align-center justify-center" v-if="loading">
+              <n-spin size="small" />
+            </div>
             <router-view />
           </div>
         </div>
@@ -29,14 +32,20 @@ export default {
     i18n: {
       main: zhCN,
       date: dateZhCN
-    }
+    },
+    loading: true
   }),
   methods: {
-    init(){
-      this.$router.push('/home')
+    init() {
+      setTimeout(() => {
+        this.$router.push('/home')
+      }, 100)
+      setTimeout(() => {
+        this.loading = false
+      }, 300)
     }
   },
-  mounted(){
+  mounted() {
     this.init()
   }
 };

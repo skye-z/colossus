@@ -43,6 +43,7 @@ export default {
             if (this.socket) this.socket.close()
             // 销毁终端
             if (this.term) this.term.dispose()
+            console.log('Terminal Close')
         },
     }
 };

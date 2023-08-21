@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="no-select">
         <n-input-group class="no-drag">
             <n-input id="search" v-model:value="screen.keyword" type="text" placeholder="搜索主机名称或地址...">
                 <template #prefix>
