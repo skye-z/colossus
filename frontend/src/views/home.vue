@@ -1,6 +1,7 @@
 <template>
     <div id="app-home">
-        <host-search />
+        <host-search @btn-add="addHost" />
+        <host-form ref="form" />
         <n-scrollbar>
             <div id="host-list" class="pl-10 pt-10 no-select">
                 <host-item v-for="item in list" :info="item" />
@@ -11,165 +12,14 @@
   
 <script>
 import HostSearch from '../components/hostSearch.vue'
+import HostForm from '../components/hostForm.vue'
 import HostItem from '../components/hostItem.vue'
 
 export default {
     name: "Home",
     components: { HostSearch, HostItem },
     data: () => ({
-        screen: {
-            keyword: '',
-            platform: '',
-            system: '',
-            region: '',
-            usage: '',
-            period: ''
-        },
-        options: {
-            platform: [
-                {
-                    label: "All",
-                    value: ""
-                },
-                {
-                    label: "Linux",
-                    value: "Linux"
-                },
-                {
-                    label: "MacOS",
-                    value: "MacOS"
-                },
-                {
-                    label: "Windows",
-                    value: "Windows"
-                },
-            ],
-            system: [
-                {
-                    label: "All",
-                    value: ""
-                },
-                {
-                    label: "RedHat",
-                    value: "RedHat"
-                },
-                {
-                    label: "Ubuntu",
-                    value: "Ubuntu"
-                },
-                {
-                    label: "CentOS",
-                    value: "CentOS"
-                },
-                {
-                    label: "Debian",
-                    value: "Debian"
-                },
-                {
-                    label: "Oracle",
-                    value: "Oracle"
-                },
-                {
-                    label: "SUSE",
-                    value: "SUSE"
-                },
-                {
-                    label: "Fedora",
-                    value: "Fedora"
-                },
-                {
-                    label: "Arch",
-                    value: "Arch"
-                }, ,
-                {
-                    label: "FreeBSD",
-                    value: "FreeBSD"
-                }
-            ],
-            region: [
-                {
-                    label: "All",
-                    value: ""
-                },
-                {
-                    label: "亚洲",
-                    value: "亚洲"
-                },
-                {
-                    label: "欧洲",
-                    value: "欧洲"
-                },
-                {
-                    label: "北美洲",
-                    value: "北美洲"
-                },
-                {
-                    label: "南美洲",
-                    value: "南美洲"
-                },
-                {
-                    label: "大洋洲",
-                    value: "大洋洲"
-                },
-                {
-                    label: "非洲",
-                    value: "非洲"
-                },
-            ],
-            usage: [
-                {
-                    label: "All",
-                    value: ""
-                },
-                {
-                    label: "个人学习",
-                    value: "个人学习"
-                },
-                {
-                    label: "个人项目",
-                    value: "个人项目"
-                },
-                {
-                    label: "个人测试",
-                    value: "个人测试"
-                },
-                {
-                    label: "家庭服务",
-                    value: "家庭服务"
-                },
-                {
-                    label: "企业项目",
-                    value: "企业项目"
-                },
-                {
-                    label: "企业测试",
-                    value: "企业测试"
-                },
-            ],
-            period: [
-                {
-                    label: "All",
-                    value: ""
-                },
-                {
-                    label: "长期有效",
-                    value: "长期有效"
-                },
-                {
-                    label: "近7天过期",
-                    value: "近7天过期"
-                },
-                {
-                    label: "近15天过期",
-                    value: "近15天过期"
-                },
-                {
-                    label: "近30天过期",
-                    value: "近30天过期"
-                },
-            ]
-        },
-        list:[
+        list: [
             {
                 id: 1,
                 name: '测试服务器(广州)',
@@ -191,6 +41,9 @@ export default {
         ]
     }),
     methods: {
+        addHost(){
+            this.$refs.form.open('add',undefined)
+        }
     }
 };
 </script>

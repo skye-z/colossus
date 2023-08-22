@@ -10,7 +10,7 @@ body {
     margin: 0;
 }
 
-.no-drag{
+.no-drag {
     --wails-draggable: no-drag;
 }
 
@@ -36,6 +36,10 @@ body {
 
 .flex {
     display: flex;
+}
+
+.full-width{
+    width: 100%;
 }
 
 .align-center {
@@ -94,6 +98,10 @@ body {
     padding: 10px;
 }
 
+.pa-20 {
+    padding: 20px;
+}
+
 .pt-10 {
     padding-top: 10px;
 }
@@ -105,6 +113,10 @@ body {
 .px-10 {
     padding-right: 10px;
     padding-left: 10px;
+}
+
+.pb-0{
+    padding-bottom: 0px;
 }
 
 .no-select {
@@ -161,13 +173,17 @@ body {
     bottom: 0;
     scrollbar-color: var(--highlight) var(--dark);
     scrollbar-width: thin;
-  }
-  
-  .xterm-viewport::-webkit-scrollbar {
+}
+
+.xterm-viewport::-webkit-scrollbar {
     background-color: var(--dark);
     width: 5px;
-  }
-  
-  .xterm-viewport::-webkit-scrollbar-thumb {
+}
+
+.xterm-viewport::-webkit-scrollbar-thumb {
     background: var(--highlight);
-  }
+}
+
+.n-drawer-header {
+    padding: 15px !important;
+}

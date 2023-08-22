@@ -9,7 +9,7 @@
                 </template>
             </n-input>
             <n-button strong secondary>搜索</n-button>
-            <n-button id="btn-add-host" type="primary" tertiary>
+            <n-button id="btn-add-host" type="primary" tertiary @click="addHost">
                 <n-icon size="20">
                     <Add12Regular />
                 </n-icon>
@@ -208,6 +208,9 @@ export default {
                 usage: '',
                 period: ''
             }
+        },
+        addHost(){
+	      this.$emit('btnAdd')
         }
     }
 };
