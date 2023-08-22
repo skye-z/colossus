@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/skye-z/colossus/backend/model"
+	_ "modernc.org/sqlite"
 	"xorm.io/xorm"
 )
 
