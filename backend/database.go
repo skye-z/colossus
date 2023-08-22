@@ -17,8 +17,18 @@ func GetDBEngine() *xorm.Engine {
 }
 
 func loadDBEngine() *xorm.Engine {
+	// 获取用户配置文件目录
 	configDir, _ := os.UserConfigDir()
-	engine, err := xorm.NewEngine("sqlite", fmt.Sprintf("%s/%s", configDir, "colossus.store"))
+	configDir = fmt.Sprintf("%s/Colossus", configDir)
+	// 判断应用目录是否存在
+	if _, err := os.Stat(configDir); os.IsNotExist(err) {
+		// 目录不存在,创建目录
+		os.Mkdir(configDir, os.ModePerm)
+	}
+	// 组装数据库存储路径
+	dbDir := fmt.Sprintf("%s/%s", configDir, "colossus.store")
+	log.Println(dbDir)
+	engine, err := xorm.NewEngine("sqlite", dbDir)
 	if err != nil {
 		panic(err)
 	}
