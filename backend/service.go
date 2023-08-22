@@ -2,6 +2,8 @@ package backend
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/skye-z/colossus/backend/model"
+	"github.com/skye-z/colossus/backend/service"
 )
 
 func Start() (ok bool) {
@@ -15,11 +17,28 @@ func Start() (ok bool) {
 }
 
 func register() *gin.Engine {
+	// 创建默认路由
 	route := gin.Default()
-
+	// 创建Socket服务
 	socket := SocketService{}
-
+	// 挂载Socket服务
 	route.GET("/ws", socket.Run)
+	// 获取数据库引擎
+	engine := GetDBEngine()
+	// 创建主机模型
+	hostModel := model.HostModel{DB: engine}
+	// 创建主机服务
+	hostService := service.HostService{HostModel: hostModel}
+	// 接口 添加主机
+	route.POST("/host/add", hostService.Add)
+	// 接口 编辑主机
+	route.POST("/host/:id", hostService.Edit)
+	// 接口 删除主机
+	route.DELETE("/host/:id", hostService.Del)
+	// 接口 获取主机列表
+	// route.GET("/host/list", hostService.GetList)
+	// 接口 获取主机详情
+	// route.GET("/host/:id", hostService.GetItem)
 
 	return route
 }

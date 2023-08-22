@@ -33,7 +33,7 @@ type Host struct {
 	// 登录用户
 	User string `json:"user"`
 	// 证书
-	Key string `json:"-"`
+	Cert string `json:"-"`
 	// 密钥
 	Secret string `json:"-"`
 }
@@ -42,6 +42,7 @@ type HostModel struct {
 	DB *xorm.Engine
 }
 
+// 获取指定主机
 func (model HostModel) GetItem(host *Host) error {
 	has, err := model.DB.Get(host)
 	if !has {
@@ -50,6 +51,7 @@ func (model HostModel) GetItem(host *Host) error {
 	return nil
 }
 
+// 获取主机列表
 func (model HostModel) GetList(name string, platform string, system string, region string, usage string, period string, address string, page int, num int) ([]Host, error) {
 	var (
 		hosts   []Host
@@ -90,4 +92,31 @@ func (model HostModel) GetList(name string, platform string, system string, regi
 		return nil, err
 	}
 	return hosts, nil
+}
+
+// 添加主机
+func (model HostModel) Add(host *Host) bool {
+	_, err := model.DB.Insert(host)
+	return err == nil
+}
+
+// 编辑主机
+func (model HostModel) Edit(host *Host) bool {
+	if host.Id == 0 {
+		return false
+	}
+	_, err := model.DB.ID(host.Id).Update(host)
+	return err == nil
+}
+
+// 删除主机
+func (model HostModel) Del(id int64) bool {
+	if id == 0 {
+		return false
+	}
+	host := Host{
+		Id: id,
+	}
+	_, err := model.DB.Delete(host)
+	return err == nil
 }

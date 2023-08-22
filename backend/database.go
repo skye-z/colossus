@@ -1,19 +1,23 @@
 package backend
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/skye-z/colossus/backend/model"
 	"xorm.io/xorm"
 )
 
-func GetDBEngine() {
+func GetDBEngine() *xorm.Engine {
 	engine := loadDBEngine()
 	go initDatabase(engine)
+	return engine
 }
 
 func loadDBEngine() *xorm.Engine {
-	engine, err := xorm.NewEngine("sqlite", "./aircraft.store")
+	configDir, _ := os.UserConfigDir()
+	engine, err := xorm.NewEngine("sqlite", fmt.Sprintf("%s/%s", configDir, "colossus.store"))
 	if err != nil {
 		panic(err)
 	}
