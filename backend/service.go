@@ -1,6 +1,9 @@
 package backend
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/skye-z/colossus/backend/model"
 	"github.com/skye-z/colossus/backend/service"
@@ -19,6 +22,8 @@ func Start() (ok bool) {
 func register() *gin.Engine {
 	// 创建默认路由
 	route := gin.Default()
+	// 加载跨域服务
+	route.Use(Cors())
 	// 创建Socket服务
 	socket := SocketService{}
 	// 挂载Socket服务
@@ -41,4 +46,27 @@ func register() *gin.Engine {
 	// route.GET("/host/:id", hostService.GetItem)
 
 	return route
+}
+
+func Cors() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		origin := c.Request.Header.Get("Origin")
+		if origin != "" {
+			c.Header("Access-Control-Allow-Origin", origin)
+			c.Header("Access-Control-Allow-Credentials", "true")
+		} else {
+			c.Header("Access-Control-Allow-Origin", "*")
+			c.Header("Access-Control-Allow-Credentials", "false")
+		}
+		// c.Header("Access-Control-Allow-Headers", "Content-Length, Accept, Origin, Host, Connection, Accept-Encoding, Accept-Language, Keep-Alive, User-Agent, Cache-Control, Content-Type")
+		c.Header("Access-Control-Allow-Headers", "content-type")
+		c.Header("Access-Control-Allow-Methods", "GET,POST,DELETE")
+		if c.Request.Method == "OPTIONS" {
+			log.Println("opt!!")
+			c.JSON(http.StatusOK, "")
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
 }
