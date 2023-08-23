@@ -3,100 +3,114 @@
         placement="right">
         <div class="form-head pa-10 flex justify-between border-bottom">
             <div>{{ form.edit ? '编辑主机' : '新建主机' }}</div>
-            <n-button quaternary circle size="small" @click="close">
+            <n-button quaternary circle size="small" @click="close" :disabled="loading">
                 <template #icon>
-                    <n-icon><CloseRound /></n-icon>
+                    <n-icon>
+                        <CloseRound />
+                    </n-icon>
                 </template>
             </n-button>
         </div>
-            <n-scrollbar style="max-height: calc(100vh - 105px)">
-                <n-form ref="formRef" class="pa-20 pb-0" :model="form" :rules="rules" label-placement="left" label-width="auto"
-                    require-mark-placement="right-hanging">
-                    <n-form-item v-if="form.edit" label="编号" path="id">
-                        <n-input v-model:value="form.id" disabled />
-                    </n-form-item>
-                    <n-form-item label="主机名" path="name">
-                        <n-input v-model:value="form.name" placeholder="便于记忆与识别的主机名称" />
-                    </n-form-item>
-                    <n-form-item label="访问地址" path="address">
-                        <n-input v-model:value="form.address" placeholder="主机网络地址(支持IP或域名)" />
-                    </n-form-item>
-                    <n-form-item label="连接端口" path="port">
-                        <n-input v-model:value="form.port" placeholder="SSH连接端口(默认22)" style="width: 170px;" />
-                    </n-form-item>
-                    <n-form-item label="登录用户" path="user">
-                        <n-input v-model:value="form.user" placeholder="登录主机的用户名称" style="width: 170px;" />
-                    </n-form-item>
-                    <n-form-item label="授权方式" path="type">
-                        <n-radio-group v-model:value="form.type" name="type">
-                            <n-space>
-                                <n-radio value="cert">
-                                    数字证书
-                                </n-radio>
-                                <n-radio value="pwd">
-                                    账户密码
-                                </n-radio>
-                            </n-space>
-                        </n-radio-group>
-                    </n-form-item>
-                    <n-form-item label="数字证书" path="cert" v-if="form.type === 'cert'">
-                        <div class="full-width">
-                            <n-select class="mb-10 full-width" v-model:value="form.certs" placeholder="选取已有证书"
-                                :options="options.certs" />
-                            <n-button class="mr-10">本地上传</n-button>
-                            <n-button>生成新证书</n-button>
-                        </div>
-                    </n-form-item>
-                    <n-form-item label="登录密码" path="secret" v-if="form.type === 'pwd'">
-                        <n-input v-model:value="form.secret" type="password" show-password-on="mousedown"
-                            placeholder="登录主机的用户密码" />
-                    </n-form-item>
+        <n-scrollbar style="max-height: calc(100vh - 105px)">
+            <n-form ref="formRef" class="pa-20 pb-0" :model="form" :rules="rules" :disabled="loading" label-placement="left"
+                label-width="auto" require-mark-placement="right-hanging">
+                <n-form-item v-if="form.edit" label="编号" path="id">
+                    <n-input v-model:value="form.id" disabled />
+                </n-form-item>
+                <n-form-item label="主机名" path="name">
+                    <n-input v-model:value="form.name" placeholder="便于记忆与识别的主机名称" />
+                </n-form-item>
+                <n-form-item label="访问地址" path="address">
+                    <n-input v-model:value="form.address" placeholder="主机网络地址(支持IP或域名)" />
+                </n-form-item>
+                <n-form-item label="连接端口" path="port">
+                    <n-input v-model:value="form.port" placeholder="SSH连接端口(默认22)" style="width: 170px;" />
+                </n-form-item>
+                <n-form-item label="登录用户" path="user">
+                    <n-input v-model:value="form.user" placeholder="登录主机的用户名称(默认root)"/>
+                </n-form-item>
+                <n-form-item label="授权方式" path="type">
+                    <n-radio-group v-model:value="form.type" name="type">
+                        <n-space>
+                            <n-radio value="cert">
+                                数字证书
+                            </n-radio>
+                            <n-radio value="pwd">
+                                账户密码
+                            </n-radio>
+                        </n-space>
+                    </n-radio-group>
+                </n-form-item>
+                <n-form-item label="数字证书" path="cert" v-if="form.type === 'cert'">
+                    <div class="full-width">
+                        <n-select class="mb-10 full-width" v-model:value="form.certs" placeholder="选取已有证书"
+                            :options="options.certs" />
+                        <n-button class="mr-10" :disabled="loading">本地上传</n-button>
+                        <n-button :disabled="loading">生成新证书</n-button>
+                    </div>
+                </n-form-item>
+                <n-form-item label="登录密码" path="secret" v-if="form.type === 'pwd'">
+                    <n-input v-model:value="form.secret" type="password" show-password-on="mousedown"
+                        placeholder="登录主机的用户密码" />
+                </n-form-item>
 
-                    <n-form-item label="运行平台" path="platform">
-                        <n-select v-model:value="form.platform" placeholder="连接成功后可自动获取" :options="options.platform"
-                            style="width: 190px;" />
-                    </n-form-item>
-                    <n-form-item label="操作系统" path="system">
-                        <n-select v-model:value="form.system" placeholder="连接成功后可自动获取" :options="options.system"
-                            style="width: 190px;" />
-                    </n-form-item>
-                    <n-form-item label="所在地区" path="region">
-                        <n-select v-model:value="form.region" placeholder="主机的网络地区" :options="options.region"
-                            style="width: 150px;" />
-                    </n-form-item>
-                    <n-form-item label="主要用途" path="usage">
-                        <n-select v-model:value="form.usage" placeholder="主机的使用场景" :options="options.usage"
-                            style="width: 150px;" />
-                    </n-form-item>
-                    <n-form-item label="有效期限" path="period">
-                        <n-date-picker v-model:value="form.period" type="date" placeholder="可使用的最后期限"
-                            style="width: 170px;" />
-                    </n-form-item>
-                </n-form>
-            </n-scrollbar>
+                <n-form-item label="运行平台" path="platform">
+                    <n-select v-model:value="form.platform" placeholder="连接成功后可自动获取" :options="options.platform"
+                        style="width: 190px;" />
+                </n-form-item>
+                <n-form-item label="操作系统" path="system">
+                    <n-select v-model:value="form.system" placeholder="连接成功后可自动获取" :options="options.system"
+                        style="width: 190px;" />
+                </n-form-item>
+                <n-form-item label="所在地区" path="region">
+                    <n-select v-model:value="form.region" placeholder="主机的网络地区" :options="options.region"
+                        style="width: 150px;" />
+                </n-form-item>
+                <n-form-item label="主要用途" path="usage">
+                    <n-select v-model:value="form.usage" placeholder="主机的使用场景" :options="options.usage"
+                        style="width: 150px;" />
+                </n-form-item>
+                <n-form-item label="有效期限" path="period">
+                    <n-date-picker v-model:value="form.period" type="date" placeholder="可使用的最后期限" style="width: 170px;" />
+                </n-form-item>
+            </n-form>
+        </n-scrollbar>
         <div class="pa-10 flex justify-between border-top">
-            <n-button @click="close">取消</n-button>
-            <n-button type="primary">保存</n-button>
+            <n-button @click="close" :disabled="loading">取消</n-button>
+            <n-popconfirm @positive-click="submit">
+                <template #trigger>
+                    <n-button type="primary" :loading="loading">保存</n-button>
+                </template>
+                确认要保存吗?
+            </n-popconfirm>
         </div>
     </n-drawer>
 </template>
 <script>
 import { CloseRound } from '@vicons/material'
+import { host } from '../plugins/api'
 
 export default {
     name: "HostForm",
-    components:{CloseRound},
+    components: { CloseRound },
     data: () => ({
+        loading: false,
         form: {
             show: false,
             edit: false,
 
+            name: null,
+            address: null,
+            port: null,
+            type: 'cert',
+            user: null,
+            cert: null,
+            secret: null,
             platform: null,
             system: null,
             region: null,
             usage: null,
-            period: null,
-            type: 'cert'
+            period: null
         },
         options: {
             platform: [
@@ -233,16 +247,6 @@ export default {
                 message: "请输入主机访问地址",
                 trigger: "blur"
             },
-            port: {
-                required: true,
-                message: "请输入主机SSH连接端口",
-                trigger: "blur"
-            },
-            user: {
-                required: true,
-                message: "请输入主机登录用户名",
-                trigger: "blur"
-            },
             cert: {
                 required: true,
                 message: "请选择数字证书",
@@ -262,7 +266,50 @@ export default {
             this.form.edit = type == 'edit'
         },
         close() {
-            this.form.show = false
+            this.form = {
+                show: false,
+                edit: false,
+
+                name: null,
+                address: null,
+                port: null,
+                type: 'cert',
+                user: null,
+                cert: null,
+                secret: null,
+                platform: null,
+                system: null,
+                region: null,
+                usage: null,
+                period: null
+            };
+        },
+        submit() {
+            console.log('sub')
+            this.$refs.formRef.validate(errors => {
+                if (errors) return false
+                let form = JSON.parse(JSON.stringify(this.form))
+
+                if(form.port == '') form.port = 22
+                else form.port = parseInt(form.port)
+                if(form.user == '') form.user = 'root'
+
+                host.add(form).then(res => {
+                    setTimeout(() => {
+                        this.loading = false
+                        if (res.state) {
+                            window.$message.success('保存成功');
+                            this.close()
+                        } else {
+                            window.$message.warning(res.message ? res.message : '保存失败, 发生意料之外的错误')
+                        }
+                    }, 500)
+                }).catch(err => {
+                    console.log(err)
+                    this.loading = false
+                    window.$message.warning('保存失败, 发生意料之外的错误')
+                })
+            });
         }
     }
 };
