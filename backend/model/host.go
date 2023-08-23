@@ -33,9 +33,9 @@ type Host struct {
 	// 登录用户
 	User string `json:"user"`
 	// 证书
-	Cert string `json:"-"`
+	Cert string `json:"cert"`
 	// 密钥
-	Secret string `json:"-"`
+	Secret string `json:"secret"`
 }
 
 type HostModel struct {
