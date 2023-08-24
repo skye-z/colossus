@@ -32,7 +32,7 @@
                 <n-form-item label="授权方式" path="type">
                     <n-radio-group v-model:value="form.type" name="type">
                         <n-space>
-                            <n-radio value="cert">
+                            <n-radio value="cert" disabled>
                                 数字证书
                             </n-radio>
                             <n-radio value="pwd">
@@ -102,7 +102,7 @@ export default {
             name: null,
             address: null,
             port: null,
-            type: 'cert',
+            type: 'pwd',
             user: null,
             cert: null,
             secret: null,

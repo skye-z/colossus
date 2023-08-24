@@ -62,10 +62,8 @@ export default {
             this.$refs.terminal.close()
     },
     methods: {
-        updateTab(e) {
-            this.tab = e
-        },
-        initTerminal() {
+        init() {
+            this.saveConnectLog()
             setTimeout(() => {
                 this.show = true
             }, 100)
@@ -73,12 +71,18 @@ export default {
                 this.$refs.terminal.init(this.info.id)
                 this.loading = false
             }, 300)
+        },
+        saveConnectLog(){
+            
+        },
+        updateTab(e) {
+            this.tab = e
         }
     },
     mounted() {
         if (this.$route.query.info) {
             this.info = JSON.parse(this.$route.query.info)
-            this.initTerminal()
+            this.init()
         } else {
             window.$dialog.error({
                 closable: false,
