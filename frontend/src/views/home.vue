@@ -1,6 +1,6 @@
 <template>
     <div id="app-home">
-        <host-search @btn-add="addHost" />
+        <host-search @btn-search="search" @btn-add="addHost" />
         <host-form ref="form" />
         <n-scrollbar>
             <div id="host-list" class="pl-10 pt-10 no-select">
@@ -14,6 +14,7 @@
 import HostSearch from '../components/hostSearch.vue'
 import HostForm from '../components/hostForm.vue'
 import HostItem from '../components/hostItem.vue'
+import { host } from '../plugins/api'
 
 export default {
     name: "Home",
@@ -41,8 +42,23 @@ export default {
         ]
     }),
     methods: {
-        addHost(){
-            this.$refs.form.open('add',undefined)
+        search(screen) {
+            this.getHostList(screen, 1, 30)
+        },
+        getHostList(screen, page, number) {
+            let form = {
+                page, number, ...screen
+            }
+            host.getList(form).then(res => {
+                console.log(res)
+            }).catch(err => {
+                console.log(err)
+                this.loading = false
+                window.$message.warning('保存失败, 发生意料之外的错误')
+            })
+        },
+        addHost() {
+            this.$refs.form.open('add', undefined)
         }
     }
 };

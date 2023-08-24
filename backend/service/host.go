@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -15,11 +16,12 @@ type HostService struct {
 
 // 添加主机
 func (hs HostService) Add(ctx *gin.Context) {
-	var form model.Host
-	if err := ctx.ShouldBindJSON(&form); err != nil {
+	var cache model.AddHost
+	if err := ctx.ShouldBindJSON(&cache); err != nil {
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
+	form := addHost2Host(cache)
 
 	if !check(ctx, form) {
 		return
@@ -79,6 +81,41 @@ func (hs HostService) Del(ctx *gin.Context) {
 	common.ReturnMessage(ctx, state, id)
 }
 
+type hostListResponse struct {
+	List []model.Host `json:"list"`
+	Time int64        `json:"time"`
+}
+
+// 获取主机列表
+func (hs HostService) GetList(ctx *gin.Context) {
+	page := ctx.Query("page")
+	iPage, err1 := strconv.Atoi(page)
+	num := ctx.Query("number")
+	iNum, err2 := strconv.Atoi(num)
+	if err1 != nil || err2 != nil {
+		common.ReturnError(ctx, common.Errors.ParamIllegalError)
+		return
+	}
+	if iNum == 0 {
+		iNum = 20
+	}
+
+	keyword := ctx.Query("keyword")
+	platform := ctx.Query("platform")
+	system := ctx.Query("system")
+	region := ctx.Query("region")
+	usage := ctx.Query("usage")
+	period := ctx.Query("period")
+
+	list, err1 := hs.HostModel.GetList(keyword, platform, system, region, usage, period, iPage, iNum)
+	if err1 != nil {
+		log.Println(err1)
+		common.ReturnError(ctx, common.Errors.UnexpectedError)
+		return
+	}
+	common.ReturnData(ctx, true, list)
+}
+
 // 校验输入参数
 func check(ctx *gin.Context, form model.Host) bool {
 	if len(form.Name) == 0 {
@@ -98,4 +135,23 @@ func check(ctx *gin.Context, form model.Host) bool {
 		return false
 	}
 	return true
+}
+
+func addHost2Host(cache model.AddHost) model.Host {
+	form := model.Host{
+		Id:       cache.Id,
+		Name:     cache.Name,
+		Platform: cache.Platform,
+		System:   cache.System,
+		Region:   cache.Region,
+		Usage:    cache.Usage,
+		Period:   cache.Period,
+		Address:  cache.Address,
+		Port:     cache.Port,
+		AuthType: cache.AuthType,
+		User:     cache.User,
+		Cert:     cache.Cert,
+		Secret:   cache.Secret,
+	}
+	return form
 }

@@ -1,7 +1,6 @@
 package backend
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -41,7 +40,7 @@ func register() *gin.Engine {
 	// 接口 删除主机
 	route.DELETE("/host/:id", hostService.Del)
 	// 接口 获取主机列表
-	// route.GET("/host/list", hostService.GetList)
+	route.GET("/host/list", hostService.GetList)
 	// 接口 获取主机详情
 	// route.GET("/host/:id", hostService.GetItem)
 
@@ -58,11 +57,9 @@ func Cors() gin.HandlerFunc {
 			c.Header("Access-Control-Allow-Origin", "*")
 			c.Header("Access-Control-Allow-Credentials", "false")
 		}
-		// c.Header("Access-Control-Allow-Headers", "Content-Length, Accept, Origin, Host, Connection, Accept-Encoding, Accept-Language, Keep-Alive, User-Agent, Cache-Control, Content-Type")
 		c.Header("Access-Control-Allow-Headers", "content-type")
 		c.Header("Access-Control-Allow-Methods", "GET,POST,DELETE")
 		if c.Request.Method == "OPTIONS" {
-			log.Println("opt!!")
 			c.JSON(http.StatusOK, "")
 			c.Abort()
 			return
