@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -81,11 +80,6 @@ func (hs HostService) Del(ctx *gin.Context) {
 	common.ReturnMessage(ctx, state, id)
 }
 
-type hostListResponse struct {
-	List []model.Host `json:"list"`
-	Time int64        `json:"time"`
-}
-
 // 获取主机列表
 func (hs HostService) GetList(ctx *gin.Context) {
 	page := ctx.Query("page")
@@ -109,7 +103,6 @@ func (hs HostService) GetList(ctx *gin.Context) {
 
 	list, err1 := hs.HostModel.GetList(keyword, platform, system, region, usage, period, iPage, iNum)
 	if err1 != nil {
-		log.Println(err1)
 		common.ReturnError(ctx, common.Errors.UnexpectedError)
 		return
 	}
