@@ -18,10 +18,10 @@ export default {
         socketURI: 'ws://127.0.0.1:18703/ws'
     }),
     methods: {
-        init() {
+        init(hostId) {
             this.term = new Terminal()
             // 创建WebSocket连接
-            this.socket = new WebSocket(this.socketURI)
+            this.socket = new WebSocket(this.socketURI + '?id=' + hostId)
             // 加载WebSocket插件
             this.term.loadAddon(new AttachAddon(this.socket))
             // 加载Canvas渲染

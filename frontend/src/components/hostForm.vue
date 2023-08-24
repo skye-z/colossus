@@ -55,8 +55,8 @@
                 </n-form-item>
 
                 <n-form-item label="运行平台" path="platform">
-                    <n-select v-model:value="form.platform" placeholder="连接成功后可自动获取" :options="options.platform"
-                        style="width: 190px;" />
+                    <n-select v-model:value="form.platform" placeholder="系统平台" :options="options.platform"
+                        style="width: 110px;" />
                 </n-form-item>
                 <n-form-item label="操作系统" path="system">
                     <n-select v-model:value="form.system" placeholder="连接成功后可自动获取" :options="options.system"
@@ -245,6 +245,11 @@ export default {
             address: {
                 required: true,
                 message: "请输入主机访问地址",
+                trigger: "blur"
+            },
+            platform: {
+                required: true,
+                message: "请选择主机运行平台",
                 trigger: "blur"
             },
             cert: {

@@ -21,7 +21,10 @@ export default {
     },
     methods: {
         openHost() {
-            this.$router.push('/host')
+            this.$router.push({
+                path: '/host',
+                query: { info: JSON.stringify(this.info) }
+            })
         }
     }
 };
@@ -43,7 +46,7 @@ export default {
     background-color: rgba(255, 255, 255, .08);
 }
 
-.host-name{
+.host-name {
     padding: 10px 10px 0 10px;
     max-width: 200px;
 }
@@ -56,16 +59,17 @@ export default {
     color: #adadad;
 }
 
-.host-tags>div{
+.host-tags>div {
     justify-content: center;
+    cursor: pointer;
     width: 100%;
 }
 
-.host-tags>div:first-child{
+.host-tags>div:first-child {
     border-radius: 0 0 0 8px;
 }
 
-.host-tags>div:last-child{
+.host-tags>div:last-child {
     border-radius: 0 0 8px 0;
 }
 </style>

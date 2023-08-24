@@ -5,12 +5,15 @@
         </div>
         <div v-if="show">
             <div class="no-select">
-                <div id="host-head" class="pa-10 flex align-center border-bottom">
-                    <div class="host-name mr-10">测试服务器(广州)</div>
-                    <n-tag size="small" :bordered="false" type="info">Linux</n-tag>
-                    <n-tag size="small" :bordered="false" type="success">CentOS</n-tag>
-                    <n-tag size="small" :bordered="false" type="warning">亚洲</n-tag>
-                    <n-tag size="small" :bordered="false" type="error">3天后过期</n-tag>
+                <div id="host-head" class="border-bottom">
+                    <div class="flex align-center">
+                        <div class="host-name mr-10">{{ info.name }}</div>
+                        <n-tag size="small" :bordered="false" type="info" v-if="info.platform">{{ info.platform }}</n-tag>
+                        <n-tag size="small" :bordered="false" type="success" v-if="info.system">{{ info.system }}</n-tag>
+                        <n-tag size="small" :bordered="false" type="warning" v-if="info.region">{{ info.region }}</n-tag>
+                        <n-tag size="small" :bordered="false" type="error" v-if="info.period">{{ info.period }}</n-tag>
+                    </div>
+                    <div class="host-address text-small text-gray">{{ info.address }}:{{ info.port }}</div>
                 </div>
                 <n-tabs id="host-tabs" type="line" @update:value="updateTab" animated>
                     <n-tab name="shell">终端</n-tab>
@@ -49,6 +52,7 @@ export default {
     name: "Host",
     components: { HostTerminal },
     data: () => ({
+        info: {},
         tab: 'shell',
         show: false,
         loading: true
@@ -66,25 +70,46 @@ export default {
                 this.show = true
             }, 100)
             setTimeout(() => {
-                this.$refs.terminal.init()
+                this.$refs.terminal.init(this.info.id)
                 this.loading = false
             }, 300)
         }
     },
     mounted() {
-        this.initTerminal()
+        if (this.$route.query.info) {
+            this.info = JSON.parse(this.$route.query.info)
+            this.initTerminal()
+        } else {
+            window.$dialog.error({
+                closable: false,
+                closeOnEsc: false,
+                maskClosable: false,
+                title: "无效主机",
+                content: "入口错误, 未传入有效的主机数据,",
+                positiveText: "返回",
+                onPositiveClick: () => {
+                    this.$router.back()
+                }
+            });
+        }
     }
 };
 </script>
 <style scoped>
-
 #host-head {
     width: calc(100% - 201px);
     position: absolute;
+    padding: 6px 10px;
 }
 
 .host-name {
+    line-height: 16px;
     font-size: 18px;
+}
+
+.host-address{
+    line-height: 14px;
+    font-size: 12px;
 }
 
 #host-tabs:deep(.n-tabs-nav-scroll-content) {

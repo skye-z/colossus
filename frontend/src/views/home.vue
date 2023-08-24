@@ -1,5 +1,8 @@
 <template>
     <div id="app-home">
+        <div class="loading flex align-center justify-center" v-if="loading">
+            <n-spin size="small" />
+        </div>
         <host-search @btn-search="search" @btn-add="addHost" />
         <host-form ref="form" />
         <n-scrollbar>
@@ -20,46 +23,72 @@ export default {
     name: "Home",
     components: { HostSearch, HostItem },
     data: () => ({
-        list: [
-            {
-                id: 1,
-                name: '测试服务器(广州)',
-                address: '192.168.123.223',
-                platform: 'Linux',
-                system: 'CentOS',
-                region: '亚洲',
-                usage: '企业测试',
-                period: '3天后过期'
-            },
-            {
-                id: 2,
-                name: '个人学习服务器',
-                address: 'ces.hangzhou.e3.aliyun.com',
-                platform: 'Linux',
-                system: 'CentOS',
-                usage: '个人学习'
-            }
-        ]
+        loading: true,
+        now: null,
+        list: []
     }),
     methods: {
         search(screen) {
             this.getHostList(screen, 1, 30)
         },
         getHostList(screen, page, number) {
+            this.loading = true
+            let now = new Date().getTime()
             let form = {
                 page, number, ...screen
             }
             host.getList(form).then(res => {
-                console.log(res)
+                if (res.data) {
+                    for (let i in res.data) {
+                        res.data[i].period = this.buildPeriod(now, res.data[i].period)
+                    }
+                    this.list = res.data
+                } else this.list = []
+                this.loading = false
             }).catch(err => {
                 console.log(err)
                 this.loading = false
-                window.$message.warning('保存失败, 发生意料之外的错误')
+                window.$message.warning('获取主机列表失败, 发生意料之外的错误')
             })
         },
         addHost() {
             this.$refs.form.open('add', undefined)
+        },
+        buildPeriod(now, period) {
+            let oneDay = 1000 * 60 * 60 * 24
+            let offset = parseInt(period) - now
+            if (offset <= 0) return '已过期'
+            else {
+                let txt = ''
+                let num = 0
+                if (offset >= (oneDay * 365)) {
+                    txt += (offset / (oneDay * 365)).toFixed(0) + '年'
+                    offset = offset % (oneDay * 365)
+                    num++
+                }
+                if (offset >= (oneDay * 30)) {
+                    txt += (offset / (oneDay * 30)).toFixed(0) + '月'
+                    offset = offset % (oneDay * 30)
+                    num++
+                }
+                if (num == 2) return txt
+                if (offset >= (oneDay * 7)) {
+                    txt += (offset / (oneDay * 7)).toFixed(0) + '周'
+                    offset = offset % (oneDay * 7)
+                    num++
+                }
+                if (num == 2) return txt
+                if (offset >= oneDay) {
+                    txt += (offset / oneDay).toFixed(0) + '天'
+                    offset = offset % oneDay
+                    num++
+                }
+                return txt
+            }
         }
+    },
+    mounted() {
+        setTimeout(() => this.getHostList({}, 1, 30), 500)
     }
 };
 </script>
@@ -68,6 +97,11 @@ export default {
     max-height: calc(100vh - 77px) !important;
     height: calc(100vh - 77px) !important;
     --wails-draggable: no-drag;
+}
+
+.loading {
+    height: calc(100% - 80px);
+    top: 80px;
 }
 
 #host-list {
