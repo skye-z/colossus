@@ -5,12 +5,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/skye-z/colossus/backend/model"
 	"golang.org/x/crypto/ssh"
+	"xorm.io/xorm"
 )
 
 // 连接升级程序
@@ -46,57 +49,74 @@ func (w *wsBufferWriter) Reset() {
 }
 
 type SocketService struct {
+	DB          *xorm.Engine
 	stdinPipe   io.WriteCloser
 	comboOutput *wsBufferWriter
 	session     *ssh.Session
 	wsConn      *websocket.Conn
 }
 
-func (s *SocketService) Run(context *gin.Context) {
-	upgrade, err := upgrader.Upgrade(context.Writer, context.Request, nil)
+func (s *SocketService) Run(ctx *gin.Context) {
+	// 获取主机编号
+	queryId := ctx.DefaultQuery("id", "")
+	if queryId == "" {
+		ctx.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+	hostId, _ := strconv.ParseInt(queryId, 10, 64)
+	// 获取主机信息
+	hostModel := model.HostModel{DB: s.DB}
+	host := &model.Host{Id: hostId}
+	hostModel.GetItem(host)
+	if len(host.Address) == 0 {
+		ctx.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+	// 升级连接
+	upgrade, err := upgrader.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
-		context.AbortWithStatus(http.StatusOK)
-		fmt.Println("http升级websocket失败")
+		ctx.AbortWithStatus(http.StatusNotAcceptable)
 		return
 	}
 	defer upgrade.Close()
-
+	// 组装连接配置
 	config := SSHService{
-		Address:  "192.168.1.2",
-		Port:     22,
-		AuthType: AUTH_TYPE_PASSWORD,
-		User:     "root",
-		Secret:   "PKUsz123",
+		Address:  host.Address,
+		Port:     host.Port,
+		AuthType: host.AuthType,
+		User:     host.User,
+		Secret:   host.Secret,
 	}
+	// 创建客户端
 	client, err2 := config.CreateClient()
 	if err2 != nil {
 		upgrade.WriteMessage(websocket.TextMessage, []byte("\n[1] 创建客户端失败"+err2.Error()))
 		return
 	}
-
+	// 连接主机
 	session, err3 := config.Connect(client)
 	if err3 != nil {
 		upgrade.WriteMessage(websocket.TextMessage, []byte("\n[2] 创建会话失败"+err3.Error()))
 		return
 	}
-
 	pipe, _ := session.StdinPipe()
 	wsBuffer := new(wsBufferWriter)
 	session.Stdout = wsBuffer
 	session.Stderr = wsBuffer
-
+	// 启动终端
 	err = session.Shell()
 	if err != nil {
 		upgrade.WriteMessage(websocket.TextMessage, []byte("第三步:启动shell终端失败"+err.Error()))
 		return
 	}
+	// 暂存连接信息
 	var connect = &SocketService{
 		stdinPipe:   pipe,
 		comboOutput: wsBuffer,
 		session:     session,
 		wsConn:      upgrade,
 	}
-
+	// 转入协程
 	quitChan := make(chan bool, 3)
 	connect.start(quitChan)
 	go connect.Wait(quitChan)

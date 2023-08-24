@@ -19,16 +19,16 @@ func Start() (ok bool) {
 }
 
 func register() *gin.Engine {
+	// 获取数据库引擎
+	engine := GetDBEngine()
 	// 创建默认路由
 	route := gin.Default()
 	// 加载跨域服务
 	route.Use(Cors())
 	// 创建Socket服务
-	socket := SocketService{}
+	socket := SocketService{DB: engine}
 	// 挂载Socket服务
 	route.GET("/ws", socket.Run)
-	// 获取数据库引擎
-	engine := GetDBEngine()
 	// 创建主机模型
 	hostModel := model.HostModel{DB: engine}
 	// 创建主机服务
