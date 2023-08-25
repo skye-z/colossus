@@ -75,8 +75,8 @@ export default {
                 this.loading = false
             }, 300)
         },
-        saveConnectLog(){
-            
+        saveConnectLog() {
+
         },
         updateTab(e) {
             this.tab = e
@@ -114,7 +114,7 @@ export default {
     font-size: 18px;
 }
 
-.host-address{
+.host-address {
     line-height: 14px;
     font-size: 12px;
 }
@@ -125,7 +125,7 @@ export default {
     padding: 3.5px 0;
 }
 
-.tips{
+.tips {
     padding-top: 40vh;
 }
 </style>

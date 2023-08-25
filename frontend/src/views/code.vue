@@ -21,7 +21,7 @@ export default {
 };
 </script>
 <style scoped>
-.tips{
+.tips {
     padding-top: 47vh;
 }
 </style>
