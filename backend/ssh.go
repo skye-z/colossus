@@ -53,7 +53,7 @@ func (s *SSHService) CreateClient() (*ssh.Client, error) {
 	return client, nil
 }
 
-func (s *SSHService) Connect(client *ssh.Client) (*ssh.Session, error) {
+func (s *SSHService) Connect(client *ssh.Client, height int, width int) (*ssh.Session, error) {
 	var (
 		session *ssh.Session
 		err     error
@@ -69,7 +69,7 @@ func (s *SSHService) Connect(client *ssh.Client) (*ssh.Session, error) {
 		ssh.TTY_OP_OSPEED: 14400,
 	}
 
-	if err := session.RequestPty("xterm", 80, 40, modes); err != nil {
+	if err := session.RequestPty("xterm", height, width, modes); err != nil {
 		return nil, err
 	}
 

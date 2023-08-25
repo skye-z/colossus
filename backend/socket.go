@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -93,8 +95,11 @@ func (s *SocketService) Run(ctx *gin.Context) {
 		upgrade.WriteMessage(websocket.TextMessage, []byte("\n[1] 创建客户端失败"+err2.Error()))
 		return
 	}
+	// 获取宽高
+	cols, _ := strconv.Atoi(ctx.DefaultQuery("cols", "80"))
+	rows, _ := strconv.Atoi(ctx.DefaultQuery("rows", "90"))
 	// 连接主机
-	session, err3 := config.Connect(client)
+	session, err3 := config.Connect(client, cols, rows)
 	if err3 != nil {
 		upgrade.WriteMessage(websocket.TextMessage, []byte("\n[2] 创建会话失败"+err3.Error()))
 		return
@@ -164,7 +169,17 @@ func (s *SocketService) receiveWsMsg(quitChan chan bool) {
 				fmt.Println("receiveWsMsg=>读取ws信息失败", err)
 				return
 			}
-			s.stdinPipe.Write(data)
+			if data[0] == 33 && data[1] == 126 {
+				cmd := string(data)
+				rc := strings.Split(cmd[2:], ":")
+				// 获取宽高
+				cols, _ := strconv.Atoi(rc[0])
+				rows, _ := strconv.Atoi(rc[1])
+				log.Println(cols, "x", rows)
+				s.session.WindowChange(cols, rows)
+			} else {
+				s.stdinPipe.Write(data)
+			}
 		}
 	}
 }

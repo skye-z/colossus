@@ -20,10 +20,6 @@ export default {
     methods: {
         init(hostId) {
             this.term = new Terminal()
-            // 创建WebSocket连接
-            this.socket = new WebSocket(this.socketURI + '?id=' + hostId)
-            // 加载WebSocket插件
-            this.term.loadAddon(new AttachAddon(this.socket))
             // 加载Canvas渲染
             this.term.loadAddon(new CanvasAddon())
             // 加载WebGL渲染
@@ -35,8 +31,21 @@ export default {
             this.term.open(this.$refs.xtermRef)
             // 自适应窗口大小
             fitAddon.fit()
+            // 创建WebSocket连接
+            this.socket = new WebSocket(this.socketURI + '?cols=' + this.term.cols + '&rows' + this.term.rows + '&id=' + hostId)
+            // 加载WebSocket插件
+            this.term.loadAddon(new AttachAddon(this.socket))
             // 输入聚焦
             this.term.focus()
+
+            let timeout = 0
+            window.addEventListener('resize', () => {
+                fitAddon.fit();
+                clearTimeout(timeout)
+                timeout = setTimeout(() => {
+                    this.socket.send("!~" + this.term.cols + ":" + this.term.rows)
+                }, 500)
+            });
         },
         close() {
             // 关闭连接

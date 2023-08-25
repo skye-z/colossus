@@ -34,6 +34,7 @@ export default {
     background-color: rgba(255, 255, 255, .08);
     transition: all ease-out 0.3s;
     margin: 0 10px 10px 0;
+    min-width: 180px;
     border-radius: 8px;
     cursor: pointer;
 }
