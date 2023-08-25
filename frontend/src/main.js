@@ -9,4 +9,5 @@ const app = createApp(App)
 
 app.config.globalProperties.$goOSName = GetOSName
 
-app.use(router).mount('#app')
+app.use(router)
+app.mount('#app')

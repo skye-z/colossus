@@ -8,7 +8,7 @@
             <div>创建连接</div>
         </n-button>
         <div id="connect-list" :class="{ macos: macOS }">
-            <div class="connect-item no-drag" v-for="item in connect">
+            <div class="connect-item no-drag" v-for="item in connect" @click="openHost(item)">
                 <div class="line1 connect-name">{{ item.name }}</div>
                 <div class="line1 connect-address">{{ item.address }}</div>
             </div>
@@ -54,20 +54,43 @@ export default {
         }
     },
     data: () => ({
-        connect: [
-            {
-                name: "测试服务器(广州)",
-                address: "192.168.110.231"
-            },
-            {
-                address: "ces.hangzhou.e3.aliyun.com"
-            }
-        ]
+        connect: []
     }),
     methods: {
+        init() {
+            let cache = localStorage.getItem('cache:history')
+            if (cache == undefined || cache == '') localStorage.setItem('cache:history', "[]")
+            else this.connect = JSON.parse(cache)
+
+            window.addEventListener("cache:history", ({ detail }) => {
+                let cache = localStorage.getItem('cache:history')
+                if (cache == undefined || cache == '') cache = []
+                else cache = JSON.parse(cache)
+
+                let exist = false
+                for (let i in cache) {
+                    if (cache[i].id == detail.id) {
+                        exist = true;
+                        break;
+                    }
+                }
+                if (!exist) cache.unshift(detail)
+                this.connect = cache;
+                localStorage.setItem('cache:history', JSON.stringify(cache))
+            })
+        },
+        openHost(item) {
+            this.$router.push({
+                path: '/host',
+                query: { info: JSON.stringify(item) }
+            })
+        },
         jump(path) {
             this.$router.push('/' + path)
         }
+    },
+    mounted() {
+        this.init()
     }
 };
 </script>
