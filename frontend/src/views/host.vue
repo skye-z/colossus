@@ -26,18 +26,21 @@
                 <host-terminal ref="terminal" />
             </div>
             <div v-show="tab === 'file'">
-                <div class="pa-10">
-                    文件浏览、上传下载
+                <div class="tips text-center">
+                    <div>等待开发</div>
+                    <div class="text-small text-gray">文件浏览、上传下载</div>
                 </div>
             </div>
             <div v-if="tab === 'tool'">
-                <div class="pa-10">
-                    配置检测、链路跟踪、性能测试、开放端口、路由表、笔记、流量监控、应用可视化安装器、Docker容器管理
+                <div class="tips text-center">
+                    <div>等待开发</div>
+                    <div class="text-small text-gray">配置检测、链路跟踪、性能测试、开放端口、路由表、笔记、流量监控、应用可视化安装器、Docker容器管理</div>
                 </div>
             </div>
             <div v-else-if="tab === 'config'">
-                <div class="pa-10">
-                    配置别名、终端颜色、压缩上传、压缩下载、探针、有效期限、认证信息
+                <div class="tips text-center">
+                    <div>等待开发</div>
+                    <div class="text-small text-gray">配置别名、终端颜色、压缩上传、压缩下载、探针、有效期限、认证信息</div>
                 </div>
             </div>
         </div>
@@ -120,5 +123,9 @@ export default {
     margin-left: calc(100% - 250px);
     --wails-draggable: no-drag;
     padding: 3.5px 0;
+}
+
+.tips{
+    padding-top: 40vh;
 }
 </style>

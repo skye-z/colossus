@@ -1,5 +1,10 @@
 <template>
-    <div>凭证</div>
+    <div>
+        <div class="tips text-center">
+            <div>等待开发</div>
+            <div class="text-small text-gray">创建证书、管理证书、管理密码</div>
+        </div>
+    </div>
 </template>
   
 <script>
@@ -15,4 +20,8 @@ export default {
     }
 };
 </script>
-<style scoped></style>
+<style scoped>
+.tips{
+    padding-top: 47vh;
+}
+</style>
