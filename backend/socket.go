@@ -2,9 +2,7 @@ package backend
 
 import (
 	"bytes"
-	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -14,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/skye-z/colossus/backend/model"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"golang.org/x/crypto/ssh"
 	"xorm.io/xorm"
 )
@@ -123,14 +122,45 @@ func (s *SocketService) Run(ctx *gin.Context) {
 	}
 	// 转入协程
 	quitChan := make(chan bool, 3)
-	connect.start(quitChan)
+	// 启动连接
+	connect.start(ctx, quitChan)
+	// 等待响应
 	go connect.Wait(quitChan)
 	<-quitChan
 }
 
-func (s *SocketService) start(quitChan chan bool) {
-	go s.receiveWsMsg(quitChan)
+func (s *SocketService) start(ctx *gin.Context, quitChan chan bool) {
+	// 接收前端传入
+	go s.receiveWsMsg(ctx, quitChan)
+	// 发送后端输出
 	go s.sendWsOutput(quitChan)
+}
+
+func (s *SocketService) receiveWsMsg(ctx *gin.Context, quitChan chan bool) {
+	wsConn := s.wsConn
+	defer setQuit(quitChan)
+	for {
+		select {
+		case <-quitChan:
+			return
+		default:
+			_, data, err := wsConn.ReadMessage()
+			if err != nil {
+				runtime.LogPrint(ctx, "与前端通信失败")
+				return
+			}
+			if data[0] == 33 && data[1] == 126 {
+				cmd := string(data)
+				rc := strings.Split(cmd[2:], ":")
+				// 获取宽高
+				cols, _ := strconv.Atoi(rc[0])
+				rows, _ := strconv.Atoi(rc[1])
+				s.session.WindowChange(rows, cols)
+			} else {
+				s.stdinPipe.Write(data)
+			}
+		}
+	}
 }
 
 func (s *SocketService) sendWsOutput(quitChan chan bool) {
@@ -153,34 +183,6 @@ func (s *SocketService) sendWsOutput(quitChan chan bool) {
 			return
 		}
 
-	}
-}
-
-func (s *SocketService) receiveWsMsg(quitChan chan bool) {
-	wsConn := s.wsConn
-	defer setQuit(quitChan)
-	for {
-		select {
-		case <-quitChan:
-			return
-		default:
-			_, data, err := wsConn.ReadMessage()
-			if err != nil {
-				fmt.Println("receiveWsMsg=>读取ws信息失败", err)
-				return
-			}
-			if data[0] == 33 && data[1] == 126 {
-				cmd := string(data)
-				rc := strings.Split(cmd[2:], ":")
-				// 获取宽高
-				cols, _ := strconv.Atoi(rc[0])
-				rows, _ := strconv.Atoi(rc[1])
-				log.Println(cols, "x", rows)
-				s.session.WindowChange(cols, rows)
-			} else {
-				s.stdinPipe.Write(data)
-			}
-		}
 	}
 }
 
