@@ -3,6 +3,7 @@ package backend
 import (
 	"bytes"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,7 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/skye-z/colossus/backend/model"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"golang.org/x/crypto/ssh"
 	"xorm.io/xorm"
 )
@@ -146,7 +146,8 @@ func (s *SocketService) receiveWsMsg(ctx *gin.Context, quitChan chan bool) {
 		default:
 			_, data, err := wsConn.ReadMessage()
 			if err != nil {
-				runtime.LogPrint(ctx, "与前端通信失败")
+				log.Println("与前端通信失败")
+				// runtime.LogPrint(ctx, "与前端通信失败")
 				return
 			}
 			if data[0] == 33 && data[1] == 126 {

@@ -31,6 +31,7 @@ export default {
         id: 0,
         term: null,
         socket: null,
+        fitAddon: null,
         socketURI: 'ws://127.0.0.1:18703/ws',
         fastCode: '',
         connect: true
@@ -38,39 +39,55 @@ export default {
     methods: {
         init(hostId) {
             this.connect = true
-            if(hostId) this.id = hostId
-            this.term = new Terminal()
+            if (hostId) this.id = hostId
+            try {
+                this.term = new Terminal()
+                // 加载插件
+                this.addPlugins();
+                // 打开Dom元素
+                this.term.open(this.$refs.xtermRef)
+                // 自适应窗口大小
+                this.fitAddon.fit()
+                // 创建连接
+                this.addSocket()
+                // 输入聚焦
+                this.term.focus()
+                // 加载大小变动事件
+                this.addResizeEvent();
+            } catch (err) {
+                console.log(err)
+            }
+        },
+        addPlugins() {
             // 加载Canvas渲染
             this.term.loadAddon(new CanvasAddon())
             // 加载WebGL渲染
             this.term.loadAddon(new WebglAddon())
             // 加载窗口自适应插件
-            const fitAddon = new FitAddon()
-            this.term.loadAddon(fitAddon)
-            // 打开Dom元素
-            this.term.open(this.$refs.xtermRef)
-            // 自适应窗口大小
-            fitAddon.fit()
+            this.fitAddon = new FitAddon()
+            this.term.loadAddon(this.fitAddon)
+        },
+        addSocket() {
             // 创建WebSocket连接
             this.socket = new WebSocket(this.socketURI + '?cols=' + this.term.cols + '&rows' + this.term.rows + '&id=' + this.id)
+            // 连接开启事件
             this.socket.onopen = () => {
                 window.dispatchEvent(new CustomEvent("cache:connect", { detail: { id: this.id, connect: true } }))
             };
+            // 连接关闭事件
             this.socket.onclose = () => {
                 window.dispatchEvent(new CustomEvent("cache:connect", { detail: { id: this.id, connect: false } }))
             };
-            this.socket.onmessage = e => {
-                console.log(e)
-            };
-
+            // this.socket.onmessage = e => {
+            //     console.log(e)
+            // };
             // 加载WebSocket插件
             this.term.loadAddon(new AttachAddon(this.socket))
-            // 输入聚焦
-            this.term.focus()
-
+        },
+        addResizeEvent() {
             let timeout = 0
             window.addEventListener('resize', () => {
-                fitAddon.fit();
+                this.fitAddon.fit();
                 clearTimeout(timeout)
                 timeout = setTimeout(() => {
                     this.socket.send("!~" + this.term.cols + ":" + this.term.rows)
@@ -82,8 +99,13 @@ export default {
             // 关闭连接
             if (this.socket) this.socket.close()
             // 销毁终端
-            if (this.term) this.term.dispose()
-            window.dispatchEvent(new CustomEvent("cache:connect", { detail: { id: hostId, connect: false } }))
+            try {
+                if (this.term) this.term.dispose()
+            } catch (err) {
+                console.log(err)
+            }
+            document.getElementsByClassName("xterm")[0].innerHTML = "";
+            window.dispatchEvent(new CustomEvent("cache:connect", { detail: { id: this.id, connect: false } }))
             console.log('Terminal Close')
         },
     }
@@ -95,7 +117,7 @@ export default {
 }
 
 .xterm:deep(.terminal) {
-    height: calc(100vh - 110px);
+    height: calc(100vh - 117px);
     padding: 5px;
 }
 </style>
