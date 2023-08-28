@@ -7,7 +7,7 @@
         <host-form ref="form" />
         <n-scrollbar>
             <div id="host-list" class="pl-10 pt-10 no-select">
-                <host-item v-for="item in list" :info="item" />
+                <host-item v-for="item in list" :info="item" @edit-host="editHost" />
             </div>
         </n-scrollbar>
     </div>
@@ -40,7 +40,7 @@ export default {
             host.getList(form).then(res => {
                 if (res.data) {
                     for (let i in res.data) {
-                        res.data[i].period = this.buildPeriod(now, res.data[i].period)
+                        res.data[i].periodTxt = this.buildPeriod(now, res.data[i].period)
                     }
                     this.list = res.data
                 } else this.list = []
@@ -53,6 +53,9 @@ export default {
         },
         addHost() {
             this.$refs.form.open('add', undefined)
+        },
+        editHost(info){
+            this.$refs.form.open('edit', info)
         },
         buildPeriod(now, period) {
             let oneDay = 1000 * 60 * 60 * 24

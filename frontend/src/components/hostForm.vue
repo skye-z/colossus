@@ -24,10 +24,10 @@
                     <n-input v-model:value="form.address" placeholder="主机网络地址(支持IP或域名)" />
                 </n-form-item>
                 <n-form-item label="连接端口" path="port">
-                    <n-input v-model:value="form.port" placeholder="SSH连接端口(默认22)" style="width: 170px;" />
+                    <n-input v-model:value="form.port" placeholder="SSH连接端口(默认22)" clearable style="width: 170px;" />
                 </n-form-item>
                 <n-form-item label="登录用户" path="user">
-                    <n-input v-model:value="form.user" placeholder="登录主机的用户名称(默认root)"/>
+                    <n-input v-model:value="form.user" placeholder="登录主机的用户名称(默认root)" clearable/>
                 </n-form-item>
                 <n-form-item label="授权方式" path="type">
                     <n-radio-group v-model:value="form.type" name="type">
@@ -50,8 +50,8 @@
                     </div>
                 </n-form-item>
                 <n-form-item label="登录密码" path="secret" v-if="form.type === 'pwd'">
-                    <n-input v-model:value="form.secret" type="password" show-password-on="mousedown"
-                        placeholder="登录主机的用户密码" />
+                    <n-input v-model:value="form.secret" type="password" clearable show-password-on="mousedown"
+                        :placeholder="form.edit ? '留空即不做修改' : '登录主机的用户密码'" />
                 </n-form-item>
 
                 <n-form-item label="运行平台" path="platform">
@@ -63,15 +63,15 @@
                         style="width: 190px;" />
                 </n-form-item>
                 <n-form-item label="所在地区" path="region">
-                    <n-select v-model:value="form.region" placeholder="主机的网络地区" :options="options.region"
+                    <n-select v-model:value="form.region" placeholder="主机的网络地区" clearable :options="options.region"
                         style="width: 150px;" />
                 </n-form-item>
                 <n-form-item label="主要用途" path="usage">
-                    <n-select v-model:value="form.usage" placeholder="主机的使用场景" :options="options.usage"
+                    <n-select v-model:value="form.usage" placeholder="主机的使用场景" clearable :options="options.usage"
                         style="width: 150px;" />
                 </n-form-item>
                 <n-form-item label="有效期限" path="period">
-                    <n-date-picker v-model:value="form.period" type="date" placeholder="可使用的最后期限" style="width: 170px;" />
+                    <n-date-picker v-model:value="form.period" type="date" placeholder="可使用的最后期限" clearable style="width: 170px;" />
                 </n-form-item>
             </n-form>
         </n-scrollbar>
@@ -269,6 +269,43 @@ export default {
         open(type, old) {
             this.form.show = true
             this.form.edit = type == 'edit'
+            let rules = {
+                name: {
+                    required: true,
+                    message: "请输入主机名",
+                    trigger: "blur"
+                },
+                address: {
+                    required: true,
+                    message: "请输入主机访问地址",
+                    trigger: "blur"
+                },
+                platform: {
+                    required: true,
+                    message: "请选择主机运行平台",
+                    trigger: "blur"
+                }
+            }
+            if (!this.form.edit) {
+                rules["cert"] = {
+                    required: true,
+                    message: "请选择数字证书",
+                    trigger: "blur"
+                };
+                rules["secret"] = {
+                    required: true,
+                    message: "请输入主机登录用户密码",
+                    trigger: "blur"
+                }
+            }
+            this.rules = rules
+
+            if(old.period) old.period = parseInt(old.period)
+            for (let key in old) {
+                if (typeof old[key] == 'string' && old[key] != '' ) this.form[key] = old[key]
+                else if (typeof old[key] == 'number') this.form[key] = old[key]
+            }
+            console.log(this.form)
         },
         close() {
             this.form = {
@@ -295,9 +332,9 @@ export default {
                 if (errors) return false
                 let form = JSON.parse(JSON.stringify(this.form))
 
-                if(form.port == '') form.port = 22
+                if (form.port == '') form.port = 22
                 else form.port = parseInt(form.port)
-                if(form.user == '') form.user = 'root'
+                if (form.user == '') form.user = 'root'
 
                 host.add(form).then(res => {
                     setTimeout(() => {
