@@ -4,6 +4,8 @@ html {
     color: #f4f4f4;
     font-size: 14px;
     line-height: 16px;
+
+    --n-border-radius: 8px
 }
 
 body {

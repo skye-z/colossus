@@ -5,10 +5,10 @@
     "borderRadiusMedium": "8px",
     "borderRadiusLarge": "8px"
   },
-  "Input":{
+  "Input": {
     "borderRadius": "8px"
   },
-  "Table":{
+  "Table": {
     "borderRadius": "8px",
     "tdColor": "#3d4a5f",
     "tdColorModal": "#3d4a5f",
@@ -18,6 +18,8 @@
     "borderColor": "#556276"
   },
   "common": {
-    "fontWeightStrong": "600"
+    "fontWeightStrong": "600",
+    "borderRadius": "8px",
+    "borderRadiusSmall": "8px"
   }
 }
