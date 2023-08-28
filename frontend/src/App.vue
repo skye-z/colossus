@@ -54,7 +54,6 @@ export default {
         this.isMacOS = true
         window.$message.warning('获取当前运行环境失败 ( 默认 darwin )')
       }
-      console.log('2')
       setTimeout(() => {
         this.$router.push('/home')
       }, 100)

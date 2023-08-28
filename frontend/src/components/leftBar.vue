@@ -10,7 +10,10 @@
         <div id="connect-list" :class="{ macos: macOS }">
             <div class="connect-item no-drag" v-for="item in connect" @click="openHost(item)">
                 <div class="line1 connect-name">{{ item.name }}</div>
-                <div class="line1 connect-address">{{ item.address }}</div>
+                <div class="line1 connect-address flex align-center">
+                    <div :class="'dot mr-5 ' + (item.connect ? 'dot-connect' : '')"></div>
+                    <div>{{ item.address }}</div>
+                </div>
             </div>
         </div>
         <div class="flex align-center justify-between pl-10 no-drag">
@@ -75,8 +78,25 @@ export default {
                     }
                 }
                 if (!exist) cache.unshift(detail)
-                this.connect = cache;
+                let connect = []
+                for (let x in cache) {
+                    for (let y in this.connect) {
+                        if (cache[x].id == this.connect[y].id) cache[x].connect = this.connect[y].connect
+                    }
+                    connect.push(cache[x])
+                }
+                this.connect = connect;
                 localStorage.setItem('cache:history', JSON.stringify(cache))
+            })
+            window.addEventListener("cache:connect", ({ detail }) => {
+                console.log(this.connect, detail)
+                for (let i in this.connect) {
+                    console.log(this.connect[i].id, detail.id, this.connect[i].id == detail.id)
+                    if (this.connect[i].id == detail.id) {
+                        this.connect[i].connect = detail.connect
+                        break;
+                    }
+                }
             })
         },
         openHost(item) {
@@ -148,5 +168,16 @@ export default {
     line-height: 14px;
     font-size: 12px;
     color: #adadad;
+}
+
+.dot {
+    background-color: #dc143c;
+    border-radius: 8px;
+    height: 8px;
+    width: 8px;
+}
+
+.dot-connect {
+    background-color: #14dc28;
 }
 </style>

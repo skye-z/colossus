@@ -8,9 +8,9 @@
                 <div id="host-head" class="border-bottom">
                     <div class="flex align-center">
                         <div class="host-name mr-10">{{ info.name }}</div>
-                        <n-tag size="small" :bordered="false" type="info" v-if="info.platform">{{ info.platform }}</n-tag>
-                        <n-tag size="small" :bordered="false" type="success" v-if="info.system">{{ info.system }}</n-tag>
-                        <n-tag size="small" :bordered="false" type="warning" v-if="info.region">{{ info.region }}</n-tag>
+                        <n-tag size="small" class="mr-5" :bordered="false" type="info" v-if="info.platform">{{ info.platform }}</n-tag>
+                        <n-tag size="small" class="mr-5" :bordered="false" type="success" v-if="info.system">{{ info.system }}</n-tag>
+                        <n-tag size="small" class="mr-5" :bordered="false" type="warning" v-if="info.region">{{ info.region }}</n-tag>
                         <n-tag size="small" :bordered="false" type="error" v-if="info.periodTxt">{{ info.periodTxt }}</n-tag>
                     </div>
                     <div class="host-address text-small text-gray">{{ info.address }}:{{ info.port }}</div>
