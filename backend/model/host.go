@@ -133,7 +133,7 @@ func (model HostModel) Edit(host *Host) bool {
 	if host.Id == 0 {
 		return false
 	}
-	_, err := model.DB.ID(host.Id).Update(host)
+	_, err := model.DB.ID(host.Id).AllCols().Update(host)
 	return err == nil
 }
 

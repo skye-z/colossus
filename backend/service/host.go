@@ -52,18 +52,41 @@ func (hs HostService) Edit(ctx *gin.Context) {
 	}
 	sid, _ := strconv.ParseInt(id, 10, 64)
 
-	var form model.Host
-	if err := ctx.ShouldBindJSON(&form); err != nil {
+	var cache model.AddHost
+	if err := ctx.ShouldBindJSON(&cache); err != nil {
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
-	if !check(ctx, form) {
+	// 查询已有数据
+	form := &model.Host{
+		Id: sid,
+	}
+	hs.HostModel.GetItem(form)
+	// 更新已有数据
+	form.Name = cache.Name
+	form.Platform = cache.Platform
+	form.System = cache.System
+	form.Region = cache.Region
+	form.Usage = cache.Usage
+	form.Period = cache.Period
+	form.Address = cache.Address
+	form.Port = cache.Port
+	form.AuthType = cache.AuthType
+	form.User = cache.User
+	// 判断证书是否需要更新
+	if len(cache.Cert) > 0 && cache.Cert != form.Cert {
+		form.Cert = cache.Cert
+	}
+	// 判断密码是否需要更新
+	if len(cache.Secret) > 0 && cache.Secret != form.Secret {
+		form.Secret = cache.Secret
+	}
+	if !check(ctx, *form) {
 		return
 	}
 
-	form.Id = sid
-	state := hs.HostModel.Edit(&form)
+	state := hs.HostModel.Edit(form)
 	common.ReturnMessage(ctx, state, id)
 }
 

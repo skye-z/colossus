@@ -332,9 +332,9 @@ export default {
             };
         },
         submit() {
-            console.log('sub')
             this.$refs.formRef.validate(errors => {
                 if (errors) return false
+                this.loading = true
                 let form = JSON.parse(JSON.stringify(this.form))
 
                 if (form.port == '') form.port = 22

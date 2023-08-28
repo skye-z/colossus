@@ -44,7 +44,9 @@ export default {
                 if (res.data) {
                     setTimeout(() => {
                         for (let i in res.data) {
-                            res.data[i].periodTxt = this.buildPeriod(now, res.data[i].period)
+                            if(res.data[i].period)
+                                res.data[i].periodTxt = this.buildPeriod(now, res.data[i].period)
+                            else res.data[i].period = null
                         }
                         this.list = res.data
                         this.loading = false
