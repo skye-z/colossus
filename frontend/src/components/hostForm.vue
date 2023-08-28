@@ -27,7 +27,7 @@
                     <n-input v-model:value="form.port" placeholder="SSH连接端口(默认22)" clearable style="width: 170px;" />
                 </n-form-item>
                 <n-form-item label="登录用户" path="user">
-                    <n-input v-model:value="form.user" placeholder="登录主机的用户名称(默认root)" clearable/>
+                    <n-input v-model:value="form.user" placeholder="登录主机的用户名称(默认root)" clearable />
                 </n-form-item>
                 <n-form-item label="授权方式" path="type">
                     <n-radio-group v-model:value="form.type" name="type">
@@ -71,7 +71,8 @@
                         style="width: 150px;" />
                 </n-form-item>
                 <n-form-item label="有效期限" path="period">
-                    <n-date-picker v-model:value="form.period" type="date" placeholder="可使用的最后期限" clearable style="width: 170px;" />
+                    <n-date-picker v-model:value="form.period" type="date" placeholder="可使用的最后期限" clearable
+                        style="width: 170px;" />
                 </n-form-item>
             </n-form>
         </n-scrollbar>
@@ -166,6 +167,10 @@ export default {
                 }
             ],
             region: [
+                {
+                    label: "内网",
+                    value: "内网"
+                },
                 {
                     label: "亚洲",
                     value: "亚洲"
@@ -300,9 +305,9 @@ export default {
             }
             this.rules = rules
 
-            if(old.period) old.period = parseInt(old.period)
+            if (old.period) old.period = parseInt(old.period)
             for (let key in old) {
-                if (typeof old[key] == 'string' && old[key] != '' ) this.form[key] = old[key]
+                if (typeof old[key] == 'string' && old[key] != '') this.form[key] = old[key]
                 else if (typeof old[key] == 'number') this.form[key] = old[key]
             }
             console.log(this.form)
@@ -336,22 +341,47 @@ export default {
                 else form.port = parseInt(form.port)
                 if (form.user == '') form.user = 'root'
 
-                host.add(form).then(res => {
-                    setTimeout(() => {
-                        this.loading = false
-                        if (res.state) {
-                            window.$message.success('保存成功');
-                            this.close()
-                        } else {
-                            window.$message.warning(res.message ? res.message : '保存失败, 发生意料之外的错误')
-                        }
-                    }, 500)
-                }).catch(err => {
-                    console.log(err)
-                    this.loading = false
-                    window.$message.warning('保存失败, 发生意料之外的错误')
-                })
+                if (typeof form.period == 'string') form.period = parseInt(form.period)
+
+                if (this.form.edit) this.updateHost(form)
+                else this.addHost(form)
             });
+        },
+        addHost(form) {
+            host.add(form).then(res => {
+                setTimeout(() => {
+                    this.loading = false
+                    if (res.state) {
+                        window.$message.success('保存成功');
+                        this.$emit('update')
+                        this.close()
+                    } else {
+                        window.$message.warning(res.message ? res.message : '保存失败, 发生意料之外的错误')
+                    }
+                }, 500)
+            }).catch(err => {
+                console.log(err)
+                this.loading = false
+                window.$message.warning('保存失败, 发生意料之外的错误')
+            })
+        },
+        updateHost(form) {
+            host.edit(form.id, form).then(res => {
+                setTimeout(() => {
+                    this.loading = false
+                    if (res.state) {
+                        window.$message.success('保存成功');
+                        this.$emit('update')
+                        this.close()
+                    } else {
+                        window.$message.warning(res.message ? res.message : '保存失败, 发生意料之外的错误')
+                    }
+                }, 500)
+            }).catch(err => {
+                console.log(err)
+                this.loading = false
+                window.$message.warning('保存失败, 发生意料之外的错误')
+            })
         }
     }
 };

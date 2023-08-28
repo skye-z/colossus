@@ -4,7 +4,7 @@
             <n-spin size="small" />
         </div>
         <host-search @btn-search="search" @btn-add="addHost" />
-        <host-form ref="form" />
+        <host-form ref="form" @update="refresh" />
         <n-scrollbar>
             <div id="host-list" class="pl-10 pt-10 no-select">
                 <host-item v-for="item in list" :info="item" @edit-host="editHost" />
@@ -31,6 +31,9 @@ export default {
         search(screen) {
             this.getHostList(screen, 1, 30)
         },
+        refresh() {
+            this.search({})
+        },
         getHostList(screen, page, number) {
             this.loading = true
             let now = new Date().getTime()
@@ -39,12 +42,17 @@ export default {
             }
             host.getList(form).then(res => {
                 if (res.data) {
-                    for (let i in res.data) {
-                        res.data[i].periodTxt = this.buildPeriod(now, res.data[i].period)
-                    }
-                    this.list = res.data
-                } else this.list = []
-                this.loading = false
+                    setTimeout(() => {
+                        for (let i in res.data) {
+                            res.data[i].periodTxt = this.buildPeriod(now, res.data[i].period)
+                        }
+                        this.list = res.data
+                        this.loading = false
+                    }, 500)
+                } else {
+                    this.list = [];
+                    this.loading = false
+                }
             }).catch(err => {
                 console.log(err)
                 this.loading = false
@@ -54,7 +62,7 @@ export default {
         addHost() {
             this.$refs.form.open('add', undefined)
         },
-        editHost(info){
+        editHost(info) {
             this.$refs.form.open('edit', info)
         },
         buildPeriod(now, period) {

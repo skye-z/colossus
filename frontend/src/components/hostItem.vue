@@ -103,6 +103,7 @@ export default {
 
 .host-tags>div {
     justify-content: center;
+    border-radius: 0;
     cursor: pointer;
     width: 100%;
 }

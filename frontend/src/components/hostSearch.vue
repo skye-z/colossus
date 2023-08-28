@@ -120,6 +120,10 @@ export default {
                     value: ""
                 },
                 {
+                    label: "内网",
+                    value: "内网"
+                },
+                {
                     label: "亚洲",
                     value: "亚洲"
                 },

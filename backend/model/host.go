@@ -22,7 +22,7 @@ type Host struct {
 	// 主机用途
 	Usage string `json:"usage"`
 	// 有效期限
-	Period string `json:"period"`
+	Period int64 `json:"period"`
 
 	// 访问地址
 	Address string `json:"address"`
@@ -53,7 +53,7 @@ type AddHost struct {
 	// 主机用途
 	Usage string `json:"usage"`
 	// 有效期限
-	Period string `json:"period"`
+	Period int64 `json:"period"`
 
 	// 访问地址
 	Address string `json:"address"`
