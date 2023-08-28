@@ -17,12 +17,16 @@
             <div class="host-tool-sub flex align-center justify-center">
                 <n-button class="mr-5" size="small" type="warning" @click="editHost">
                     <template #icon>
-                        <n-icon><LinkEdit16Filled /></n-icon>
+                        <n-icon>
+                            <LinkEdit16Filled />
+                        </n-icon>
                     </template>
                 </n-button>
                 <n-button size="small" type="error" @click="removeHost">
                     <template #icon>
-                        <n-icon><Delete16Filled /></n-icon>
+                        <n-icon>
+                            <Delete16Filled />
+                        </n-icon>
                     </template>
                 </n-button>
             </div>
@@ -30,10 +34,10 @@
     </div>
 </template>
 <script>
-import { PlugConnected20Filled,LinkEdit16Filled,Delete16Filled } from '@vicons/fluent'
+import { PlugConnected20Filled, LinkEdit16Filled, Delete16Filled } from '@vicons/fluent'
 export default {
     name: "HostItem",
-    components:{PlugConnected20Filled,LinkEdit16Filled,Delete16Filled},
+    components: { PlugConnected20Filled, LinkEdit16Filled, Delete16Filled },
     props: {
         info: {
             type: Object,
@@ -45,14 +49,14 @@ export default {
             window.dispatchEvent(new CustomEvent("cache:history", { detail: this.info }))
 
             this.$router.push({
-                path: '/host',
+                path: '/host/' + this.info.id,
                 query: { info: JSON.stringify(this.info) }
             })
         },
-        editHost(){
+        editHost() {
             this.$emit('editHost', this.info)
         },
-        removeHost(){
+        removeHost() {
 
         }
     }
@@ -65,7 +69,6 @@ export default {
     border-radius: 8px;
     position: relative;
     min-width: 180px;
-    cursor: pointer;
 }
 
 .host-tool {
@@ -80,7 +83,7 @@ export default {
     top: 0;
 }
 
-.host-tool-sub > button{
+.host-tool-sub>button {
     width: calc(50% - 7px);
 }
 
@@ -114,5 +117,4 @@ export default {
 
 .host-tags>div:last-child {
     border-radius: 0 0 8px 0;
-}
-</style>
+}</style>

@@ -19,7 +19,7 @@ const router = createRouter({
         },
         {
             name: 'Host',
-            path: '/host',
+            path: '/host/:id',
             component: Host
         },
         {

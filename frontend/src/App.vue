@@ -9,7 +9,14 @@
             <div class="loading flex align-center justify-center" v-if="loading">
               <n-spin size="small" />
             </div>
-            <router-view />
+            <!-- <router-view /> -->
+            <router-view v-slot="{ Component }">
+              <transition name="fade">
+                <keep-alive>
+                  <component :is="Component" />
+                </keep-alive>
+              </transition>
+            </router-view>
           </div>
         </div>
       </n-message-provider>
