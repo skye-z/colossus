@@ -38,9 +38,16 @@ export default {
   }),
   methods: {
     init() {
-      this.$goOSName().then(res => {
-        this.isMacOS = res == 'darwin'
-      });
+      try {
+        this.$goOSName().then(res => {
+          this.isMacOS = res == 'darwin'
+        });
+      } catch (err) {
+        console.log(err)
+        this.isMacOS = true
+        window.$message.warning('获取当前运行环境失败 ( 默认 darwin )')
+      }
+      console.log('2')
       setTimeout(() => {
         this.$router.push('/home')
       }, 100)
