@@ -26,37 +26,48 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+// WebSocket 缓存池
 type wsBufferWriter struct {
 	buffer bytes.Buffer
 	mu     sync.Mutex
 }
 
+// 写入缓存
 func (w *wsBufferWriter) Write(p []byte) (n int, err error) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	return w.buffer.Write(p)
 }
 
+// 获取缓存
 func (w *wsBufferWriter) Bytes() []byte {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	return w.buffer.Bytes()
 }
 
+// 刷新缓存
 func (w *wsBufferWriter) Reset() {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	w.buffer.Reset()
 }
 
+// WebSocket服务
 type SocketService struct {
-	DB          *xorm.Engine
-	stdinPipe   io.WriteCloser
+	// 数据库引擎
+	DB *xorm.Engine
+	// 会话读写管道
+	stdinPipe io.WriteCloser
+	// 连接缓存
 	comboOutput *wsBufferWriter
-	session     *ssh.Session
-	wsConn      *websocket.Conn
+	// SSH会话
+	session *ssh.Session
+	// WebSocket连接
+	wsConn *websocket.Conn
 }
 
+// 启动WebSocket服务
 func (s *SocketService) Run(ctx *gin.Context) {
 	// 获取主机编号
 	queryId := ctx.DefaultQuery("id", "")
@@ -129,6 +140,7 @@ func (s *SocketService) Run(ctx *gin.Context) {
 	<-quitChan
 }
 
+// 开始传输数据
 func (s *SocketService) start(ctx *gin.Context, quitChan chan bool) {
 	// 接收前端传入
 	go s.receiveWsMsg(ctx, quitChan)
@@ -136,6 +148,7 @@ func (s *SocketService) start(ctx *gin.Context, quitChan chan bool) {
 	go s.sendWsOutput(quitChan)
 }
 
+// 接受消息
 func (s *SocketService) receiveWsMsg(ctx *gin.Context, quitChan chan bool) {
 	wsConn := s.wsConn
 	defer setQuit(quitChan)
@@ -163,6 +176,7 @@ func (s *SocketService) receiveWsMsg(ctx *gin.Context, quitChan chan bool) {
 	}
 }
 
+// 发送消息
 func (s *SocketService) sendWsOutput(quitChan chan bool) {
 	wsConn := s.wsConn
 	defer setQuit(quitChan)
@@ -186,12 +200,14 @@ func (s *SocketService) sendWsOutput(quitChan chan bool) {
 	}
 }
 
+// 等待关闭
 func (s *SocketService) Wait(quitChan chan bool) {
 	s.session.Wait()
 	log.Println("关闭连接")
 	setQuit(quitChan)
 }
 
+// 关闭连接
 func setQuit(quitChan chan bool) {
 	quitChan <- true
 }

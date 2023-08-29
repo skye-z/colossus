@@ -23,6 +23,7 @@ type SSHService struct {
 	Secret   string
 }
 
+// 创建客户端
 func (s *SSHService) CreateClient() (*ssh.Client, error) {
 	// 创建授权方式
 	var auth []ssh.AuthMethod
@@ -53,6 +54,7 @@ func (s *SSHService) CreateClient() (*ssh.Client, error) {
 	return client, nil
 }
 
+// 连接主机
 func (s *SSHService) Connect(client *ssh.Client, height int, width int) (*ssh.Session, error) {
 	var (
 		session *ssh.Session
