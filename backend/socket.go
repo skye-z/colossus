@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/skye-z/colossus/backend/model"
+	"github.com/skye-z/colossus/backend/service"
 	"golang.org/x/crypto/ssh"
 	"xorm.io/xorm"
 )
@@ -92,7 +93,7 @@ func (s *SocketService) Run(ctx *gin.Context) {
 	}
 	defer upgrade.Close()
 	// 组装连接配置
-	config := SSHService{
+	config := service.SSHService{
 		Address:  host.Address,
 		Port:     host.Port,
 		AuthType: host.AuthType,
