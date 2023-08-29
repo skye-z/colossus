@@ -1,7 +1,10 @@
 <template>
-    <div>
+    <div style="position: relative;">
         <div ref="xtermRef" class="xterm border-bottom"></div>
-        <div class="pa-10 flex align-center">
+        <div v-if="!connect" class="notconnect no-select flex align-center justify-center">
+            <div>未连接</div>
+        </div>
+        <div class="no-select pa-10 flex align-center">
             <n-input v-model:value="fastCode" type="text" placeholder="查找快捷命令..." clearable>
                 <template #prefix>
                     <n-icon>
@@ -78,9 +81,7 @@ export default {
             this.socket.onclose = () => {
                 window.dispatchEvent(new CustomEvent("cache:connect", { detail: { id: this.id, connect: false } }))
             };
-            // this.socket.onmessage = e => {
-            //     console.log(e)
-            // };
+            this.socket.onerror = () => this.close()
             // 加载WebSocket插件
             this.term.loadAddon(new AttachAddon(this.socket))
         },
@@ -97,7 +98,11 @@ export default {
         close() {
             this.connect = false
             // 关闭连接
-            if (this.socket) this.socket.close()
+            try {
+                if (this.socket) this.socket.close()
+            } catch (err) {
+                console.log(err)
+            }
             // 销毁终端
             try {
                 if (this.term) this.term.dispose()
@@ -119,5 +124,18 @@ export default {
 .xterm:deep(.terminal) {
     height: calc(100vh - 117px);
     padding: 5px;
+}
+
+.notconnect {
+    color: rgba(255, 255, 255, .2);
+    height: calc(100vh - 107px);
+    position: absolute;
+    font-weight: bold;
+    font-size: 42px;
+    cursor: default;
+    width: 100%;
+    z-index: 3;
+    left: 0;
+    top: 0;
 }
 </style>

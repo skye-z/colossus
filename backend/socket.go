@@ -146,8 +146,7 @@ func (s *SocketService) receiveWsMsg(ctx *gin.Context, quitChan chan bool) {
 		default:
 			_, data, err := wsConn.ReadMessage()
 			if err != nil {
-				log.Println("与前端通信失败")
-				// runtime.LogPrint(ctx, "与前端通信失败")
+				log.Println("连接断开")
 				return
 			}
 			if data[0] == 33 && data[1] == 126 {
@@ -188,9 +187,9 @@ func (s *SocketService) sendWsOutput(quitChan chan bool) {
 }
 
 func (s *SocketService) Wait(quitChan chan bool) {
-	if err := s.session.Wait(); err != nil {
-		setQuit(quitChan)
-	}
+	s.session.Wait()
+	log.Println("关闭连接")
+	setQuit(quitChan)
 }
 
 func setQuit(quitChan chan bool) {

@@ -89,9 +89,7 @@ export default {
                 localStorage.setItem('cache:history', JSON.stringify(cache))
             })
             window.addEventListener("cache:connect", ({ detail }) => {
-                console.log(this.connect, detail)
                 for (let i in this.connect) {
-                    console.log(this.connect[i].id, detail.id, this.connect[i].id == detail.id)
                     if (this.connect[i].id == detail.id) {
                         this.connect[i].connect = detail.connect
                         break;

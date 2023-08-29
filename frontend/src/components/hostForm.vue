@@ -310,7 +310,6 @@ export default {
                 if (typeof old[key] == 'string' && old[key] != '') this.form[key] = old[key]
                 else if (typeof old[key] == 'number') this.form[key] = old[key]
             }
-            console.log(this.form)
         },
         close() {
             this.form = {
