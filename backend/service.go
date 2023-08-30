@@ -25,10 +25,12 @@ func register() *gin.Engine {
 	route := gin.Default()
 	// 加载跨域服务
 	route.Use(Cors())
+
 	// 创建Socket服务
 	socket := SocketService{DB: engine}
 	// 挂载Socket服务
 	route.GET("/ws", socket.Run)
+
 	// 创建主机模型
 	hostModel := model.HostModel{DB: engine}
 	// 创建主机服务
@@ -43,6 +45,13 @@ func register() *gin.Engine {
 	route.GET("/host/list", hostService.GetList)
 	// 接口 获取主机详情
 	// route.GET("/host/:id", hostService.GetItem)
+
+	// 创建文件服务
+	fileService := service.FileService{
+		HostModel: hostModel,
+	}
+	// 接口 查询文件列表
+	route.POST("/file/list", fileService.GetFileList)
 
 	return route
 }
