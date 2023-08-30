@@ -8,14 +8,13 @@
   "Input": {
     "borderRadius": "8px"
   },
-  "Table": {
-    "borderRadius": "8px",
-    "tdColor": "#3d4a5f",
-    "tdColorModal": "#3d4a5f",
-    "tdColorStriped": "#3d4a5f",
-    "thColor": "#2d3d51",
-    "thColorModal": "#2d3d51",
-    "borderColor": "#556276"
+  "DataTable": {
+    "borderColor": "rgba(255, 255, 255, 0.12)",
+    "thColor": "rgba(0, 0, 0, 0)",
+    "thColorHover": "rgba(0, 0, 0, 0)",
+    "tdColor": "rgba(0, 0, 0, 0)",
+    "tdColorHover": "rgba(0, 0, 0, .1)",
+    "tdColorStriped": "rgba(0, 0, 0, 0)"
   },
   "common": {
     "fontWeightStrong": "600",

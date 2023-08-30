@@ -39,3 +39,12 @@ export const host = {
         return get('/host/list' + query)
     }
 }
+
+export const file = {
+    getList: (id,path) => {
+        return post('/file/list', {
+            id,
+            path
+        })
+    }
+}

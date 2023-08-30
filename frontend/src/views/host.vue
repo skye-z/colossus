@@ -8,10 +8,14 @@
                 <div id="host-head" class="border-bottom">
                     <div class="flex align-center">
                         <div class="host-name mr-10">{{ info.name }}</div>
-                        <n-tag size="small" class="mr-5" :bordered="false" type="info" v-if="info.platform">{{ info.platform }}</n-tag>
-                        <n-tag size="small" class="mr-5" :bordered="false" type="success" v-if="info.system">{{ info.system }}</n-tag>
-                        <n-tag size="small" class="mr-5" :bordered="false" type="warning" v-if="info.region">{{ info.region }}</n-tag>
-                        <n-tag size="small" :bordered="false" type="error" v-if="info.periodTxt">{{ info.periodTxt }}</n-tag>
+                        <n-tag size="small" class="mr-5" :bordered="false" type="info" v-if="info.platform">{{ info.platform
+                        }}</n-tag>
+                        <n-tag size="small" class="mr-5" :bordered="false" type="success" v-if="info.system">{{ info.system
+                        }}</n-tag>
+                        <n-tag size="small" class="mr-5" :bordered="false" type="warning" v-if="info.region">{{ info.region
+                        }}</n-tag>
+                        <n-tag size="small" :bordered="false" type="error" v-if="info.periodTxt">{{ info.periodTxt
+                        }}</n-tag>
                     </div>
                     <div class="host-address text-small text-gray">{{ info.address }}:{{ info.port }}</div>
                 </div>
@@ -26,10 +30,7 @@
                 <host-terminal ref="terminal" />
             </div>
             <div v-show="tab === 'file'">
-                <div class="tips text-center">
-                    <div>等待开发</div>
-                    <div class="text-small text-gray">文件浏览、上传下载</div>
-                </div>
+                <host-file ref="file" />
             </div>
             <div v-if="tab === 'tool'">
                 <div class="tips text-center">
@@ -48,12 +49,12 @@
 </template>
   
 <script>
-import "xterm/css/xterm.css";
 import HostTerminal from "../components/hostTerminal.vue";
+import HostFile from "../components/hostFile.vue";
 
 export default {
     name: "Host",
-    components: { HostTerminal },
+    components: { HostTerminal, HostFile },
     data: () => ({
         info: {},
         tab: 'shell',
@@ -80,6 +81,7 @@ export default {
         },
         updateTab(e) {
             this.tab = e
+            if (e == 'file') this.$refs.file.init(this.info.id)
         }
     },
     mounted() {
