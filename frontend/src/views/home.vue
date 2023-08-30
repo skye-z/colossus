@@ -114,7 +114,7 @@ export default {
 
 .loading {
     height: calc(100% - 80px);
-    top: 80px;
+    top: 78px;
 }
 
 #host-list {

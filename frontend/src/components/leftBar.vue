@@ -63,7 +63,11 @@ export default {
         init() {
             let cache = localStorage.getItem('cache:history')
             if (cache == undefined || cache == '') localStorage.setItem('cache:history', "[]")
-            else this.connect = JSON.parse(cache)
+            else {
+                let list = JSON.parse(cache)
+                for (let i in list) list[i].connect = false
+                this.connect = list
+            }
 
             window.addEventListener("cache:history", ({ detail }) => {
                 let cache = localStorage.getItem('cache:history')

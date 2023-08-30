@@ -105,6 +105,10 @@ body {
     padding: 20px;
 }
 
+.pt-0 {
+    padding-top: 0px;
+}
+
 .pt-10 {
     padding-top: 10px;
 }
