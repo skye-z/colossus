@@ -99,7 +99,7 @@
                 :bordered="false" :row-props="touchRow" />
         </div>
         <n-dropdown placement="bottom-start" trigger="manual" :x="menu.x" :y="menu.y" :options="menu.options"
-            :show="menu.show" @select="selectMenu"/>
+            :show="menu.show" @select="selectMenu" />
     </div>
 </template>
   
@@ -310,7 +310,7 @@ export default {
             }
         },
         // 点击右键菜单
-        selectMenu(key){
+        selectMenu(key) {
             console.log(key)
             this.menu.show = false
         },
@@ -318,7 +318,10 @@ export default {
         touchRow(row) {
             return {
                 onClick: () => {
-                    this.menu.show = false
+                    if (this.menu.show) {
+                        this.menu.show = false
+                        return false
+                    }
                     if (row.type == 2 || row.type == 4) {
                         // 打开目录
                         let path = this.path
