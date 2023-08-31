@@ -9,12 +9,12 @@
                 <div class="card pa-10 mb-10">
                     <div class="flex align-center">
                         <div class="setting-label">终端背景</div>
-                        <n-color-picker v-model:value="terminalBgColor"
+                        <n-color-picker v-model:value="terminalBgColor" style="width: 200px;"
                             @complete="updateValue('terminal.background_color')" />
                     </div>
                     <div class="flex align-center mt-10">
                         <div class="setting-label">文字颜色</div>
-                        <n-color-picker v-model:value="terminalTextColor" @complete="updateValue('terminal.text_color')" />
+                        <n-color-picker v-model:value="terminalTextColor" style="width: 200px;" @complete="updateValue('terminal.text_color')" />
                     </div>
                     <div class="flex align-center mt-10">
                         <div class="setting-label">文字大小</div>
@@ -22,6 +22,7 @@
                             @blur="updateValue('terminal.text_size')" style="width: 80px;" />
                         <div class="text-small text-gray ml-10">px</div>
                     </div>
+                    <div class="text-small text-gray mt-10">* 修改终端样式后已连接的终端需重新连接后生效</div>
                 </div>
                 <div class="card pa-10 mb-10">
                     <div class="flex align-center">
@@ -181,6 +182,7 @@ export default {
             })
         },
         updateConfig(key, value) {
+            localStorage.setItem(key, value)
             window.dispatchEvent(new CustomEvent("update:config", {
                 detail: {
                     key, value

@@ -44,7 +44,16 @@ export default {
             this.connect = true
             if (hostId) this.id = hostId
             try {
-                this.term = new Terminal()
+                let background = localStorage.getItem('terminal.background_color')
+                let foreground = localStorage.getItem('terminal.text_color')
+                let fontSize = parseInt(localStorage.getItem('terminal.text_size'))
+                this.term = new Terminal({
+                    theme:{
+                        background,
+                        foreground
+                    },
+                    fontSize
+                })
                 // 加载插件
                 this.addPlugins();
                 // 打开Dom元素
@@ -57,6 +66,8 @@ export default {
                 this.term.focus()
                 // 加载大小变动事件
                 this.addResizeEvent();
+                // 加载样式变动事件
+                this.addStyleEvent();
             } catch (err) {
                 console.log(err)
             }
