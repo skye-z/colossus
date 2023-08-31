@@ -41,5 +41,9 @@ func initDatabase(engine *xorm.Engine) {
 	if err != nil {
 		panic(err)
 	}
+	// 下载地址
+	downloadDir, _ := os.UserHomeDir()
+	downloadDir = fmt.Sprintf("%s/%s", downloadDir, "/Downloads/colossus")
+
 	log.Println("[DB] loading completed")
 }

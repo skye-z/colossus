@@ -27,6 +27,17 @@ func (a *App) GetOSName() string {
 	return local.GOOS
 }
 
+func (a *App) SelectDirectory(title string) string {
+	opt := &runtime.OpenDialogOptions{
+		Title: title,
+	}
+	path, err := runtime.OpenDirectoryDialog(a.ctx, *opt)
+	if err != nil {
+		return "error"
+	}
+	return path
+}
+
 func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 	dialog, err := runtime.MessageDialog(ctx, runtime.MessageDialogOptions{
 		Type:          runtime.QuestionDialog,

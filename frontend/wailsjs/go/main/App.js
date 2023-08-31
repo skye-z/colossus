@@ -5,3 +5,7 @@
 export function GetOSName() {
   return window['go']['main']['App']['GetOSName']();
 }
+
+export function SelectDirectory(arg1) {
+  return window['go']['main']['App']['SelectDirectory'](arg1);
+}

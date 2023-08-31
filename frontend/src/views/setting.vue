@@ -7,18 +7,39 @@
         <div class="setting-box flex justify-between pa-10">
             <div class="full-width mr-10">
                 <div class="card pa-10 mb-10">
-                    <div>终端背景</div>
-                    <div>终端字号</div>
-                    <div>终端字色</div>
+                    <div class="flex align-center">
+                        <div class="setting-label">终端背景</div>
+                        <n-color-picker v-model:value="terminalBgColor" />
+                    </div>
+                    <div class="flex align-center mt-10">
+                        <div class="setting-label">文字颜色</div>
+                        <n-color-picker v-model:value="terminalTextColor" />
+                    </div>
+                    <div class="flex align-center mt-10">
+                        <div class="setting-label">文字大小</div>
+                        <n-input-number v-model:value="terminalTextSize" :min="12" :max="32" style="width: 80px;" />
+                        <div class="text-small text-gray ml-10">px</div>
+                    </div>
                 </div>
                 <div class="card pa-10 mb-10">
-                    <div>下载目录</div>
-                </div>
-                <div class="card pa-10 mb-10">
-                    <div>加密策略</div>
-                </div>
-                <div class="card pa-10">
-                    <div>缓存清理</div>
+                    <div class="flex align-center">
+                        <div class="setting-label">下载目录</div>
+                        <n-input-group>
+                            <n-input v-model:value="downloadPath" :disabled="downloadSelect" type="text"
+                                placeholder="请选择下载目录" />
+                            <n-button type="primary" :loading="downloadSelect" @click="selectDirectory">选取目录</n-button>
+                        </n-input-group>
+                    </div>
+                    <div class="flex align-center mt-10">
+                        <div class="setting-label">自动解压</div>
+                        <n-switch v-model:value="autoUnzip" />
+                        <div class="text-small text-gray ml-10">打包下载完成后自动解压</div>
+                    </div>
+                    <div class="flex align-center mt-10">
+                        <div class="setting-label">打包上传</div>
+                        <n-switch v-model:value="autoZipUpload" />
+                        <div class="text-small text-gray ml-10">将待上传文件打包后再上传</div>
+                    </div>
                 </div>
             </div>
             <div>
@@ -113,9 +134,22 @@ export default {
     name: "Setting",
     components: { LogoDevFilled, HomeRound },
     data: () => ({
+        terminalBgColor: 'rgba(0, 0, 0, 1)',
+        terminalTextColor: 'rgba(255, 255, 255, 1)',
+        terminalTextSize: 14,
+        downloadPath: '',
+        downloadSelect: false,
+        autoUnzip: false,
+        autoZipUpload: false
     }),
     methods: {
-
+        selectDirectory() {
+            this.downloadSelect = true
+            this.$goSelectDirectory('选择下载目录').then(res => {
+                if (res) this.downloadPath = res + '/colossus'
+                this.downloadSelect = false
+            })
+        }
     },
     mounted() {
 
@@ -149,5 +183,12 @@ export default {
 .info-name {
     margin-top: -5px;
     font-size: 16px;
+}
+
+.setting-label {
+    margin-right: 10px;
+    text-align: right;
+    min-width: 60px;
+    width: 60px;
 }
 </style>
