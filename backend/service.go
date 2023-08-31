@@ -31,6 +31,13 @@ func register() *gin.Engine {
 	// 挂载Socket服务
 	route.GET("/ws", socket.Run)
 
+	// 创建配置服务
+	configService := service.ConfigService{}
+	// 接口 获取所有配置
+	route.GET("/config/all", configService.GetAll)
+	// 接口 更新配置
+	route.POST("/config/update", configService.Update)
+
 	// 创建主机模型
 	hostModel := model.HostModel{DB: engine}
 	// 创建主机服务
@@ -44,7 +51,7 @@ func register() *gin.Engine {
 	// 接口 获取主机列表
 	route.GET("/host/list", hostService.GetList)
 	// 接口 获取主机详情
-	// route.GET("/host/:id", hostService.GetItem)
+	route.GET("/host/:id", hostService.GetItem)
 
 	// 创建文件服务
 	fileService := service.FileService{

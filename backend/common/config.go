@@ -39,6 +39,15 @@ func Set(key string, value interface{}) {
 	viper.WriteConfig()
 }
 
+func GetAll() map[string]string {
+	var objMap map[string]string
+	for _, key := range viper.AllKeys() {
+		objMap[key] = viper.GetString(key)
+	}
+
+	return objMap
+}
+
 func GetBool(key string) bool {
 	return viper.GetBool(key)
 }

@@ -54,7 +54,7 @@ func (hs HostService) Edit(ctx *gin.Context) {
 
 	var cache model.AddHost
 	if err := ctx.ShouldBindJSON(&cache); err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		common.ReturnMessage(ctx, false, "非法参数")
 		return
 	}
 
@@ -130,6 +130,27 @@ func (hs HostService) GetList(ctx *gin.Context) {
 		return
 	}
 	common.ReturnData(ctx, true, list)
+}
+
+// 获取主机
+func (hs HostService) GetItem(ctx *gin.Context) {
+	id := ctx.Param("id")
+	if len(id) == 0 {
+		common.ReturnMessage(ctx, false, "主机编号不能为空")
+		return
+	}
+	sid, _ := strconv.ParseInt(id, 10, 64)
+
+	form := &model.Host{
+		Id: sid,
+	}
+
+	hs.HostModel.GetItem(form)
+	if len(form.Name) == 0 {
+		common.ReturnMessage(ctx, false, "主机不存在")
+	}
+	form.Secret = ""
+	common.ReturnData(ctx, true, form)
 }
 
 // 校验输入参数

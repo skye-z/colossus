@@ -27,6 +27,17 @@ function buildQuery(form) {
     else return '?' + query.substring(0, query.length - 1)
 }
 
+export const config = {
+    getAll: () => {
+        return get('/config/all')
+    },
+    update: (key, value) => {
+        return post('/config/update', {
+            key, value
+        })
+    },
+}
+
 export const host = {
     add: (form) => {
         return post('/host/add', form)
