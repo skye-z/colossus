@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/skye-z/colossus/backend/common"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -20,10 +21,13 @@ var assets embed.FS
 var icon []byte
 
 func main() {
+	// 加载日志文件地址
 	cacheDir, _ := os.UserCacheDir()
 	logPath := fmt.Sprintf("%s/%s", cacheDir, "colossus.log")
 	fmt.Println("Log path: " + logPath)
 	fileLogger := NewFileLogger(logPath)
+	// 初始化配置文件
+	common.InitConfig()
 	// 创建应用程序实例
 	app := NewApp()
 	// 运行应用程序
