@@ -41,7 +41,11 @@ func Set(key string, value interface{}) {
 
 func GetAll() map[string]string {
 	var objMap map[string]string
+	objMap = make(map[string]string)
 	for _, key := range viper.AllKeys() {
+		if key == "security.secret" {
+			continue
+		}
 		objMap[key] = viper.GetString(key)
 	}
 

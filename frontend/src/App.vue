@@ -11,9 +11,9 @@
             </div>
             <!-- <router-view /> -->
             <router-view v-slot="{ Component }">
-                <keep-alive>
-                  <component :is="Component" />
-                </keep-alive>
+              <keep-alive>
+                <component :is="Component" />
+              </keep-alive>
             </router-view>
           </div>
         </div>
@@ -26,6 +26,7 @@
 import { darkTheme, zhCN, dateZhCN } from 'naive-ui'
 import GlobalApi from './components/globalApi.vue'
 import LeftBar from './components/leftBar.vue'
+import { config } from './plugins/api'
 import theme from './theme.json'
 
 export default {
@@ -43,6 +44,16 @@ export default {
   }),
   methods: {
     init() {
+      this.initSystem();
+      this.initConfig();
+      setTimeout(() => {
+        this.$router.push('/home')
+      }, 100)
+      setTimeout(() => {
+        this.loading = false
+      }, 300)
+    },
+    initSystem() {
       try {
         this.$goOSName().then(res => {
           this.isMacOS = res == 'darwin'
@@ -51,12 +62,17 @@ export default {
         this.isMacOS = true
         window.$message.warning('获取当前运行环境失败 ( 默认 darwin )')
       }
-      setTimeout(() => {
-        this.$router.push('/home')
-      }, 100)
-      setTimeout(() => {
-        this.loading = false
-      }, 300)
+    },
+    initConfig() {
+      config.getAll().then(res => {
+        if (res.state) {
+          for (let key in res.data) {
+            localStorage.setItem(key, res.data[key])
+          }
+        } else window.$message.warning('加载应用设置失败')
+      }).catch(() => {
+        window.$message.warning('加载应用设置失败')
+      })
     }
   },
   mounted() {
