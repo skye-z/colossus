@@ -28,6 +28,7 @@ func loadDBEngine() *xorm.Engine {
 	// 组装数据库存储路径
 	dbDir := fmt.Sprintf("%s/%s", configDir, "colossus.store")
 	log.Println(dbDir)
+	log.Println("Database path: " + dbDir)
 	engine, err := xorm.NewEngine("sqlite", dbDir)
 	if err != nil {
 		panic(err)
@@ -41,9 +42,5 @@ func initDatabase(engine *xorm.Engine) {
 	if err != nil {
 		panic(err)
 	}
-	// 下载地址
-	downloadDir, _ := os.UserHomeDir()
-	downloadDir = fmt.Sprintf("%s/%s", downloadDir, "/Downloads/colossus")
-
 	log.Println("[DB] loading completed")
 }
