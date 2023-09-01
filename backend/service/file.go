@@ -22,7 +22,7 @@ type FileParam struct {
 	Path string `json:"path"`
 }
 
-// 添加主机
+// 获取文件列表
 func (fs FileService) GetFileList(ctx *gin.Context) {
 	var param FileParam
 	if err := ctx.ShouldBindJSON(&param); err != nil {
@@ -111,6 +111,51 @@ func (fs FileService) GetFileList(ctx *gin.Context) {
 	common.ReturnData(ctx, true, files)
 }
 
+type UpDownParam struct {
+	Id         int64  `json:"id"`
+	LocalPath  string `json:"localPath"`
+	ServerPath string `json:"serverPath"`
+}
+
+func (fs FileService) DownloadFile(ctx *gin.Context) {
+	var param UpDownParam
+	if err := ctx.ShouldBindJSON(&param); err != nil {
+		common.ReturnMessage(ctx, false, "传入参数非法")
+		return
+	}
+
+	// 获取SFTP操作对象
+	sftp := fs.getSFTP(param.Id, ctx)
+	if sftp == nil {
+		return
+	}
+
+	// 下载文件
+	sftp.Download(param.LocalPath, param.ServerPath)
+
+	common.ReturnMessage(ctx, true, "下载开始")
+}
+
+func (fs FileService) UploadFile(ctx *gin.Context) {
+	var param UpDownParam
+	if err := ctx.ShouldBindJSON(&param); err != nil {
+		common.ReturnMessage(ctx, false, "传入参数非法")
+		return
+	}
+
+	// 获取SFTP操作对象
+	sftp := fs.getSFTP(param.Id, ctx)
+	if sftp == nil {
+		return
+	}
+
+	// 上传文件
+	sftp.Upload(param.LocalPath, param.ServerPath)
+
+	common.ReturnMessage(ctx, true, "上传开始")
+}
+
+// 获取SFTP
 func (fs FileService) getSFTP(hostId int64, ctx *gin.Context) *SFTPService {
 	// 获取主机信息
 	host := &model.Host{Id: hostId}
