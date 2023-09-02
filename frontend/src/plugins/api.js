@@ -52,10 +52,16 @@ export const host = {
 }
 
 export const file = {
-    getList: (id,path) => {
+    getList: (id, path) => {
         return post('/file/list', {
             id,
             path
         })
-    }
+    },
+    download: (id, localPath, serverPath) => {
+        return post('/file/down', { id, localPath, serverPath })
+    },
+    upload: (id, localPath, serverPath) => {
+        return post('/file/up', { id, localPath, serverPath })
+    },
 }
