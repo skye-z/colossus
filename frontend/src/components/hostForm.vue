@@ -335,10 +335,10 @@ export default {
                 if (errors) return false
                 this.loading = true
                 let form = JSON.parse(JSON.stringify(this.form))
-
-                if (form.port == '') form.port = 22
+                
+                if (form.port == null || form.port == '') form.port = 22
                 else form.port = parseInt(form.port)
-                if (form.user == '') form.user = 'root'
+                if (form.port == null || form.user == '') form.user = 'root'
 
                 if (typeof form.period == 'string') form.period = parseInt(form.period)
 

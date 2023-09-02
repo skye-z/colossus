@@ -48,7 +48,7 @@ export default {
                 let foreground = localStorage.getItem('terminal.text_color')
                 let fontSize = parseInt(localStorage.getItem('terminal.text_size'))
                 this.term = new Terminal({
-                    theme:{
+                    theme: {
                         background,
                         foreground
                     },
@@ -105,6 +105,10 @@ export default {
                     this.socket.send("!~" + this.term.cols + ":" + this.term.rows)
                 }, 500)
             });
+        },
+        send(cmd) {
+            console.log(cmd)
+            this.socket.send(cmd + '\n')
         },
         close() {
             this.connect = false

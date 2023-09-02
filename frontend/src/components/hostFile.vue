@@ -159,6 +159,7 @@ export default {
             x: 0,
             y: 0,
             show: false,
+            file: {},
             options: [
                 {
                     title: "下载",
@@ -313,6 +314,20 @@ export default {
         selectMenu(key) {
             console.log(key)
             this.menu.show = false
+            if (key === 'directDownload') {
+                let item = this.menu.file
+                let directory = localStorage.getItem('download.directory')
+                file.download(this.id, directory, this.path, item.name).then(res => {
+                    console.log(res)
+                }).catch(() => {
+                    window.$message.warning('文件下载失败, 发生意料之外的错误')
+                })
+            } else if (key === 'sendTerminal') {
+                let path = ''
+                if(this.menu.file.type == 2) path = this.menu.file.name
+                else if(this.menu.file.type == 4) path = this.menu.file.path
+                this.$emit('send', this.path+'/'+path)
+            }
         },
         // 点击项目
         touchRow(row) {
@@ -343,6 +358,7 @@ export default {
                     this.menu.x = e.clientX
                     this.menu.y = e.clientY
                     this.menu.show = true
+                    this.menu.file = row
                 }
             };
         }

@@ -17,9 +17,9 @@
                         <n-tag size="small" :bordered="false" type="error" v-if="info.periodTxt">{{ info.periodTxt
                         }}</n-tag>
                     </div>
-                    <div class="host-address text-small text-gray">{{ info.address }}:{{ info.port }}</div>
+                    <div class="host-address text-small text-gray">{{ info.user }}@{{ info.address }}:{{ info.port }}</div>
                 </div>
-                <n-tabs id="host-tabs" type="line" @update:value="updateTab" animated>
+                <n-tabs v-model:value="tab" id="host-tabs" type="line" @update:value="updateTab" animated>
                     <n-tab name="shell">终端</n-tab>
                     <n-tab name="file">文件</n-tab>
                     <n-tab name="tool">工具</n-tab>
@@ -29,7 +29,7 @@
                 <host-terminal ref="terminal" />
             </div>
             <div v-show="tab === 'file'">
-                <host-file ref="file" />
+                <host-file ref="file" @send="sendTerminal" />
             </div>
             <div v-if="tab === 'tool'">
                 <div class="tips text-center">
@@ -72,8 +72,11 @@ export default {
         saveConnectLog() {
 
         },
+        sendTerminal(e) {
+            this.$refs.terminal.send('cd ' + e)
+            this.tab = 'shell'
+        },
         updateTab(e) {
-            this.tab = e
             if (e == 'file') this.$refs.file.init(this.info.id)
         }
     },
