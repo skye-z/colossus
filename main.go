@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"os"
+	local "runtime"
 
 	"github.com/skye-z/colossus/backend/common"
 	"github.com/wailsapp/wails/v2"
@@ -30,6 +31,11 @@ func main() {
 	common.InitConfig()
 	// 创建应用程序实例
 	app := NewApp()
+	// 选取背景颜色
+	color := &options.RGBA{R: 0, G: 0, B: 0, A: 0}
+	if local.GOOS == "windows" {
+		color = &options.RGBA{R: 30, G: 30, B: 30, A: 1}
+	}
 	// 运行应用程序
 	err := wails.Run(&options.App{
 		// 窗口标题
@@ -53,7 +59,7 @@ func main() {
 			Assets: assets,
 		},
 		// 背景颜色
-		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 0},
+		BackgroundColour: color,
 		Windows: &windows.Options{
 			DisableWindowIcon: true,
 			Theme:             windows.Dark,
