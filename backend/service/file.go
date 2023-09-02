@@ -113,6 +113,7 @@ func (fs FileService) GetFileList(ctx *gin.Context) {
 
 type UpDownParam struct {
 	Id         int64  `json:"id"`
+	FileName   string `json:"fileName"`
 	LocalPath  string `json:"localPath"`
 	ServerPath string `json:"serverPath"`
 }
@@ -131,7 +132,7 @@ func (fs FileService) DownloadFile(ctx *gin.Context) {
 	}
 
 	// 下载文件
-	sftp.Download(param.LocalPath, param.ServerPath)
+	sftp.Download(param.LocalPath, param.ServerPath, param.FileName)
 
 	common.ReturnMessage(ctx, true, "下载开始")
 }
@@ -150,7 +151,7 @@ func (fs FileService) UploadFile(ctx *gin.Context) {
 	}
 
 	// 上传文件
-	sftp.Upload(param.LocalPath, param.ServerPath)
+	sftp.Upload(param.LocalPath, param.ServerPath, param.FileName)
 
 	common.ReturnMessage(ctx, true, "上传开始")
 }
@@ -161,7 +162,7 @@ func (fs FileService) getSFTP(hostId int64, ctx *gin.Context) *SFTPService {
 	host := &model.Host{Id: hostId}
 	fs.HostModel.GetItem(host)
 	if len(host.Address) == 0 {
-		common.ReturnMessage(ctx, false, "主机地址为空")
+		common.ReturnMessage(ctx, false, "主机不存在")
 		return nil
 	}
 	// 组装SSH连接配置
