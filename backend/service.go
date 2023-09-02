@@ -59,6 +59,8 @@ func register() *gin.Engine {
 	}
 	// 接口 查询文件列表
 	route.POST("/file/list", fileService.GetFileList)
+	// 接口 查询文件详情
+	route.POST("/file/info", fileService.GetFileInfo)
 	// 接口 下载文件
 	route.POST("/file/down", fileService.DownloadFile)
 	// 接口 上传文件

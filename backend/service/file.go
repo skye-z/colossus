@@ -111,6 +111,31 @@ func (fs FileService) GetFileList(ctx *gin.Context) {
 	common.ReturnData(ctx, true, files)
 }
 
+// 获取文件信息
+func (fs FileService) GetFileInfo(ctx *gin.Context) {
+	var param FileParam
+	if err := ctx.ShouldBindJSON(&param); err != nil {
+		common.ReturnMessage(ctx, false, "传入参数非法")
+		return
+	}
+
+	// 获取SFTP操作对象
+	sftp := fs.getSFTP(param.Id, ctx)
+	if sftp == nil {
+		return
+	}
+	// 执行查询
+	result := sftp.RunShell(fmt.Sprintf(CMD_GET_FILE_INFO, param.Path))
+	if result == "" || result == "ERROR" {
+		common.ReturnMessage(ctx, false, "目录地址不可用")
+		return
+	}
+	results := strings.Split(result, " ")
+
+	common.ReturnData(ctx, true, results)
+}
+
+// 上传下载参数
 type UpDownParam struct {
 	Id         int64  `json:"id"`
 	FileName   string `json:"fileName"`
@@ -118,6 +143,7 @@ type UpDownParam struct {
 	ServerPath string `json:"serverPath"`
 }
 
+// 下载文件
 func (fs FileService) DownloadFile(ctx *gin.Context) {
 	var param UpDownParam
 	if err := ctx.ShouldBindJSON(&param); err != nil {
@@ -137,6 +163,7 @@ func (fs FileService) DownloadFile(ctx *gin.Context) {
 	common.ReturnMessage(ctx, true, "下载开始")
 }
 
+// 上传文件
 func (fs FileService) UploadFile(ctx *gin.Context) {
 	var param UpDownParam
 	if err := ctx.ShouldBindJSON(&param); err != nil {

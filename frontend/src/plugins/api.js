@@ -58,6 +58,12 @@ export const file = {
             path
         })
     },
+    getInfo: (id, path) => {
+        return post('/file/info', {
+            id,
+            path
+        })
+    },
     download: (id, localPath, serverPath, fileName) => {
         return post('/file/down', { id, localPath, serverPath, fileName })
     },

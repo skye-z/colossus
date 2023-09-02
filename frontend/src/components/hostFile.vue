@@ -4,8 +4,8 @@
             <n-spin size="small" />
         </div>
         <div class="file-tool pa-5 border-bottom flex align-center justify-between">
-            <n-input v-if="edit" class="mr-5" size="small" v-model:value="path" type="text" placeholder="请输入目录路径"
-                @keyup.enter="switchEdit(0)" />
+            <n-input v-if="edit" class="mr-5" size="small" v-model:value="path" :autofocus="edit" type="text"
+                placeholder="请输入目录路径" @keyup.enter="switchEdit(0)" />
             <n-breadcrumb class="full-width" v-else>
                 <n-breadcrumb-item v-for="(item, index) in pathList" :clickable="item != '...'" @click="jump(index)">{{ item
                 }}</n-breadcrumb-item>
@@ -275,6 +275,19 @@ export default {
                 window.$message.warning('获取文件列表失败, 发生意料之外的错误')
             })
         },
+        // 获取文件详情
+        getFileInfo(path) {
+            file.getInfo(this.id, path).then(res => {
+                if (res.state) {
+                    console.log(res)
+                } else {
+                    window.$message.warning(res.message)
+                }
+            }).catch(err => {
+                console.log(err)
+                window.$message.warning('获取文件详情失败, 发生意料之外的错误')
+            })
+        },
         // 解析文件数据
         analysis(list, data) {
             if (data.name == '.' || data.name == '..') return false;
@@ -324,9 +337,9 @@ export default {
                 })
             } else if (key === 'sendTerminal') {
                 let path = ''
-                if(this.menu.file.type == 2) path = this.menu.file.name
-                else if(this.menu.file.type == 4) path = this.menu.file.path
-                this.$emit('send', this.path+'/'+path)
+                if (this.menu.file.type == 2) path = this.menu.file.name
+                else if (this.menu.file.type == 4) path = this.menu.file.path
+                this.$emit('send', this.path + '/' + path)
             }
         },
         // 点击项目
@@ -337,10 +350,10 @@ export default {
                         this.menu.show = false
                         return false
                     }
+                    let path = this.path
+                    if (path.substring(0, path.length - 1) != '/') path += '/';
                     if (row.type == 2 || row.type == 4) {
                         // 打开目录
-                        let path = this.path
-                        if (path.substring(0, path.length - 1) != '/') path += '/';
                         path = path + (row.type == 2 ? row.name : row.path)
                         if (path.length > 1) {
                             let check = path.substring(0, 2);
@@ -349,9 +362,7 @@ export default {
                         this.path = path
                         this.buildPathList()
                         this.getFileList()
-                    } else {
-                        // 查询文件、程序、链接详细信息
-                    }
+                    } else this.getFileInfo(path+row.name)
                 },
                 onContextmenu: e => {
                     e.preventDefault();
