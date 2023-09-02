@@ -31,9 +31,17 @@ func main() {
 	common.InitConfig()
 	// 创建应用程序实例
 	app := NewApp()
-	// 选取背景颜色
+	// 分平台加载配置
+	width := 1024
+	height := 700
+	minWidth := 1024
+	minHeight := 700
 	color := &options.RGBA{R: 0, G: 0, B: 0, A: 0}
 	if local.GOOS == "windows" {
+		width = 1040
+		height = 740
+		minWidth = 1040
+		minHeight = 740
 		color = &options.RGBA{R: 30, G: 30, B: 30, A: 1}
 	}
 	// 运行应用程序
@@ -41,13 +49,13 @@ func main() {
 		// 窗口标题
 		Title: "Colossus",
 		// 默认宽度
-		Width: 1024,
+		Width: width,
 		// 默认高度
-		Height: 700,
+		Height: height,
 		// 最小宽度
-		MinWidth: 1024,
+		MinWidth: minWidth,
 		// 最小高度
-		MinHeight: 700,
+		MinHeight: minHeight,
 		// 日志记录器
 		Logger: fileLogger,
 		// 开发日志级别
