@@ -11,11 +11,13 @@ import (
 )
 
 const (
-	// 获取文件列表(详细)
+	// 获取文件列表
 	// 文件索引号  权限  链接数  所有者  用户组 文件大小  修改日期  修改时间  时区  文件名
 	// 103921544 -rw-------.  1 root root    59 2023-04-04 16:13:07.439361337 +0800 .Xauthority
 	// 文件名中: ‘/’表示目录、‘@’表示链接、‘*’表示可执行
 	CMD_GET_FILE_LIST = "ls -aliF --full-time %s"
+	// 获取文件详情
+	CMD_GET_FILE_INFO = "stat %s"
 )
 
 type SFTPService struct {
@@ -80,7 +82,8 @@ func (s *SFTPService) RunShell(shell string) string {
 }
 
 // 上传文件
-func (s *SFTPService) Upload(localPath, cloudPath string) {
+func (s *SFTPService) Upload(localPath, cloudPath, fileName string) {
+	log.Println(localPath, "->", cloudPath)
 	localFile, _ := os.Open(localPath)
 	cloudFile, _ := s.sftpClient.Create(cloudPath)
 	defer func() {
@@ -102,15 +105,19 @@ func (s *SFTPService) Upload(localPath, cloudPath string) {
 }
 
 // 下载文件
-func (s *SFTPService) Download(localPath, cloudPath string) {
-	localFile, _ := s.sftpClient.Open(localPath)
-	cloudFile, _ := os.Create(cloudPath)
-	defer func() {
-		_ = localFile.Close()
-		_ = cloudFile.Close()
-	}()
-	if _, err := localFile.WriteTo(cloudFile); err != nil {
+func (s *SFTPService) Download(localPath, cloudPath, fileName string) {
+	// 判断应用目录是否存在
+	if _, err := os.Stat(localPath); os.IsNotExist(err) {
+		// 目录不存在,创建目录
+		os.Mkdir(localPath, os.ModePerm)
+	}
+	cloudFile, _ := s.sftpClient.Open(cloudPath + "/" + fileName)
+	defer cloudFile.Close()
+	localFile, _ := os.Create(localPath + "/" + fileName)
+	defer localFile.Close()
+	number, err := io.Copy(localFile, cloudFile)
+	if err != nil {
 		log.Fatalln("error occurred", err)
 	}
-	fmt.Println("文件下载完毕")
+	fmt.Printf("Downloaded %d bytes\n", number)
 }
