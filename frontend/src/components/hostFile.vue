@@ -296,10 +296,10 @@ export default {
         selectMenu(key) {
             console.log(key)
             this.menu.show = false
-            if (key === 'directDownload') {
+            if (key === 'directDownload' || key === 'zipDownload') {
                 let item = this.menu.file
                 let directory = localStorage.getItem('download.directory')
-                file.download(this.id, directory, this.path, item.name).then(res => {
+                file.download(this.id, key.replace('Download', ''), directory, this.path, item.name).then(res => {
                     console.log(res)
                 }).catch(() => {
                     window.$message.warning('文件下载失败, 发生意料之外的错误')

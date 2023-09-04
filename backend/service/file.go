@@ -142,6 +142,7 @@ func (fs FileService) GetFileInfo(ctx *gin.Context) {
 
 type EditParam struct {
 	Id         int64  `json:"id"`
+	Model      string `json:"model"`
 	FileName   string `json:"fileName"`
 	LocalPath  string `json:"localPath"`
 	ServerPath string `json:"serverPath"`
@@ -162,9 +163,27 @@ func (fs FileService) DownloadFile(ctx *gin.Context) {
 	}
 
 	// 下载文件
-	sftp.Download(param.LocalPath, param.ServerPath, param.FileName)
+	switch param.Model {
+	case "zip":
+		now := time.Now()
+		result := sftp.RunShell(fmt.Sprintf(CMD_ZIP_FILE, param.ServerPath, now.Unix(), param.FileName))
+		if result == "ERROR" {
+			common.ReturnMessage(ctx, false, "压缩出错")
+			return
+		}
+		sftp.Download(param.LocalPath, param.ServerPath, fmt.Sprintf("%v.tar.gz", now.Unix()))
+		result = sftp.RunShell(fmt.Sprintf(CMD_RM_FILE, param.ServerPath+"/"+fmt.Sprintf("%v.tar.gz", now.Unix())))
+		if result == "ERROR" {
+			common.ReturnMessage(ctx, false, "残留文件删除")
+			return
+		}
+		break
+	default:
+		sftp.Download(param.LocalPath, param.ServerPath, param.FileName)
+		break
+	}
 
-	common.ReturnMessage(ctx, true, "下载开始")
+	common.ReturnMessage(ctx, true, "下载完成")
 }
 
 // 上传文件

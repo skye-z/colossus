@@ -21,6 +21,10 @@ const (
 	CMD_GET_FILE_INFO = "stat --format=\"%%n %%i %%s %%o %%b %%B %%H %%f %%u %%U %%g %%G %%a %%A %%t %%T %%X %%Y %%Z\" %s"
 	// 移动文件 重命名文件
 	CMD_MV_FILE = "mv \"%s\" \"%s\""
+	// 压缩文件
+	CMD_ZIP_FILE = "cd %s && tar -zcvf %v.tar.gz ./%s"
+	// 删除文件
+	CMD_RM_FILE = "rm -rf --preserve-root %s"
 )
 
 type SFTPService struct {
