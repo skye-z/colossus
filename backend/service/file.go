@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -23,6 +24,26 @@ type FileParam struct {
 	Hide bool   `json:"hide"`
 }
 
+func (fs FileService) GetHomePath(ctx *gin.Context) {
+	var param FileParam
+	if err := ctx.ShouldBindJSON(&param); err != nil {
+		common.ReturnMessage(ctx, false, "传入参数非法")
+		return
+	}
+	// 获取SFTP操作对象
+	sftp := fs.getSFTP(param.Id, ctx)
+	if sftp == nil {
+		return
+	}
+	// 执行查询
+	result := sftp.RunShell(CMD_GET_HOME)
+	if result == "" || result == "ERROR" {
+		common.ReturnMessage(ctx, false, "寻址不可用")
+		return
+	}
+	common.ReturnMessage(ctx, true, result)
+}
+
 // 获取文件列表
 func (fs FileService) GetFileList(ctx *gin.Context) {
 	var param FileParam
@@ -42,7 +63,7 @@ func (fs FileService) GetFileList(ctx *gin.Context) {
 		showAll = ""
 	}
 	// 执行查询
-	result := sftp.RunShell(fmt.Sprintf(CMD_GET_FILE_LIST, showAll, param.Path))
+	result := sftp.RunShell(fmt.Sprintf(CMD_GET_FILE_LIST, showAll, fs.cleanPath(param.Path)))
 	if result == "" || result == "ERROR" {
 		common.ReturnMessage(ctx, false, "目录地址不可用")
 		return
@@ -75,8 +96,13 @@ func (fs FileService) GetFileList(ctx *gin.Context) {
 			fileDate, _ := time.Parse(layout, fmt.Sprintf("%s %s %s", metas[6], metas[7], metas[8]))
 
 			var fileName string
-			for x := 9; x < len(metas); x++ {
-				fileName += metas[x]
+			if len(metas) == 10 {
+				fileName = metas[9]
+			} else {
+				for x := 9; x < len(metas); x++ {
+					fileName += metas[x] + " "
+				}
+				fileName = fileName[0 : len(fileName)-1]
 			}
 			suffix := fileName[len(fileName)-1]
 			var fileType int
@@ -130,7 +156,7 @@ func (fs FileService) GetFileInfo(ctx *gin.Context) {
 		return
 	}
 	// 执行查询
-	result := sftp.RunShell(fmt.Sprintf(CMD_GET_FILE_INFO, param.Path))
+	result := sftp.RunShell(fmt.Sprintf(CMD_GET_FILE_INFO, fs.cleanPath(param.Path)))
 	if result == "" || result == "ERROR" {
 		common.ReturnMessage(ctx, false, "目录地址不可用")
 		return
@@ -166,21 +192,22 @@ func (fs FileService) DownloadFile(ctx *gin.Context) {
 	switch param.Model {
 	case "zip":
 		now := time.Now()
-		result := sftp.RunShell(fmt.Sprintf(CMD_ZIP_FILE, param.ServerPath, now.Unix(), param.FileName))
+		path := param.ServerPath
+		fileName := param.FileName
+		result := sftp.RunShell(fmt.Sprintf(CMD_ZIP_FILE, fs.cleanPath(path), now.Unix(), fs.cleanPath(fileName)))
 		if result == "ERROR" {
 			common.ReturnMessage(ctx, false, "压缩出错")
 			return
 		}
 		sftp.Download(param.LocalPath, param.ServerPath, fmt.Sprintf("%v.tar.gz", now.Unix()))
-		result = sftp.RunShell(fmt.Sprintf(CMD_RM_FILE, param.ServerPath+"/"+fmt.Sprintf("%v.tar.gz", now.Unix())))
+		result = sftp.RunShell(fmt.Sprintf(CMD_RM_FILE, fs.cleanPath(path+"/"+fmt.Sprintf("%v.tar.gz", now.Unix()))))
 		if result == "ERROR" {
 			common.ReturnMessage(ctx, false, "残留文件删除")
 			return
 		}
-		break
 	default:
+		log.Println(param.LocalPath, param.ServerPath, param.FileName)
 		sftp.Download(param.LocalPath, param.ServerPath, param.FileName)
-		break
 	}
 
 	common.ReturnMessage(ctx, true, "下载完成")
@@ -220,9 +247,31 @@ func (fs FileService) MoveFile(ctx *gin.Context) {
 		return
 	}
 
-	result := sftp.RunShell(fmt.Sprintf(CMD_MV_FILE, param.LocalPath, param.ServerPath))
+	result := sftp.RunShell(fmt.Sprintf(CMD_MV_FILE, fs.cleanPath(param.LocalPath), fs.cleanPath(param.ServerPath)))
 	if result == "" || result == "ERROR" {
 		common.ReturnMessage(ctx, false, "重命名出错")
+		return
+	}
+	common.ReturnMessage(ctx, true, "操作成功")
+}
+
+// 删除文件
+func (fs FileService) RemoveFile(ctx *gin.Context) {
+	var param EditParam
+	if err := ctx.ShouldBindJSON(&param); err != nil {
+		common.ReturnMessage(ctx, false, "传入参数非法")
+		return
+	}
+
+	// 获取SFTP操作对象
+	sftp := fs.getSFTP(param.Id, ctx)
+	if sftp == nil {
+		return
+	}
+
+	result := sftp.RunShell(fmt.Sprintf(CMD_RM_FILE, fs.cleanPath(param.ServerPath+"/"+param.FileName)))
+	if result == "ERROR" {
+		common.ReturnMessage(ctx, false, "删除出错")
 		return
 	}
 	common.ReturnMessage(ctx, true, "操作成功")
@@ -258,4 +307,10 @@ func (fs FileService) getSFTP(hostId int64, ctx *gin.Context) *SFTPService {
 	// 创建SFTP客户端
 	sftpConfig.CreateClient()
 	return &sftpConfig
+}
+
+func (fs FileService) cleanPath(path string) string {
+	cache := strings.Replace(path, "//", "/", -1)
+	cache = strings.Replace(path, " ", "\\ ", -1)
+	return cache
 }

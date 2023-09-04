@@ -52,6 +52,11 @@ export const host = {
 }
 
 export const file = {
+    getHome: id => {
+        return post('/file/home', {
+            id
+        })
+    },
     getList: (id, path, hide) => {
         return post('/file/list', {
             id,
@@ -73,5 +78,8 @@ export const file = {
     },
     move: (id, oldPath, newPath) => {
         return post('/file/move', { id, localPath: oldPath, serverPath: newPath })
+    },
+    remove: (id, path, fileName) => {
+        return post('/file/remove', { id, serverPath: path, fileName })
     },
 }

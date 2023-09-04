@@ -182,9 +182,26 @@ export default {
         init(hostId) {
             if (this.id == 0) {
                 this.id = hostId
+                this.getHomePath()
+            }
+        },
+        // 获取用户目录
+        getHomePath() {
+            this.loading = true
+            file.getHome(this.id).then(res => {
+                if (res.state) {
+                    this.path = res.message
+                } else {
+                    window.$message.warning(res.message)
+                    this.loading = false
+                }
                 this.buildPathList()
                 this.getFileList()
-            }
+            }).catch(err => {
+                console.log(err)
+                this.loading = false
+                window.$message.warning('获取用户目录失败, 发生意料之外的错误')
+            })
         },
         // 构建路径列表
         buildPathList() {
@@ -299,11 +316,42 @@ export default {
             if (key === 'directDownload' || key === 'zipDownload') {
                 let item = this.menu.file
                 let directory = localStorage.getItem('download.directory')
+                let tips = window.$message.loading("正在下载中...", { duration: (1000 * 60 * 30) });
                 file.download(this.id, key.replace('Download', ''), directory, this.path, item.name).then(res => {
-                    console.log(res)
+                    if (res.state) {
+                        tips.type = 'success'
+                        tips.content = '下载成功'
+                    } else {
+                        tips.type = 'warning'
+                        tips.content = res.message ? res.message : "下载失败, 发生意料之外的错误"
+                    }
+                    setTimeout(()=>{
+                        tips.destroy()
+                    },2000)
                 }).catch(() => {
                     window.$message.warning('文件下载失败, 发生意料之外的错误')
                 })
+            } else if (key === 'remove') {
+                window.$dialog.warning({
+                    title: "危险操作警告",
+                    content: "你正在尝试删除‘" + this.menu.file.name + "’" + (this.menu.file.type == 2 || this.menu.file.type == 4 ? ', 删除目录将会一并删除目录下的所有文件' : '') + ", 此项操作不可逆, 确认要删除吗?",
+                    negativeText: '确认删除',
+                    positiveText: '取消',
+                    onNegativeClick: () => {
+                        file.remove(this.id, this.path, this.menu.file.name).then(res => {
+                            if (res.state) {
+                                window.$message.success("删除成功");
+                                this.getFileList()
+                            } else {
+                                window.$message.warning(
+                                    res.message ? res.message : "删除失败, 发生意料之外的错误"
+                                );
+                            }
+                        }).catch(() => {
+                            window.$message.warning('文件删除失败, 发生意料之外的错误')
+                        })
+                    }
+                });
             } else if (key === 'copyPath') {
                 let path = ''
                 if (this.menu.file.type == 4) path = this.menu.file.path

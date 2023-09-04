@@ -57,6 +57,8 @@ func register() *gin.Engine {
 	fileService := service.FileService{
 		HostModel: hostModel,
 	}
+	// 接口 查询用户目录
+	route.POST("/file/home", fileService.GetHomePath)
 	// 接口 查询文件列表
 	route.POST("/file/list", fileService.GetFileList)
 	// 接口 查询文件详情
@@ -65,8 +67,10 @@ func register() *gin.Engine {
 	route.POST("/file/down", fileService.DownloadFile)
 	// 接口 上传文件
 	route.POST("/file/up", fileService.UploadFile)
-	// 接口 重命名文件
+	// 接口 移动文件
 	route.POST("/file/move", fileService.MoveFile)
+	// 接口 删除文件
+	route.POST("/file/remove", fileService.RemoveFile)
 
 	return route
 }
