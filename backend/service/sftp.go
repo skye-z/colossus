@@ -19,6 +19,8 @@ const (
 	// 获取文件详情
 	// 文件名 索引节号 文件大小 I/O块大小 文件占用的块数 块大小 硬链接数量 文件类型 所有者id 所有者 用户组id 用户组 权限位 权限位和文件类型 主要设备类型 次要设备类型 最后访问时间 最后修改时间 最后更改时间
 	CMD_GET_FILE_INFO = "stat --format=\"%%n %%i %%s %%o %%b %%B %%H %%f %%u %%U %%g %%G %%a %%A %%t %%T %%X %%Y %%Z\" %s"
+	// 移动文件 重命名文件
+	CMD_MV_FILE = "mv \"%s\" \"%s\""
 )
 
 type SFTPService struct {

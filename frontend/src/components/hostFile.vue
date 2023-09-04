@@ -1,5 +1,6 @@
 <template>
     <div class="no-drag no-select">
+        <div class="mask" v-if="menu.show" @click="closeMenu"></div>
         <div class="loading flex align-center justify-center" v-if="loading">
             <n-spin size="small" />
         </div>
@@ -173,57 +174,7 @@ export default {
             y: 0,
             show: false,
             file: {},
-            options: [
-                {
-                    title: "下载",
-                    key: "download",
-                    children: [
-                        {
-                            title: "直接下载",
-                            key: "directDownload"
-                        },
-                        {
-                            title: "打包下载",
-                            key: "zipDownload"
-                        },
-                        {
-                            title: "分块下载",
-                            key: "blockDownload"
-                        },
-                    ]
-                },
-                {
-                    title: "重命名",
-                    key: "rename"
-                },
-                {
-                    title: "删除",
-                    key: "remove"
-                },
-                {
-                    type: 'divider',
-                    key: 'd1'
-                },
-                {
-                    label: '工具',
-                    key: 'tools',
-                    children: [
-                        {
-                            label: '暂无可用工具',
-                            key: 'none',
-                            disabled: true
-                        },
-                    ]
-                },
-                {
-                    title: "复制路径",
-                    key: "copyPath"
-                },
-                {
-                    title: "终端中查看",
-                    key: "sendTerminal"
-                }
-            ]
+            options: []
         }
     }),
     methods: {
@@ -337,7 +288,7 @@ export default {
             }
         },
         // 切换不可见文件的显示状态
-        switchHide(){
+        switchHide() {
             this.hide = !this.hide;
             this.getFileList();
         },
@@ -353,6 +304,12 @@ export default {
                 }).catch(() => {
                     window.$message.warning('文件下载失败, 发生意料之外的错误')
                 })
+            } else if (key === 'copyPath') {
+                let path = ''
+                if (this.menu.file.type == 4) path = this.menu.file.path
+                else path = this.menu.file.name
+                this.$goSetClipboard(this.path + '/' + path)
+                window.$message.success('路径已复制到剪切板')
             } else if (key === 'sendTerminal') {
                 let path = ''
                 if (this.menu.file.type == 2) path = this.menu.file.name
@@ -360,14 +317,13 @@ export default {
                 this.$emit('send', this.path + '/' + path)
             }
         },
+        closeMenu() {
+            this.menu.show = false
+        },
         // 点击项目
         touchRow(row) {
             return {
                 onClick: () => {
-                    if (this.menu.show) {
-                        this.menu.show = false
-                        return false
-                    }
                     let path = this.path
                     if (path.substring(0, path.length - 1) != '/') path += '/';
                     if (row.type == 2 || row.type == 4) {
@@ -380,10 +336,70 @@ export default {
                         this.path = path
                         this.buildPathList()
                         this.getFileList()
-                    } else this.getFileInfo(path+row.name)
+                    } else this.getFileInfo(path + row.name)
                 },
                 onContextmenu: e => {
                     e.preventDefault();
+                    let options = [
+                        {
+                            title: "重命名",
+                            key: "rename"
+                        },
+                        {
+                            title: "删除",
+                            key: "remove"
+                        },
+                        {
+                            type: 'divider',
+                            key: 'd1'
+                        },
+                        {
+                            label: '工具',
+                            key: 'tools',
+                            children: [
+                                {
+                                    label: '暂无可用工具',
+                                    key: 'none',
+                                    disabled: true
+                                },
+                            ]
+                        },
+                        {
+                            title: "复制路径",
+                            key: "copyPath"
+                        }
+                    ]
+                    if (row.type == 2 || row.type == 4) {
+                        options.unshift({
+                            title: "打包下载",
+                            key: "zipDownload"
+                        })
+                        options.push({
+                            title: "终端中查看",
+                            key: "sendTerminal"
+                        })
+                    } else {
+                        options.unshift({
+                            title: "下载",
+                            key: "download",
+                            children: [
+                                {
+                                    title: "直接下载",
+                                    key: "directDownload"
+                                },
+                                {
+                                    title: "打包下载",
+                                    key: "zipDownload"
+                                },
+                                {
+                                    title: "分块下载",
+                                    key: "blockDownload"
+                                },
+                            ]
+                        })
+                    }
+
+                    this.menu.options = options
                     this.menu.x = e.clientX
                     this.menu.y = e.clientY
                     this.menu.show = true
@@ -398,6 +414,15 @@ export default {
 .loading {
     height: calc(100% - 90px);
     top: 88px;
+}
+
+.mask {
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    z-index: 99;
+    left: 0;
+    top: 0;
 }
 
 .file-tool:deep(.n-breadcrumb-item__separator) {

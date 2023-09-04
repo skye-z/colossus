@@ -140,8 +140,7 @@ func (fs FileService) GetFileInfo(ctx *gin.Context) {
 	common.ReturnData(ctx, true, results)
 }
 
-// 上传下载参数
-type UpDownParam struct {
+type EditParam struct {
 	Id         int64  `json:"id"`
 	FileName   string `json:"fileName"`
 	LocalPath  string `json:"localPath"`
@@ -150,7 +149,7 @@ type UpDownParam struct {
 
 // 下载文件
 func (fs FileService) DownloadFile(ctx *gin.Context) {
-	var param UpDownParam
+	var param EditParam
 	if err := ctx.ShouldBindJSON(&param); err != nil {
 		common.ReturnMessage(ctx, false, "传入参数非法")
 		return
@@ -170,7 +169,7 @@ func (fs FileService) DownloadFile(ctx *gin.Context) {
 
 // 上传文件
 func (fs FileService) UploadFile(ctx *gin.Context) {
-	var param UpDownParam
+	var param EditParam
 	if err := ctx.ShouldBindJSON(&param); err != nil {
 		common.ReturnMessage(ctx, false, "传入参数非法")
 		return
@@ -186,6 +185,28 @@ func (fs FileService) UploadFile(ctx *gin.Context) {
 	sftp.Upload(param.LocalPath, param.ServerPath, param.FileName)
 
 	common.ReturnMessage(ctx, true, "上传开始")
+}
+
+// 移动文件
+func (fs FileService) MoveFile(ctx *gin.Context) {
+	var param EditParam
+	if err := ctx.ShouldBindJSON(&param); err != nil {
+		common.ReturnMessage(ctx, false, "传入参数非法")
+		return
+	}
+
+	// 获取SFTP操作对象
+	sftp := fs.getSFTP(param.Id, ctx)
+	if sftp == nil {
+		return
+	}
+
+	result := sftp.RunShell(fmt.Sprintf(CMD_MV_FILE, param.LocalPath, param.ServerPath))
+	if result == "" || result == "ERROR" {
+		common.ReturnMessage(ctx, false, "重命名出错")
+		return
+	}
+	common.ReturnMessage(ctx, true, "操作成功")
 }
 
 // 获取SFTP

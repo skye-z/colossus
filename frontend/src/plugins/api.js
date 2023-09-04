@@ -71,4 +71,7 @@ export const file = {
     upload: (id, localPath, serverPath, fileName) => {
         return post('/file/up', { id, localPath, serverPath, fileName })
     },
+    move: (id, oldPath, newPath) => {
+        return post('/file/move', { id, localPath: oldPath, serverPath: newPath })
+    },
 }

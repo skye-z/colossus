@@ -65,6 +65,8 @@ func register() *gin.Engine {
 	route.POST("/file/down", fileService.DownloadFile)
 	// 接口 上传文件
 	route.POST("/file/up", fileService.UploadFile)
+	// 接口 重命名文件
+	route.POST("/file/move", fileService.MoveFile)
 
 	return route
 }
