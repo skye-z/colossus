@@ -87,6 +87,8 @@ func createDefault() {
 	viper.SetDefault("download.auto_unzip", "false")
 	// 上传自动压缩打包
 	viper.SetDefault("upload.auto_zip", "false")
+	// 上传自动压缩打包
+	viper.SetDefault("file.show_hide", "true")
 	// AES密钥
 	secret, err := generateSecret()
 	if err != nil {

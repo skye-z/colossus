@@ -20,6 +20,7 @@ type FileService struct {
 type FileParam struct {
 	Id   int64  `json:"id"`
 	Path string `json:"path"`
+	Hide bool   `json:"hide"`
 }
 
 // 获取文件列表
@@ -35,8 +36,13 @@ func (fs FileService) GetFileList(ctx *gin.Context) {
 	if sftp == nil {
 		return
 	}
+	// 是否显示全部
+	showAll := "a"
+	if param.Hide {
+		showAll = ""
+	}
 	// 执行查询
-	result := sftp.RunShell(fmt.Sprintf(CMD_GET_FILE_LIST, param.Path))
+	result := sftp.RunShell(fmt.Sprintf(CMD_GET_FILE_LIST, showAll, param.Path))
 	if result == "" || result == "ERROR" {
 		common.ReturnMessage(ctx, false, "目录地址不可用")
 		return
@@ -72,7 +78,6 @@ func (fs FileService) GetFileList(ctx *gin.Context) {
 			for x := 9; x < len(metas); x++ {
 				fileName += metas[x]
 			}
-
 			suffix := fileName[len(fileName)-1]
 			var fileType int
 			switch suffix {

@@ -52,10 +52,11 @@ export const host = {
 }
 
 export const file = {
-    getList: (id, path) => {
+    getList: (id, path, hide) => {
         return post('/file/list', {
             id,
-            path
+            path,
+            hide
         })
     },
     getInfo: (id, path) => {

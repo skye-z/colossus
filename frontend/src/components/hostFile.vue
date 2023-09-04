@@ -73,9 +73,9 @@
                 </n-tooltip>
             </n-button-group>
             <n-button-group>
-                <n-tooltip trigger="hover" :delay="1000" :show-arrow="false">
+                <n-tooltip trigger="hover" :delay="1000" :show-arrow="false" v-if="hide">
                     <template #trigger>
-                        <n-button size="small" tertiary>
+                        <n-button size="small" tertiary @click="switchHide">
                             <template #icon>
                                 <n-icon>
                                     <Eye />
@@ -83,7 +83,19 @@
                             </template>
                         </n-button>
                     </template>
-                    显示隐藏文件
+                    显示不可见文件
+                </n-tooltip>
+                <n-tooltip trigger="hover" :delay="1000" :show-arrow="false" v-else>
+                    <template #trigger>
+                        <n-button size="small" tertiary @click="switchHide">
+                            <template #icon>
+                                <n-icon>
+                                    <EyeOff />
+                                </n-icon>
+                            </template>
+                        </n-button>
+                    </template>
+                    隐藏不可见文件
                 </n-tooltip>
                 <n-button size="small" tertiary @click="getFileList">
                     <template #icon>
@@ -104,16 +116,17 @@
 </template>
   
 <script>
-import { Check, EditCircle, CloudUpload, Download, Refresh, Eye } from '@vicons/tabler'
+import { Check, EditCircle, CloudUpload, Download, Refresh, Eye, EyeOff } from '@vicons/tabler'
 import { CreateNewFolderOutlined } from '@vicons/material'
 import { file } from '../plugins/api';
 
 export default {
     name: "HostFile",
-    components: { Check, EditCircle, CloudUpload, Download, Refresh, CreateNewFolderOutlined, Eye },
+    components: { Check, EditCircle, CloudUpload, Download, Refresh, CreateNewFolderOutlined, Eye, EyeOff },
     data: () => ({
         id: 0,
         path: '~',
+        hide: true,
         edit: false,
         pathList: [],
         fileList: [],
@@ -255,7 +268,7 @@ export default {
         // 获取文件列表
         getFileList() {
             this.loading = true
-            file.getList(this.id, this.path).then(res => {
+            file.getList(this.id, this.path, this.hide).then(res => {
                 if (res.state) {
                     setTimeout(() => {
                         let list = []
@@ -322,6 +335,11 @@ export default {
                 this.buildPathList()
                 this.getFileList()
             }
+        },
+        // 切换不可见文件的显示状态
+        switchHide(){
+            this.hide = !this.hide;
+            this.getFileList();
         },
         // 点击右键菜单
         selectMenu(key) {
