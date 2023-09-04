@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -41,7 +42,7 @@ func (fs FileService) GetHomePath(ctx *gin.Context) {
 		common.ReturnMessage(ctx, false, "寻址不可用")
 		return
 	}
-	common.ReturnMessage(ctx, true, result)
+	common.ReturnMessage(ctx, true, strings.TrimSpace(result))
 }
 
 // 获取文件列表
@@ -110,18 +111,14 @@ func (fs FileService) GetFileList(ctx *gin.Context) {
 			case '/':
 				fileType = 2
 				fileName = fileName[0 : len(fileName)-1]
-				break
 			case '*':
 				fileType = 3
 				fileName = fileName[0 : len(fileName)-1]
-				break
 			case '@':
 				fileType = 4
 				fileName = fileName[0 : len(fileName)-1]
-				break
 			default:
 				fileType = 1
-				break
 			}
 
 			file := &SFTPFile{
@@ -192,18 +189,27 @@ func (fs FileService) DownloadFile(ctx *gin.Context) {
 	switch param.Model {
 	case "zip":
 		now := time.Now()
-		path := param.ServerPath
-		fileName := param.FileName
-		result := sftp.RunShell(fmt.Sprintf(CMD_ZIP_FILE, fs.cleanPath(path), now.Unix(), fs.cleanPath(fileName)))
+		result := sftp.RunShell(fmt.Sprintf(CMD_ZIP_FILE, param.ServerPath, now.Unix(), param.FileName))
 		if result == "ERROR" {
 			common.ReturnMessage(ctx, false, "压缩出错")
 			return
 		}
-		sftp.Download(param.LocalPath, param.ServerPath, fmt.Sprintf("%v.tar.gz", now.Unix()))
-		result = sftp.RunShell(fmt.Sprintf(CMD_RM_FILE, fs.cleanPath(path+"/"+fmt.Sprintf("%v.tar.gz", now.Unix()))))
+		zipName := fmt.Sprintf("%v.tar.gz", now.Unix())
+		sftp.Download(param.LocalPath, param.ServerPath, zipName)
+		result = sftp.RunShell(fmt.Sprintf(CMD_RM_FILE, fs.cleanPath(param.ServerPath+"/"+zipName)))
 		if result == "ERROR" {
 			common.ReturnMessage(ctx, false, "残留文件删除")
 			return
+		}
+		autoUnzip := common.GetBool("download.auto_unzip")
+		if autoUnzip {
+			err := common.UnzipTarGz(param.LocalPath, zipName)
+			if err != nil {
+				log.Println(err)
+				common.ReturnMessage(ctx, false, "自动解压出错")
+				return
+			}
+			os.Remove(param.LocalPath + "/" + zipName)
 		}
 	default:
 		log.Println(param.LocalPath, param.ServerPath, param.FileName)
