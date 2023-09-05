@@ -113,6 +113,22 @@
         </div>
         <n-dropdown placement="bottom-start" trigger="manual" :x="menu.x" :y="menu.y" :options="menu.options"
             :show="menu.show" @select="selectMenu" />
+        <n-modal :mask-closable="false" :close-on-esc="false" v-model:show="rename.show">
+            <n-card style="width: 300px" :bordered="false" size="small" role="dialog" aria-modal="true">
+                <div class="flex align-center mb-10">
+                    <div class="file-label">原名称</div>
+                    <n-input v-model:value="rename.file.name" disabled />
+                </div>
+                <div class="flex align-center mb-10">
+                    <div class="file-label">新名称</div>
+                    <n-input v-model:value="rename.name" placeholder="请输入新的名称" @keyup.enter="submitRename" />
+                </div>
+                <div>
+                    <n-button type="primary" class="float-right" @click="submitRename">提交重命名</n-button>
+                    <n-button @click="() => { rename.show = false }">取消</n-button>
+                </div>
+            </n-card>
+        </n-modal>
     </div>
 </template>
   
@@ -120,6 +136,7 @@
 import { Check, EditCircle, CloudUpload, Download, Refresh, Eye, EyeOff } from '@vicons/tabler'
 import { CreateNewFolderOutlined } from '@vicons/material'
 import { file } from '../plugins/api';
+import util from '../plugins/util';
 
 export default {
     name: "HostFile",
@@ -175,6 +192,11 @@ export default {
             show: false,
             file: {},
             options: []
+        },
+        rename: {
+            show: false,
+            file: {},
+            name: ''
         }
     }),
     methods: {
@@ -214,22 +236,7 @@ export default {
         },
         // 面包屑跳转
         jump(index) {
-            let path = ''
-            let list = this.path.split('/')
-            if (list.length > 6) {
-                for (let i = 0; i <= list.length - 5; i++) {
-                    path += '/' + list[i]
-                }
-            }
-            for (let i = (list.length > 6 ? 2 : 0); i <= index; i++) {
-                path += '/' + this.pathList[i]
-            }
-            if (path.length > 1) {
-                let check = path.substring(0, 2);
-                if (check == '/~' || check == '//') path = path.substring(1)
-            }
-
-            this.path = path
+            this.path = util.buildFilePath(this.pathList, this.path.split('/'), index)
             this.buildPathList()
             this.getFileList()
         },
@@ -241,7 +248,8 @@ export default {
                     setTimeout(() => {
                         let list = []
                         for (let i in res.data) {
-                            this.analysis(list, res.data[i])
+                            let data = util.analysisFile(res.data[i])
+                            if (data != null) list.push(data)
                         }
                         this.fileList = list
                         this.loading = false
@@ -250,11 +258,7 @@ export default {
                     window.$message.warning(res.message)
                     this.loading = false
                 }
-            }).catch(err => {
-                console.log(err)
-                this.loading = false
-                window.$message.warning('获取文件列表失败, 发生意料之外的错误')
-            })
+            }).catch(err => util.funcError(err, this.loading, '获取文件列表'))
         },
         // 获取文件详情
         getFileInfo(path) {
@@ -264,37 +268,7 @@ export default {
                 } else {
                     window.$message.warning(res.message)
                 }
-            }).catch(err => {
-                console.log(err)
-                window.$message.warning('获取文件详情失败, 发生意料之外的错误')
-            })
-        },
-        // 解析文件数据
-        analysis(list, data) {
-            if (data.name == '.' || data.name == '..') return false;
-            if (data.type == 1) data.typeName = '文件'
-            else if (data.type == 2) data.typeName = '目录'
-            else if (data.type == 3) data.typeName = '程序'
-            else if (data.type == 4) data.typeName = '链接'
-
-            if (data.name.indexOf('->') != -1) {
-                data.type = 4
-                data.typeName = '链接'
-                data.path = data.name.substring(data.name.indexOf('->') + 2, data.name.length)
-                data.name = data.name.substring(0, data.name.indexOf('->'))
-            }
-
-            data.owner = data.user + ' / ' + data.group
-            if (data.type == 2 || data.type == 4) data.sizeText = '-'
-            else data.sizeText = this.bytes2Size(data.size)
-            list.push(data)
-        },
-        // 字节转文件大小
-        bytes2Size(number) {
-            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-            if (number === 0) return '0 Byte';
-            const i = parseInt(Math.floor(Math.log(number) / Math.log(1024)));
-            return Math.round(number / Math.pow(1024, i), 2) + ' ' + sizes[i];
+            }).catch(err => util.funcErrorNoLoading(err, '获取文件详情'))
         },
         // 切换地址编辑模式
         switchEdit(state) {
@@ -311,7 +285,6 @@ export default {
         },
         // 点击右键菜单
         selectMenu(key) {
-            console.log(key)
             this.menu.show = false
             if (key === 'directDownload' || key === 'zipDownload') {
                 let item = this.menu.file
@@ -325,12 +298,16 @@ export default {
                         tips.type = 'warning'
                         tips.content = res.message ? res.message : "下载失败, 发生意料之外的错误"
                     }
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         tips.destroy()
-                    },2000)
-                }).catch(() => {
-                    window.$message.warning('文件下载失败, 发生意料之外的错误')
-                })
+                    }, 2000)
+                }).catch(err => util.funcErrorDIYTips(err, tips, '文件下载'))
+            } else if (key === 'rename') {
+                this.rename = {
+                    show: true,
+                    file: this.menu.file,
+                    name: ''
+                }
             } else if (key === 'remove') {
                 window.$dialog.warning({
                     title: "危险操作警告",
@@ -347,9 +324,7 @@ export default {
                                     res.message ? res.message : "删除失败, 发生意料之外的错误"
                                 );
                             }
-                        }).catch(() => {
-                            window.$message.warning('文件删除失败, 发生意料之外的错误')
-                        })
+                        }).catch(err => util.funcErrorNoLoading(err, '文件删除'))
                     }
                 });
             } else if (key === 'copyPath') {
@@ -365,6 +340,7 @@ export default {
                 this.$emit('send', this.path + '/' + path)
             }
         },
+        // 关闭右键菜单难
         closeMenu() {
             this.menu.show = false
         },
@@ -441,7 +417,8 @@ export default {
                                 },
                                 {
                                     title: "分块下载",
-                                    key: "blockDownload"
+                                    key: "blockDownload",
+                                    disabled: true
                                 },
                             ]
                         })
@@ -454,6 +431,22 @@ export default {
                     this.menu.file = row
                 }
             };
+        },
+        submitRename() {
+            this.rename.show = false
+            let item = this.rename.file
+            let newName = this.rename.name
+            if(item.name === newName){
+                window.$message.warning('新旧名称不能相同')
+                return false
+            }
+            file.move(this.id, this.path + "/" + item.name, this.path + "/" + newName).then(res => {
+                if (res.state) {
+                    window.$message.success("重命名成功");
+                    this.getFileList()
+                } else
+                    window.$message.warning(res.message ? res.message : "重命名失败, 发生意料之外的错误")
+            }).catch(err => util.funcErrorNoLoading(err, '重命名'))
         }
     }
 };
@@ -486,5 +479,12 @@ export default {
 
 .file-list:deep(.n-data-table-tr) {
     cursor: pointer;
+}
+
+.file-label {
+    margin-right: 10px;
+    text-align: right;
+    min-width: 45px;
+    width: 45px;
 }
 </style>

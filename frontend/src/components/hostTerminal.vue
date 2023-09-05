@@ -66,8 +66,6 @@ export default {
                 this.term.focus()
                 // 加载大小变动事件
                 this.addResizeEvent();
-                // 加载样式变动事件
-                this.addStyleEvent();
             } catch (err) {
                 console.log(err)
             }

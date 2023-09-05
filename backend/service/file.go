@@ -254,7 +254,7 @@ func (fs FileService) MoveFile(ctx *gin.Context) {
 	}
 
 	result := sftp.RunShell(fmt.Sprintf(CMD_MV_FILE, fs.cleanPath(param.LocalPath), fs.cleanPath(param.ServerPath)))
-	if result == "" || result == "ERROR" {
+	if result == "ERROR" {
 		common.ReturnMessage(ctx, false, "重命名出错")
 		return
 	}
