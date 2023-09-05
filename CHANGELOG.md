@@ -12,11 +12,14 @@
 
 > 重大更新: 远程主机文件管理
 
-* [x] Added 主机目录查看
-* [ ] Added 主机文件上传
-* [x] Added 主机文件下载
-* [ ] Added 主机目录上传
-* [ ] Added 主机目录下载
+* [x] Added 目录查看
+* [ ] Added 文件上传
+* [ ] Added 目录上传
+* [x] Added 文件下载
+* [x] Added 目录下载
+* [x] Added 文件和目录重命名
+* [x] Added 文件和目录删除
+* [x] Added 复制资源路径
 * [x] Added 设置界面
 
 ## v0.0.1-alpha2 - 2023-08-29
