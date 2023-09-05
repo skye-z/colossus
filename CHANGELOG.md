@@ -2,13 +2,28 @@
 
 本项目的所有变更都将记录在此文件中, 书写规范请参照[保留变更日志](https://keepachangelog.com/zh-CN/1.0.0/).
 
+## v0.0.1-alpha6 - Unreleased
+
+> 重大更新: 加入主机工具链
+
+* [ ] Added 主机工具
+
+## v0.0.1-alpha5 - Unreleased
+
+> 重大更新: 加入证书登录
+
+* [ ] Added 证书管理
+* [ ] Added 证书登陆主机
+
 ## v0.0.1-alpha4 - Unreleased
 
 > 重大更新: 加入快捷指令
 
-* [ ] Added 快捷指令
+* [ ] Added 快捷指令管理
+* [ ] Added 终端快捷指令输入
+* [ ] Added 文件详细信息查看
 
-## v0.0.1-alpha3 - Unreleased
+## v0.0.1-alpha3 - 2023-09-05
 
 > 重大更新: 远程主机文件管理
 

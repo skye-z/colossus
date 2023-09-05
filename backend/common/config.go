@@ -72,7 +72,7 @@ func createDefault() {
 	// 版本信息
 	viper.SetDefault("basic.version", "0.0.1")
 	viper.SetDefault("basic.stage", "alpha")
-	viper.SetDefault("basic.number", "3")
+	viper.SetDefault("basic.number", "4")
 	// 终端背景颜色
 	viper.SetDefault("terminal.background_color", "rgba(0, 0, 0, 1)")
 	// 终端文字颜色
