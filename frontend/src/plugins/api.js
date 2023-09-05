@@ -73,8 +73,8 @@ export const file = {
     download: (id, model, localPath, serverPath, fileName) => {
         return post('/file/down', { id, model, localPath, serverPath, fileName })
     },
-    upload: (id, localPath, serverPath, fileName) => {
-        return post('/file/up', { id, localPath, serverPath, fileName })
+    upload: (id, model, localPath, serverPath, fileName) => {
+        return post('/file/up', { id, model, localPath, serverPath, fileName })
     },
     move: (id, oldPath, newPath) => {
         return post('/file/move', { id, localPath: oldPath, serverPath: newPath })

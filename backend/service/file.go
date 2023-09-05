@@ -198,7 +198,7 @@ func (fs FileService) DownloadFile(ctx *gin.Context) {
 		sftp.Download(param.LocalPath, param.ServerPath, zipName)
 		result = sftp.RunShell(fmt.Sprintf(CMD_RM_FILE, fs.cleanPath(param.ServerPath+"/"+zipName)))
 		if result == "ERROR" {
-			common.ReturnMessage(ctx, false, "残留文件删除")
+			common.ReturnMessage(ctx, false, "残留文件删除出错")
 			return
 		}
 		autoUnzip := common.GetBool("download.auto_unzip")
@@ -233,10 +233,37 @@ func (fs FileService) UploadFile(ctx *gin.Context) {
 		return
 	}
 
-	// 上传文件
-	sftp.Upload(param.LocalPath, param.ServerPath, param.FileName)
+	switch param.Model {
+	case "directory":
+		// 压缩目录
+		now := time.Now()
+		zipName := fmt.Sprintf("%v.tar.gz", now.Unix())
+		err := common.ZipTarGz(param.LocalPath, param.FileName, zipName)
+		if err != nil {
+			log.Println(err)
+			common.ReturnMessage(ctx, false, "目录压缩出错")
+			return
+		}
+		// 上传压缩包
+		sftp.Upload(param.LocalPath, param.ServerPath, zipName)
+		// 解压目录
+		result := sftp.RunShell(fmt.Sprintf(CMD_UNZIP_FILE, zipName, fs.cleanPath(param.ServerPath)))
+		if result == "ERROR" {
+			common.ReturnMessage(ctx, false, "解压文件出错")
+			return
+		}
+		// 清理垃圾
+		result = sftp.RunShell(fmt.Sprintf(CMD_RM_FILE, fs.cleanPath(param.ServerPath+"/"+zipName)))
+		if result == "ERROR" {
+			common.ReturnMessage(ctx, false, "残留文件删除出错")
+			return
+		}
+		os.Remove(param.LocalPath + "/" + zipName)
+	default:
+		sftp.Upload(param.LocalPath, param.ServerPath, param.FileName)
+	}
 
-	common.ReturnMessage(ctx, true, "上传开始")
+	common.ReturnMessage(ctx, true, "上传完成")
 }
 
 // 移动文件

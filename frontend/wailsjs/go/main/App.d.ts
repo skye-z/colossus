@@ -4,3 +4,5 @@
 export function GetOSName():Promise<string>;
 
 export function SelectDirectory(arg1:string):Promise<string>;
+
+export function SelectFile(arg1:string):Promise<string>;

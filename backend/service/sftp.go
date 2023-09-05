@@ -24,6 +24,8 @@ const (
 	CMD_MV_FILE = "mv %s %s"
 	// 压缩文件
 	CMD_ZIP_FILE = "cd \"%s\" && tar -zcvf %v.tar.gz \"./%s\""
+	// 解缩文件
+	CMD_UNZIP_FILE = "tar -zxvf %s -C %s"
 	// 删除文件
 	CMD_RM_FILE = "rm -rf --preserve-root %s"
 )
@@ -91,24 +93,32 @@ func (s *SFTPService) RunShell(shell string) string {
 
 // 上传文件
 func (s *SFTPService) Upload(localPath, cloudPath, fileName string) {
-	log.Println(localPath, "->", cloudPath)
-	localFile, _ := os.Open(localPath)
-	cloudFile, _ := s.sftpClient.Create(cloudPath)
-	defer func() {
-		_ = localFile.Close()
-		_ = cloudFile.Close()
-	}()
+	localFile, err := os.Open(localPath + "/" + fileName)
+	if err != nil {
+		log.Println("localFile error", err)
+		return
+	}
+	defer localFile.Close()
+	cloudFile, err := s.sftpClient.Create(cloudPath + "/" + fileName)
+	if err != nil {
+		log.Println("cloudFile error", err)
+		return
+	}
+	defer cloudFile.Close()
 	buf := make([]byte, 1024)
 	for {
 		n, err := localFile.Read(buf)
 		if err != nil {
 			if err != io.EOF {
-				log.Fatalln("error occurred:", err)
+				log.Fatalln("file error:", err)
 			} else {
 				break
 			}
 		}
-		_, _ = cloudFile.Write(buf[:n])
+		_, err = cloudFile.Write(buf[:n])
+		if err != nil {
+			log.Println("upload error", err)
+		}
 	}
 }
 
@@ -119,7 +129,6 @@ func (s *SFTPService) Download(localPath, cloudPath, fileName string) {
 		// 目录不存在,创建目录
 		os.Mkdir(localPath, os.ModePerm)
 	}
-	log.Println(cloudPath + "/" + fileName)
 	cloudFile, err := s.sftpClient.Open(cloudPath + "/" + fileName)
 	if err != nil {
 		log.Println("cloudFile error", err)

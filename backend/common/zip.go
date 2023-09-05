@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"io"
 	"os"
+	"path/filepath"
 )
 
 func UnzipTarGz(path, name string) error {
@@ -70,4 +71,52 @@ func UnzipTarGz(path, name string) error {
 		}
 	}
 	return nil
+}
+
+func ZipTarGz(dir, name, outName string) error {
+	// 创建输出文件
+	out, err := os.Create(dir + "/" + outName)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+	// 创建 gzip 写入器
+	gw := gzip.NewWriter(out)
+	defer gw.Close()
+	// 创建 tar 写入器
+	tw := tar.NewWriter(gw)
+	defer tw.Close()
+	// 遍历目录并存入压缩包
+	return filepath.Walk(dir+"/"+name, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		// 跳过根目录
+		if path == dir {
+			return nil
+		}
+		// 创建信息标头
+		hdr, err := tar.FileInfoHeader(info, "")
+		if err != nil {
+			return err
+		}
+		// 设置相对根目录的标头名称
+		hdr.Name = path[len(dir)+1:]
+		// 标头写入压缩包
+		if err := tw.WriteHeader(hdr); err != nil {
+			return err
+		}
+		// 常规文件直接写入
+		if info.Mode().IsRegular() {
+			f, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+			defer f.Close()
+			if _, err := io.Copy(tw, f); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }

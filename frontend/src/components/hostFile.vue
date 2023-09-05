@@ -48,18 +48,15 @@
                     </template>
                     创建目录
                 </n-tooltip>
-                <n-tooltip trigger="hover" :delay="1000" :show-arrow="false">
-                    <template #trigger>
-                        <n-button size="small" tertiary>
-                            <template #icon>
-                                <n-icon>
-                                    <CloudUpload />
-                                </n-icon>
-                            </template>
-                        </n-button>
-                    </template>
-                    上传文件
-                </n-tooltip>
+                <n-dropdown trigger="click" :options="upOptions" @select="upload">
+                    <n-button size="small" tertiary>
+                        <template #icon>
+                            <n-icon>
+                                <CloudUpload />
+                            </n-icon>
+                        </template>
+                    </n-button>
+                </n-dropdown>
                 <n-tooltip trigger="hover" :delay="1000" :show-arrow="false">
                     <template #trigger>
                         <n-button size="small" tertiary>
@@ -197,7 +194,11 @@ export default {
             show: false,
             file: {},
             name: ''
-        }
+        },
+        upOptions: [
+            { title: "上传文件", key: "uploadFile" },
+            { title: "上传文件夹", key: "uploadDirectory" }
+        ]
     }),
     methods: {
         // 初始化文件管理器
@@ -432,11 +433,12 @@ export default {
                 }
             };
         },
+        // 提交重命名
         submitRename() {
             this.rename.show = false
             let item = this.rename.file
             let newName = this.rename.name
-            if(item.name === newName){
+            if (item.name === newName) {
                 window.$message.warning('新旧名称不能相同')
                 return false
             }
@@ -447,6 +449,45 @@ export default {
                 } else
                     window.$message.warning(res.message ? res.message : "重命名失败, 发生意料之外的错误")
             }).catch(err => util.funcErrorNoLoading(err, '重命名'))
+        },
+        upload(key) {
+            let tips = window.$message.loading("等待选取...", { duration: (1000 * 60 * 30) });
+            setTimeout(() => {
+                if (key === 'uploadFile') {
+                    this.$goSelectFile("选择待上传的文件").then((res) => {
+                        if (res) {
+                            tips.content = "正在上传中..."
+                            this.submitUpload(tips, "file", res)
+                        } else tips.destroy()
+                        console.log(res)
+                    });
+                } else {
+                    this.$goSelectDirectory("选择待上传的文件目录").then((res) => {
+                        if (res) {
+                            tips.content = "正在上传中..."
+                            this.submitUpload(tips, "directory", res)
+                        } else tips.destroy()
+                        console.log(res)
+                    });
+                }
+            }, 300)
+        },
+        submitUpload(tips, type, path) {
+            let name = path.substring(path.lastIndexOf('/') + 1)
+            path = path.substring(0, path.lastIndexOf('/'))
+            file.upload(this.id, type, path, this.path, name).then(res => {
+                if (res.state) {
+                    tips.type = 'success'
+                    tips.content = '上传成功'
+                    this.getFileList()
+                } else {
+                    tips.type = 'warning'
+                    tips.content = res.message ? res.message : "上传失败, 发生意料之外的错误"
+                }
+                setTimeout(() => {
+                    tips.destroy()
+                }, 2000)
+            }).catch(err => util.funcErrorDIYTips(err, tips, '文件上传'))
         }
     }
 };

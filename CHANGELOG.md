@@ -13,8 +13,8 @@
 > 重大更新: 远程主机文件管理
 
 * [x] Added 目录查看
-* [ ] Added 文件上传
-* [ ] Added 目录上传
+* [x] Added 文件上传
+* [x] Added 目录上传
 * [x] Added 文件下载
 * [x] Added 目录下载
 * [x] Added 文件和目录重命名

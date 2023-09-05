@@ -38,6 +38,17 @@ func (a *App) SelectDirectory(title string) string {
 	return path
 }
 
+func (a *App) SelectFile(title string) string {
+	opt := &runtime.OpenDialogOptions{
+		Title: title,
+	}
+	path, err := runtime.OpenFileDialog(a.ctx, *opt)
+	if err != nil {
+		return "error"
+	}
+	return path
+}
+
 func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 	dialog, err := runtime.MessageDialog(ctx, runtime.MessageDialogOptions{
 		Type:          runtime.QuestionDialog,
