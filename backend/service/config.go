@@ -15,7 +15,12 @@ type Config struct {
 
 // 获取配置信息
 func (cs ConfigService) GetAll(ctx *gin.Context) {
-	common.ReturnData(ctx, true, common.GetAll())
+	data := common.GetAll()
+	data["basic.version"] = common.VersionCode
+	data["basic.stage"] = common.VersionStage
+	data["basic.number"] = common.VersionNumber
+
+	common.ReturnData(ctx, true, data)
 }
 
 // 更新配置

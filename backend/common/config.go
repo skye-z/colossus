@@ -68,11 +68,13 @@ func GetInt32(key string) int32 {
 	return viper.GetInt32(key)
 }
 
+const (
+	VersionCode   = "0.0.1"
+	VersionStage  = "alpha"
+	VersionNumber = "4"
+)
+
 func createDefault() {
-	// 版本信息
-	viper.SetDefault("basic.version", "0.0.1")
-	viper.SetDefault("basic.stage", "alpha")
-	viper.SetDefault("basic.number", "4")
 	// 终端背景颜色
 	viper.SetDefault("terminal.background_color", "rgba(0, 0, 0, 1)")
 	// 终端文字颜色
@@ -85,8 +87,6 @@ func createDefault() {
 	viper.SetDefault("download.directory", downloadDir)
 	// 打包下载后自动解压
 	viper.SetDefault("download.auto_unzip", "false")
-	// 上传自动压缩打包
-	viper.SetDefault("upload.auto_zip", "false")
 	// 上传自动压缩打包
 	viper.SetDefault("file.show_hide", "true")
 	// AES密钥
