@@ -12,7 +12,8 @@
 
 > 重大更新: 远程主机文件管理
 
-* [x] Added 目录查看
+* [ ] Added 创建目录
+* [x] Added 文件系统查看
 * [x] Added 文件上传
 * [x] Added 目录上传
 * [x] Added 文件下载
