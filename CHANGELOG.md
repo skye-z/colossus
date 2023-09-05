@@ -34,7 +34,7 @@
 
 > 重大更新: 远程主机文件管理
 
-* [ ] Added 创建目录
+* [x] Added 创建目录
 * [x] Added 文件系统查看
 * [x] Added 文件上传
 * [x] Added 目录上传
@@ -44,6 +44,7 @@
 * [x] Added 文件和目录删除
 * [x] Added 复制资源路径
 * [x] Added 设置界面
+* [x] Added Terminal风格设置
 
 ## v0.0.1-alpha2 - 2023-08-29
 

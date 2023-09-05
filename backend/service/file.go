@@ -310,6 +310,28 @@ func (fs FileService) RemoveFile(ctx *gin.Context) {
 	common.ReturnMessage(ctx, true, "操作成功")
 }
 
+// 创建目录
+func (fs FileService) CreateDirectory(ctx *gin.Context) {
+	var param EditParam
+	if err := ctx.ShouldBindJSON(&param); err != nil {
+		common.ReturnMessage(ctx, false, "传入参数非法")
+		return
+	}
+
+	// 获取SFTP操作对象
+	sftp := fs.getSFTP(param.Id, ctx)
+	if sftp == nil {
+		return
+	}
+
+	result := sftp.RunShell(fmt.Sprintf(CMD_CREATE_DIR, fs.cleanPath(param.ServerPath)))
+	if result == "ERROR" {
+		common.ReturnMessage(ctx, false, "目录创建出错")
+		return
+	}
+	common.ReturnMessage(ctx, true, "目录创建成功")
+}
+
 // 获取SFTP
 func (fs FileService) getSFTP(hostId int64, ctx *gin.Context) *SFTPService {
 	// 获取主机信息
@@ -342,6 +364,7 @@ func (fs FileService) getSFTP(hostId int64, ctx *gin.Context) *SFTPService {
 	return &sftpConfig
 }
 
+// 清理路径
 func (fs FileService) cleanPath(path string) string {
 	cache := strings.Replace(path, "//", "/", -1)
 	cache = strings.Replace(path, " ", "\\ ", -1)

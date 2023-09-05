@@ -71,6 +71,8 @@ func register() *gin.Engine {
 	route.POST("/file/move", fileService.MoveFile)
 	// 接口 删除文件
 	route.POST("/file/remove", fileService.RemoveFile)
+	// 接口 创建目录
+	route.POST("/file/directory", fileService.CreateDirectory)
 
 	return route
 }

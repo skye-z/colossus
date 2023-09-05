@@ -38,7 +38,7 @@
             <n-button-group class="mr-5">
                 <n-tooltip trigger="hover" :delay="1000" :show-arrow="false">
                     <template #trigger>
-                        <n-button size="small" tertiary>
+                        <n-button size="small" tertiary @click="createDirectory">
                             <template #icon>
                                 <n-icon>
                                     <CreateNewFolderOutlined />
@@ -112,6 +112,7 @@
             :show="menu.show" @select="selectMenu" />
         <n-modal :mask-closable="false" :close-on-esc="false" v-model:show="rename.show">
             <n-card style="width: 300px" :bordered="false" size="small" role="dialog" aria-modal="true">
+                <div class="text-center mb-10 text-gray">重命名</div>
                 <div class="flex align-center mb-10">
                     <div class="file-label">原名称</div>
                     <n-input v-model:value="rename.file.name" disabled />
@@ -123,6 +124,19 @@
                 <div>
                     <n-button type="primary" class="float-right" @click="submitRename">提交重命名</n-button>
                     <n-button @click="() => { rename.show = false }">取消</n-button>
+                </div>
+            </n-card>
+        </n-modal>
+        <n-modal :mask-closable="false" :close-on-esc="false" v-model:show="directory.show">
+            <n-card style="width: 300px" :bordered="false" size="small" role="dialog" aria-modal="true">
+                <div class="text-center mb-10 text-gray">创建目录</div>
+                <div class="flex align-center mb-10">
+                    <div class="file-label">目录名</div>
+                    <n-input v-model:value="directory.name" placeholder="支持递归创建子文件夹" @keyup.enter="submitDirectory" />
+                </div>
+                <div>
+                    <n-button type="primary" class="float-right" @click="submitDirectory">提交创建</n-button>
+                    <n-button @click="() => { directory.show = false }">取消</n-button>
                 </div>
             </n-card>
         </n-modal>
@@ -194,6 +208,10 @@ export default {
             show: false,
             file: {},
             name: ''
+        },
+        directory: {
+            show: false,
+            name: "",
         },
         upOptions: [
             { title: "上传文件", key: "uploadFile" },
@@ -435,13 +453,13 @@ export default {
         },
         // 提交重命名
         submitRename() {
-            this.rename.show = false
             let item = this.rename.file
             let newName = this.rename.name
             if (item.name === newName) {
                 window.$message.warning('新旧名称不能相同')
                 return false
             }
+            this.rename.show = false
             file.move(this.id, this.path + "/" + item.name, this.path + "/" + newName).then(res => {
                 if (res.state) {
                     window.$message.success("重命名成功");
@@ -450,6 +468,7 @@ export default {
                     window.$message.warning(res.message ? res.message : "重命名失败, 发生意料之外的错误")
             }).catch(err => util.funcErrorNoLoading(err, '重命名'))
         },
+        // 上传准备
         upload(key) {
             let tips = window.$message.loading("等待选取...", { duration: (1000 * 60 * 30) });
             setTimeout(() => {
@@ -472,6 +491,7 @@ export default {
                 }
             }, 300)
         },
+        // 提交上传
         submitUpload(tips, type, path) {
             let name = path.substring(path.lastIndexOf('/') + 1)
             path = path.substring(0, path.lastIndexOf('/'))
@@ -488,6 +508,28 @@ export default {
                     tips.destroy()
                 }, 2000)
             }).catch(err => util.funcErrorDIYTips(err, tips, '文件上传'))
+        },
+        // 显示创建目录窗口
+        createDirectory() {
+            this.directory = {
+                show: true,
+                name: "",
+            }
+        },
+        // 提交创建目录请求
+        submitDirectory(){
+            if (this.directory.name.indexOf('/') == 0) {
+                window.$message.warning('不允许使用斜杠开头')
+                return false
+            }
+            this.directory.show = false
+            file.createDirectory(this.id, this.path + "/" + this.directory.name).then(res => {
+                if (res.state) {
+                    window.$message.success("目录创建成功");
+                    this.getFileList()
+                } else
+                    window.$message.warning(res.message ? res.message : "目录创建失败, 发生意料之外的错误")
+            }).catch(err => util.funcErrorNoLoading(err, '目录创建'))
         }
     }
 };

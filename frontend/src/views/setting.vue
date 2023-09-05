@@ -63,14 +63,6 @@
             <div class="text-small text-gray ml-10">打包下载完成后自动解压</div>
           </div>
           <div class="flex align-center mt-10">
-            <div class="setting-label">打包上传</div>
-            <n-switch
-              v-model:value="autoZipUpload"
-              @update:value="updateValue('upload.auto_zip')"
-            />
-            <div class="text-small text-gray ml-10">将待上传文件打包后再上传</div>
-          </div>
-          <div class="flex align-center mt-10">
             <div class="setting-label">显示隐藏</div>
             <n-switch
               v-model:value="showHide"
@@ -196,7 +188,6 @@ export default {
     downloadPath: "",
     downloadSelect: false,
     autoUnzip: false,
-    autoZipUpload: false,
     showHide: true,
   }),
   methods: {
@@ -218,7 +209,6 @@ export default {
             this.terminalTextSize = parseInt(res.data["terminal.text_size"]);
             this.downloadPath = res.data["download.directory"];
             this.autoUnzip = res.data["download.auto_unzip"] === "true";
-            this.autoZipUpload = res.data["upload.auto_zip"] === "true";
             this.showHide = res.data["file.show_hide"] === "true";
           } else window.$message.warning("加载应用设置失败");
         })
@@ -263,7 +253,6 @@ export default {
         this.updateConfig(key, "" + this.terminalTextSize);
       else if (key === "download.directory") this.updateConfig(key, this.downloadPath);
       else if (key === "download.auto_unzip") this.updateConfig(key, "" + this.autoUnzip);
-      else if (key === "upload.auto_zip") this.updateConfig(key, "" + this.autoZipUpload);
       else if (key === "file.show_hide") this.updateConfig(key, "" + this.showHide);
     },
   },

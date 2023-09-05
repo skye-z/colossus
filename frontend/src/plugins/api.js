@@ -82,4 +82,7 @@ export const file = {
     remove: (id, path, fileName) => {
         return post('/file/remove', { id, serverPath: path, fileName })
     },
+    createDirectory: (id, serverPath) => {
+        return post('/file/directory', { id, serverPath })
+    },
 }

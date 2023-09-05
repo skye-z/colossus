@@ -28,6 +28,8 @@ const (
 	CMD_UNZIP_FILE = "tar -zxvf %s -C %s"
 	// 删除文件
 	CMD_RM_FILE = "rm -rf --preserve-root %s"
+	// 创建文件夹
+	CMD_CREATE_DIR = "mkdir -p %s"
 )
 
 type SFTPService struct {
