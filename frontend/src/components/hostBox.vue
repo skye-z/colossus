@@ -72,7 +72,6 @@ export default {
             this.getHostInfo()
         },
         getHostInfo() {
-            console.log('[HB] #' + this.hostId)
             host.getInfo(this.hostId).then(res => {
                 this.loading = false
                 this.$refs["terminal"+this.hostId].init(this.hostId)

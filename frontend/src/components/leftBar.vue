@@ -162,7 +162,7 @@ export default {
 
 .connect-item {
     background-color: rgba(255, 255, 255, .08);
-    transition: all ease-out 0.3s;
+    transition: background-color ease-out 0.3s;
     padding: 6px 5px 8px 5px;
     margin-bottom: 10px;
     border-radius: 8px;
@@ -179,6 +179,8 @@ export default {
 
 .connect-item.select {
     background-color: rgba(99, 226, 183, .12);
+    border: 1px solid rgba(99, 226, 183, .3);
+    padding: 5px 4px 7px 4px;
 }
 
 .connect-address {

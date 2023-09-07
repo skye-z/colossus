@@ -16,7 +16,6 @@ export default {
     }),
     methods: {
         openConnect(id) {
-            console.log(id)
             if (this.connect[id] == undefined) {
                 setTimeout(() => {
                     this.connect[id] = new Date().getTime()
