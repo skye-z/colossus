@@ -1,129 +1,37 @@
 <template>
-    <div>
-        <div class="loading flex align-center justify-center" v-if="loading">
-            <n-spin size="small" />
-        </div>
-        <div v-if="show">
-            <div class="no-select">
-                <div id="host-head" class="border-bottom">
-                    <div class="flex align-center">
-                        <div class="host-name mr-10">{{ info.name }}</div>
-                        <n-tag size="small" class="mr-5" :bordered="false" type="info" v-if="info.platform">{{ info.platform
-                        }}</n-tag>
-                        <n-tag size="small" class="mr-5" :bordered="false" type="success" v-if="info.system">{{ info.system
-                        }}</n-tag>
-                        <n-tag size="small" class="mr-5" :bordered="false" type="warning" v-if="info.region">{{ info.region
-                        }}</n-tag>
-                        <n-tag size="small" :bordered="false" type="error" v-if="info.periodTxt">{{ info.periodTxt
-                        }}</n-tag>
-                    </div>
-                    <div class="host-address text-small text-gray">{{ info.user }}@{{ info.address }}:{{ info.port }}</div>
-                </div>
-                <n-tabs v-model:value="tab" id="host-tabs" type="line" @update:value="updateTab" animated>
-                    <n-tab name="shell">终端</n-tab>
-                    <n-tab name="file">文件</n-tab>
-                    <n-tab name="tool">工具</n-tab>
-                </n-tabs>
-            </div>
-            <div v-show="tab === 'shell'">
-                <host-terminal ref="terminal" />
-            </div>
-            <div v-show="tab === 'file'">
-                <host-file ref="file" @send="sendTerminal" />
-            </div>
-            <div v-if="tab === 'tool'">
-                <div class="tips text-center">
-                    <div>等待开发</div>
-                    <div class="text-small text-gray">配置检测、链路跟踪、性能测试、开放端口、路由表、笔记、流量监控、应用可视化安装器、Docker容器管理</div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <host-box v-for="(item, index) in connect" v-show="select == index" :host-id="index" />
 </template>
   
 <script>
-import HostTerminal from "../components/hostTerminal.vue";
-import HostFile from "../components/hostFile.vue";
+import HostBox from "../components/hostBox.vue";
 
 export default {
     name: "Host",
-    components: { HostTerminal, HostFile },
+    components: { HostBox },
     data: () => ({
-        info: {},
-        tab: 'shell',
-        show: false,
-        loading: true
+        select: null,
+        connect: {}
     }),
-    beforeDestroy() {
-        if (this.$refs.terminal)
-            this.$refs.terminal.close()
-    },
     methods: {
-        init() {
-            this.saveConnectLog()
-            setTimeout(() => {
-                this.show = true
-            }, 100)
-            setTimeout(() => {
-                this.$refs.terminal.init(this.info.id)
-                this.loading = false
-            }, 300)
-        },
-        saveConnectLog() {
-
-        },
-        sendTerminal(e) {
-            this.$refs.terminal.send('cd ' + e)
-            this.tab = 'shell'
-        },
-        updateTab(e) {
-            if (e == 'file') this.$refs.file.init(this.info.id)
+        openConnect(id) {
+            if (this.connect[id] == undefined) {
+                this.connect[id] = new Date().getTime()
+                this.select = id
+            } else this.select = id
+            console.log('Show host -> '+this.select)
         }
     },
     mounted() {
-        if (this.$route.query.info) {
-            this.info = JSON.parse(this.$route.query.info)
-            this.init()
-        } else {
-            window.$dialog.error({
-                closable: false,
-                closeOnEsc: false,
-                maskClosable: false,
-                title: "无效主机",
-                content: "入口错误, 未传入有效的主机数据,",
-                positiveText: "返回",
-                onPositiveClick: () => {
-                    this.$router.back()
-                }
-            });
-        }
-    }
+        this.openConnect(this.$route.params.id)
+    },
+    watch: {
+        $route: {
+            handler(to) {
+                this.openConnect(to.params.id)
+            },
+            deep: true,
+        },
+    },
 };
 </script>
-<style scoped>
-#host-head {
-    width: calc(100% - 201px);
-    position: absolute;
-    padding: 6px 10px;
-}
-
-.host-name {
-    line-height: 16px;
-    font-size: 18px;
-}
-
-.host-address {
-    line-height: 14px;
-    font-size: 12px;
-}
-
-#host-tabs:deep(.n-tabs-nav-scroll-content) {
-    margin-left: calc(100% - 180px);
-    --wails-draggable: no-drag;
-    padding: 3.5px 0;
-}
-
-.tips {
-    padding-top: 40vh;
-}
-</style>
+<style scoped></style>

@@ -45,13 +45,13 @@
             v-model:value="form.port"
             placeholder="SSH连接端口(默认22)"
             clearable
-            style="width: 170px"
+            style="width: 180px"
           />
         </n-form-item>
         <n-form-item label="登录用户" path="user">
           <n-input
             v-model:value="form.user"
-            placeholder="登录主机的用户名称(默认root)"
+            placeholder="主机登录用户名(默认root)"
             clearable
           />
         </n-form-item>

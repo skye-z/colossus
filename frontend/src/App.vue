@@ -9,7 +9,6 @@
             <div class="loading flex align-center justify-center" v-if="loading">
               <n-spin size="small" />
             </div>
-            <!-- <router-view /> -->
             <router-view v-slot="{ Component }">
               <keep-alive>
                 <component :is="Component" />

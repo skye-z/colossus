@@ -20,7 +20,10 @@ const router = createRouter({
         {
             name: 'Host',
             path: '/host/:id',
-            component: Host
+            component: Host,
+            meta: {
+                keepAlive: false
+            }
         },
         {
             name: 'Cert',

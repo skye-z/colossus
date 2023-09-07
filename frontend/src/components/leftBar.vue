@@ -102,10 +102,7 @@ export default {
             })
         },
         openHost(item) {
-            this.$router.push({
-                path: '/host/' + item.id,
-                query: { info: JSON.stringify(item) }
-            })
+            this.$router.push('/host/' + item.id)
         },
         jump(path) {
             this.$router.push('/' + path)

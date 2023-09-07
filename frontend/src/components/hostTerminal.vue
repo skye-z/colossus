@@ -1,6 +1,6 @@
 <template>
     <div style="position: relative;">
-        <div ref="xtermRef" class="xterm border-bottom"></div>
+        <div :ref="'xterm' + id" :id="'xterm' + id" class="xterm border-bottom"></div>
         <div v-if="!connect" class="notconnect no-select flex align-center justify-center">
             <div>未连接</div>
         </div>
@@ -25,7 +25,7 @@ import { Terminal } from "xterm";
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
 import { CanvasAddon } from 'xterm-addon-canvas';
-import { WebglAddon } from 'xterm-addon-webgl';
+// import { WebglAddon } from 'xterm-addon-webgl';
 
 export default {
     name: "HostTerminal",
@@ -57,7 +57,9 @@ export default {
                 // 加载插件
                 this.addPlugins();
                 // 打开Dom元素
-                this.term.open(this.$refs.xtermRef)
+                setTimeout(()=>{
+                    this.term.open(this.$refs['xterm' + hostId])
+                },100)
                 // 自适应窗口大小
                 this.fitAddon.fit()
                 // 创建连接
@@ -73,8 +75,8 @@ export default {
         addPlugins() {
             // 加载Canvas渲染
             this.term.loadAddon(new CanvasAddon())
-            // 加载WebGL渲染
-            this.term.loadAddon(new WebglAddon())
+            // 加载WebGL渲染 (卡顿暂时屏蔽)
+            // this.term.loadAddon(new WebglAddon())
             // 加载窗口自适应插件
             this.fitAddon = new FitAddon()
             this.term.loadAddon(this.fitAddon)
@@ -117,12 +119,14 @@ export default {
                 console.log(err)
             }
             // 销毁终端
-            try {
-                if (this.term) this.term.dispose()
-            } catch (err) {
-                console.log(err)
-            }
-            document.getElementsByClassName("xterm")[0].innerHTML = "";
+            // try {
+            //     if (this.term) this.term.dispose()
+            // } catch (err) {
+            //     console.log(err)
+            // }
+
+            document.getElementById('xterm' + this.id).innerHTML = "";
+            // document.getElementsByClassName("xterm")[0].innerHTML = "";
             window.dispatchEvent(new CustomEvent("cache:connect", { detail: { id: this.id, connect: false } }))
             console.log('Terminal Close')
         },

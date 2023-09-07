@@ -39,15 +39,18 @@ export const config = {
 }
 
 export const host = {
-    add: (form) => {
+    add: form => {
         return post('/host/add', form)
     },
     edit: (id, form) => {
         return post('/host/' + id, form)
     },
-    getList: (form) => {
+    getList: form => {
         let query = buildQuery(form)
         return get('/host/list' + query)
+    },
+    getInfo: id => {
+        return get('/host/' + id)
     }
 }
 

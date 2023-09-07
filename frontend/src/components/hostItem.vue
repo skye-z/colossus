@@ -47,11 +47,7 @@ export default {
     methods: {
         openHost() {
             window.dispatchEvent(new CustomEvent("cache:history", { detail: this.info }))
-
-            this.$router.push({
-                path: '/host/' + this.info.id,
-                query: { info: JSON.stringify(this.info) }
-            })
+            this.$router.push('/host/' + this.info.id)
         },
         editHost() {
             this.$emit('editHost', this.info)
