@@ -8,7 +8,8 @@
             <div>创建连接</div>
         </n-button>
         <div id="connect-list" :class="{ macos: macOS }">
-            <div class="connect-item no-drag" v-for="item in connect" @click="openHost(item)">
+            <div class="connect-item no-drag" v-for="item in connect" @click="openHost(item)"
+                :class="{ 'select': select == item.id }">
                 <div class="line1 connect-name">{{ item.name }}</div>
                 <div class="line1 connect-address flex align-center">
                     <div :class="'dot mr-5 ' + (item.connect ? 'dot-connect' : '')"></div>
@@ -57,7 +58,8 @@ export default {
         }
     },
     data: () => ({
-        connect: []
+        connect: [],
+        select: null
     }),
     methods: {
         init() {
@@ -106,11 +108,23 @@ export default {
         },
         jump(path) {
             this.$router.push('/' + path)
+        },
+        illuminate(id) {
+            this.select = id
         }
     },
     mounted() {
         this.init()
-    }
+    },
+    watch: {
+        $route: {
+            handler(to) {
+                if (to.params.id) this.illuminate(to.params.id)
+                else this.illuminate(null)
+            },
+            deep: true,
+        },
+    },
 };
 </script>
 <style scoped>
@@ -161,6 +175,10 @@ export default {
 
 .connect-item:active {
     background-color: rgba(255, 255, 255, .08);
+}
+
+.connect-item.select {
+    background-color: rgba(99, 226, 183, .12);
 }
 
 .connect-address {

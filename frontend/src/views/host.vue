@@ -15,10 +15,12 @@ export default {
     methods: {
         openConnect(id) {
             if (this.connect[id] == undefined) {
-                this.connect[id] = new Date().getTime()
-                this.select = id
+                setTimeout(() => {
+                    this.connect[id] = new Date().getTime()
+                    this.select = id
+                }, 100)
             } else this.select = id
-            console.log('Show host -> '+this.select)
+            console.log('Show host -> ' + this.select)
         }
     },
     mounted() {

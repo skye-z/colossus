@@ -119,12 +119,11 @@ export default {
                 console.log(err)
             }
             // 销毁终端
-            // try {
-            //     if (this.term) this.term.dispose()
-            // } catch (err) {
-            //     console.log(err)
-            // }
-
+            try {
+                if (this.term) this.term.dispose()
+            } catch (err) {
+                console.log(err)
+            }
             document.getElementById('xterm' + this.id).innerHTML = "";
             // document.getElementsByClassName("xterm")[0].innerHTML = "";
             window.dispatchEvent(new CustomEvent("cache:connect", { detail: { id: this.id, connect: false } }))
