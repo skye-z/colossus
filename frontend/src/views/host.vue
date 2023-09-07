@@ -1,5 +1,7 @@
 <template>
-    <host-box v-for="(item, index) in connect" v-show="select == index" :host-id="index" />
+    <div v-for="(item, index) in connect">
+        <host-box  v-show="select == index" :key="item" :host-id="index" />
+    </div>
 </template>
   
 <script>
@@ -14,13 +16,13 @@ export default {
     }),
     methods: {
         openConnect(id) {
+            console.log(id)
             if (this.connect[id] == undefined) {
                 setTimeout(() => {
                     this.connect[id] = new Date().getTime()
                     this.select = id
                 }, 100)
             } else this.select = id
-            console.log('Show host -> ' + this.select)
         }
     },
     mounted() {

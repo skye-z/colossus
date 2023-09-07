@@ -7,7 +7,7 @@
             <div class="no-select">
                 <div id="host-head" class="border-bottom">
                     <div class="flex align-center">
-                        <div class="host-name mr-10">{{ info.name }}</div>
+                        <div class="host-name mr-10">{{ info.name }}{{ hostId }}</div>
                         <n-tag size="small" class="mr-5" :bordered="false" type="info" v-if="info.platform">{{ info.platform
                         }}</n-tag>
                         <n-tag size="small" class="mr-5" :bordered="false" type="success" v-if="info.system">{{ info.system
@@ -26,10 +26,10 @@
                 </n-tabs>
             </div>
             <div v-show="tab === 'shell'">
-                <host-terminal :ref="'terminal'+id" />
+                <host-terminal :ref="'terminal' + hostId" />
             </div>
             <div v-show="tab === 'file'">
-                <host-file :ref="'file'+id" @send="sendTerminal" />
+                <host-file :ref="'file' + hostId" @send="sendTerminal" />
             </div>
             <div v-if="tab === 'tool'">
                 <div class="tips text-center">
@@ -50,7 +50,6 @@ export default {
     name: "HostBox",
     components: { HostTerminal, HostFile },
     data: () => ({
-        id: 0,
         info: {},
         tab: 'shell',
         show: false,
@@ -64,21 +63,19 @@ export default {
         }
     },
     beforeDestroy() {
-        if (this.$refs["terminal"+this.id])
-            this.$refs["terminal"+this.id].close()
+        if (this.$refs["terminal" + this.hostId])
+            this.$refs["terminal" + this.hostId].close()
     },
     methods: {
-        init(id) {
-            this.id = id
+        init() {
             this.show = true
-            setTimeout(() => {
-                this.getHostInfo()
-            }, 200)
+            this.getHostInfo()
         },
         getHostInfo() {
-            host.getInfo(this.id).then(res => {
+            console.log('[HB] #' + this.hostId)
+            host.getInfo(this.hostId).then(res => {
                 this.loading = false
-                this.$refs["terminal"+this.id].init(this.id)
+                this.$refs["terminal"+this.hostId].init(this.hostId)
                 if (res.state) {
                     this.lastUpdate = new Date().getTime()
                     this.info = res.data
@@ -102,17 +99,17 @@ export default {
             });
         },
         sendTerminal(e) {
-            this.$refs["terminal"+this.id].send('cd ' + e)
+            this.$refs["terminal" + this.hostId].send('cd ' + e)
             this.tab = 'shell'
         },
         updateTab(e) {
-            if (e == 'file') this.$refs["file"+this.id].init(this.info.id)
+            if (e == 'file') this.$refs["file" + this.hostId].init(this.hostId)
         }
     },
     mounted() {
         setTimeout(() => {
-            this.init(parseInt(this.hostId))
-        }, 100)
+            this.init()
+        }, 300)
     }
 };
 </script>
