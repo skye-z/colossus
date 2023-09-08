@@ -29,7 +29,7 @@
         require-mark-placement="right-hanging"
       >
         <n-form-item v-if="form.edit" label="编号" path="id">
-          <n-input v-model:value="form.id" disabled />
+          <n-input v-model:value="form.id" disabled style="width: 110px"/>
         </n-form-item>
         <n-form-item label="主机名" path="name">
           <n-input v-model:value="form.name" placeholder="便于记忆与识别的主机名称" />

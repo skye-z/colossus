@@ -83,7 +83,7 @@ func (model HostModel) GetItem(host *Host) error {
 }
 
 // 获取主机列表
-func (model HostModel) GetList(keyword string, platform string, system string, region string, usage string, period string, page int, num int) ([]Host, error) {
+func (model HostModel) GetList(keyword, platform, system, region, usage, period string, page, num int) ([]Host, error) {
 	var (
 		hosts   []Host
 		session *xorm.Session
