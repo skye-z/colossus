@@ -42,5 +42,9 @@ func initDatabase(engine *xorm.Engine) {
 	if err != nil {
 		panic(err)
 	}
+	err = engine.Sync2(new(model.Code))
+	if err != nil {
+		panic(err)
+	}
 	log.Println("[DB] loading completed")
 }

@@ -27,6 +27,7 @@ function buildQuery(form) {
     else return '?' + query.substring(0, query.length - 1)
 }
 
+// 应用配置接口
 export const config = {
     getAll: () => {
         return get('/config/all')
@@ -38,6 +39,7 @@ export const config = {
     },
 }
 
+// 主机信息接口
 export const host = {
     add: form => {
         return post('/host/add', form)
@@ -51,9 +53,16 @@ export const host = {
     },
     getInfo: id => {
         return get('/host/' + id)
+    },
+    remove: id => {
+        return request({
+            url: '/host/' + id,
+            method: 'DELETE'
+        })
     }
 }
 
+// 主机文件接口
 export const file = {
     getHome: id => {
         return post('/file/home', {
@@ -88,4 +97,24 @@ export const file = {
     createDirectory: (id, serverPath) => {
         return post('/file/directory', { id, serverPath })
     },
+}
+
+// 命令接口
+export const code = {
+    add: form => {
+        return post('/code/add', form)
+    },
+    edit: (id, form) => {
+        return post('/code/' + id, form)
+    },
+    getList: form => {
+        let query = buildQuery(form)
+        return get('/code/list' + query)
+    },
+    remove: id => {
+        return request({
+            url: '/code/' + id,
+            method: 'DELETE'
+        })
+    }
 }

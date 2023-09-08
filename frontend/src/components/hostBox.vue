@@ -74,11 +74,14 @@ export default {
         getHostInfo() {
             host.getInfo(this.hostId).then(res => {
                 this.loading = false
-                this.$refs["terminal"+this.hostId].init(this.hostId)
                 if (res.state) {
+                    this.$refs["terminal" + this.hostId].init(this.hostId, res.data.platform, res.data.system)
                     this.lastUpdate = new Date().getTime()
                     this.info = res.data
-                } else this.initError()
+                } else {
+                    this.$refs["terminal" + this.hostId].init(this.hostId, null, null)
+                    this.initError()
+                }
             }).catch(err => {
                 console.log(err)
                 this.initError()

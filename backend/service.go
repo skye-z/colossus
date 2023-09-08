@@ -74,6 +74,19 @@ func register() *gin.Engine {
 	// 接口 创建目录
 	route.POST("/file/directory", fileService.CreateDirectory)
 
+	// 创建命令模型
+	codeModel := model.CodeModel{DB: engine}
+	// 创建命令服务
+	codeService := service.CodeService{CodeModel: codeModel}
+	// 接口 获取命令列表
+	route.GET("/code/list", codeService.GetList)
+	// 接口 添加命令
+	route.POST("/code/add", codeService.Add)
+	// 接口 编辑命令
+	route.POST("/code/:id", codeService.Edit)
+	// 接口 删除命令
+	route.DELETE("/code/:id", codeService.Del)
+
 	return route
 }
 

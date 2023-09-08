@@ -5,6 +5,7 @@ go 1.21
 require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/gorilla/websocket v1.5.0
+	github.com/mozillazg/go-pinyin v0.20.0
 	github.com/pkg/sftp v1.13.6
 	github.com/spf13/viper v1.16.0
 	github.com/wailsapp/wails/v2 v2.5.1

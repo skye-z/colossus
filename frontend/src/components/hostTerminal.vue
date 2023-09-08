@@ -5,13 +5,15 @@
             <div>未连接</div>
         </div>
         <div class="no-select pa-10 flex align-center">
-            <n-input v-model:value="fastCode" type="text" placeholder="查找快捷命令..." clearable>
+            <n-auto-complete v-model:value="search.input" :input-props="{ autocomplete: 'disabled' }"
+                @update:value="searchCode" @select="selectCode" :loading="search.loading" :options="search.options"
+                type="text" placeholder="查找快捷命令..." clear-after-select blur-after-select clearable>
                 <template #prefix>
                     <n-icon>
                         <Code16Filled />
                     </n-icon>
                 </template>
-            </n-input>
+            </n-auto-complete>
             <n-button strong secondary v-if="connect" type="error" class="ml-10" @click="close">断开连接</n-button>
             <n-button strong secondary v-else type="primary" class="ml-10" @click="init()">重新连接</n-button>
         </div>
@@ -25,7 +27,8 @@ import { Terminal } from "xterm";
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
 import { CanvasAddon } from 'xterm-addon-canvas';
-// import { WebglAddon } from 'xterm-addon-webgl';
+import { code } from "../plugins/api"
+import { Base64 } from 'js-base64'
 
 export default {
     name: "HostTerminal",
@@ -36,13 +39,22 @@ export default {
         socket: null,
         fitAddon: null,
         socketURI: 'ws://127.0.0.1:18703/ws',
-        fastCode: '',
-        connect: true
+        connect: true,
+        search: {
+            input: '',
+            timeout: 0,
+            loading: false,
+            options: []
+        },
+        platform: null,
+        system: null,
     }),
     methods: {
-        init(hostId) {
+        init(hostId,platform,system) {
             this.connect = true
             if (hostId) this.id = hostId
+            if (platform) this.platform = platform
+            if (system) this.system = system
             try {
                 let background = localStorage.getItem('terminal.background_color')
                 let foreground = localStorage.getItem('terminal.text_color')
@@ -56,12 +68,12 @@ export default {
                 })
                 // 加载插件
                 this.addPlugins();
-                // 打开Dom元素
-                setTimeout(()=>{
+                setTimeout(() => {
+                    // 打开Dom元素
                     this.term.open(this.$refs['xterm' + hostId])
-                },100)
-                // 自适应窗口大小
-                this.fitAddon.fit()
+                    // 自适应窗口大小
+                    this.fitAddon.fit()
+                }, 100)
                 // 创建连接
                 this.addSocket()
                 // 输入聚焦
@@ -129,6 +141,33 @@ export default {
             window.dispatchEvent(new CustomEvent("cache:connect", { detail: { id: this.id, connect: false } }))
             console.log('Terminal Close')
         },
+        searchCode(key) {
+            this.search.loading = true
+            clearTimeout(this.search.timeout)
+            this.search.timeout = setTimeout(() => {
+                code.getList({ keyword: key, platform: this.platform, system: this.system, page: 1, number: 10 }).then(res => {
+                    this.search.loading = false
+                    if (res.state) {
+                        let codes = []
+                        for (let i in res.data) {
+                            codes.push({
+                                label: res.data[i].name,
+                                value: res.data[i].content
+                            })
+                        }
+                        this.search.options = codes
+                    } else this.search.options = []
+                }).catch(err => {
+                    console.log(err)
+                    this.search.loading = false
+                    window.$message.warning('检索命令失败, 发生意料之外的错误')
+                })
+            }, 500)
+        },
+        selectCode(code) {
+            if (!code) return false
+            this.send(Base64.decode(code))
+        }
     }
 };
 </script>
