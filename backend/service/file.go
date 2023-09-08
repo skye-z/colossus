@@ -158,7 +158,7 @@ func (fs FileService) GetFileInfo(ctx *gin.Context) {
 		common.ReturnMessage(ctx, false, "目录地址不可用")
 		return
 	}
-	results := strings.Split(result, " ")
+	results := strings.Split(strings.TrimSpace(result), ",")
 
 	common.ReturnData(ctx, true, results)
 }

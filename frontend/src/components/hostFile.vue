@@ -140,6 +140,74 @@
                 </div>
             </n-card>
         </n-modal>
+        <n-drawer class="no-select no-drag" v-model:show="fileInfo.show" :width="350" placement="right">
+            <div class="tips" v-if="fileInfo.list.length == 0">文件详情</div>
+            <!-- 文件名 索引节号 文件大小 I/O块大小 文件占用的块数 块大小 硬链接数量 文件类型 所有者id 所有者 
+                用户组id 用户组 权限位 权限位和文件类型 主要设备类型 次要设备类型 最后访问时间 最后修改时间 最后更改时间 -->
+            <div v-else class="pa-10">
+                <div class="pa-10 line1">{{ fileInfo.list[0] }}</div>
+                <div class="flex align-center pa-10">
+                    <div class="info-label">索引</div>
+                    <div>{{ fileInfo.list[1] }}</div>
+                </div>
+                <div class="flex align-center pa-10">
+                    <div class="info-label">大小</div>
+                    <div>{{ fileInfo.list[2] }}</div>
+                </div>
+                <div class="flex align-center pa-10">
+                    <div class="info-label">存储块</div>
+                    <div>{{ fileInfo.list[3] }} KB ({{ fileInfo.list[4] }} x {{ fileInfo.list[5] }})</div>
+                </div>
+                <div class="flex align-center pa-10">
+                    <div class="info-label">挂载点</div>
+                    <div>{{ fileInfo.list[14] }}</div>
+                </div>
+                <div class="flex align-center pa-10">
+                    <div class="info-label">设备号</div>
+                    <div>{{ fileInfo.list[15] }} / 0x{{ fileInfo.list[16] }}</div>
+                </div>
+                <div class="flex align-center pa-10">
+                    <div class="info-label">硬链接</div>
+                    <div>{{ fileInfo.list[6] }} 个</div>
+                </div>
+                <!-- <div class="flex align-center pa-10">
+                    <div class="info-label">文件类型</div>
+                    <div>{{ fileInfo.list[7] }}</div>
+                </div> -->
+                <div class="flex align-center pa-10">
+                    <div class="info-label">所有者</div>
+                    <div>{{ fileInfo.list[9] }} / {{ fileInfo.list[8] }}</div>
+                </div>
+                <div class="flex align-center pa-10">
+                    <div class="info-label">用户组</div>
+                    <div>{{ fileInfo.list[11] }} / {{ fileInfo.list[10] }}</div>
+                </div>
+                <div class="flex align-center pa-10">
+                    <div class="info-label">权限</div>
+                    <div>{{ fileInfo.list[13] }} / {{ fileInfo.list[12] }}</div>
+                </div>
+                <div class="flex align-center pa-10">
+                    <div class="info-label">文件创建时间</div>
+                    <div v-if="fileInfo.list[17]"><n-time :time="fileInfo.list[17]" /></div>
+                    <div v-else>-</div>
+                </div>
+                <div class="flex align-center pa-10">
+                    <div class="info-label">最后访问时间</div>
+                    <div v-if="fileInfo.list[18]"><n-time :time="fileInfo.list[18]" /></div>
+                    <div v-else>-</div>
+                </div>
+                <div class="flex align-center pa-10">
+                    <div class="info-label">数据修改时间</div>
+                    <div v-if="fileInfo.list[19]"><n-time :time="fileInfo.list[19]" /></div>
+                    <div v-else>-</div>
+                </div>
+                <div class="flex align-center pa-10">
+                    <div class="info-label">状态更改时间</div>
+                    <div v-if="fileInfo.list[20]"><n-time :time="fileInfo.list[20]" /></div>
+                    <div v-else>-</div>
+                </div>
+            </div>
+        </n-drawer>
     </div>
 </template>
   
@@ -159,7 +227,10 @@ export default {
         edit: false,
         pathList: [],
         fileList: [],
-        fileInfo: {},
+        fileInfo: {
+            show: false,
+            list: []
+        },
         loading: true,
         columns: [
             {
@@ -222,7 +293,7 @@ export default {
         // 初始化文件管理器
         init(hostId) {
             if (this.id == 0) {
-                this.id = hostId
+                this.id = parseInt(hostId)
                 this.getHomePath()
             }
         },
@@ -281,9 +352,19 @@ export default {
         },
         // 获取文件详情
         getFileInfo(path) {
+            this.fileInfo = {
+                show: true,
+                list: []
+            }
             file.getInfo(this.id, path).then(res => {
                 if (res.state) {
-                    console.log(res)
+                    if (res.data[0]) res.data[0] = res.data[0].substring(res.data[0].lastIndexOf('/')+1)
+                    if (res.data[2]) res.data[2] = util.bytes2Size(parseInt(res.data[2]))
+                    if (res.data[17]) res.data[17] = parseInt(res.data[17]+'000')
+                    if (res.data[18]) res.data[18] = parseInt(res.data[18]+'000')
+                    if (res.data[19]) res.data[19] = parseInt(res.data[19]+'000')
+                    if (res.data[20]) res.data[20] = parseInt(res.data[20]+'000')
+                    this.fileInfo.list = res.data
                 } else {
                     window.$message.warning(res.message)
                 }
@@ -517,7 +598,7 @@ export default {
             }
         },
         // 提交创建目录请求
-        submitDirectory(){
+        submitDirectory() {
             if (this.directory.name.indexOf('/') == 0) {
                 window.$message.warning('不允许使用斜杠开头')
                 return false
@@ -569,5 +650,19 @@ export default {
     text-align: right;
     min-width: 45px;
     width: 45px;
+}
+
+.tips {
+    color: rgba(255, 255, 255, .2);
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+.info-label {
+    width: 100px;
 }
 </style>
