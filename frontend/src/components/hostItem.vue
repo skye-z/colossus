@@ -53,7 +53,7 @@ export default {
             this.$emit('editHost', this.info)
         },
         removeHost() {
-
+            this.$emit('removeHost', this.info)
         }
     }
 };

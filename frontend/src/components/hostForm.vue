@@ -298,6 +298,7 @@ export default {
       this.rules = rules;
       if (old) {
         if (old.period) old.period = parseInt(old.period);
+        if (old.cert) old.cert = ""+old.cert;
         for (let key in old) {
           if (typeof old[key] == "string" && old[key] != "") this.form[key] = old[key];
           else if (typeof old[key] == "number") this.form[key] = old[key];

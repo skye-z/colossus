@@ -10,7 +10,7 @@
         </div>
         <n-scrollbar v-else>
             <div id="host-list" class="pl-10 pt-10 no-select">
-                <host-item v-for="item in list" :info="item" @edit-host="editHost" />
+                <host-item v-for="item in list" :info="item" @edit-host="editHost" @remove-host="removeHost" />
             </div>
         </n-scrollbar>
     </div>
@@ -69,6 +69,29 @@ export default {
         },
         editHost(info) {
             this.$refs.form.open('edit', info)
+        },
+        removeHost(info){
+            window.$dialog.warning({
+                title: "删除主机",
+                content: "你正在尝试删除‘" + info.name + "’主机, 此项操作不可逆, 确认要删除吗?",
+                negativeText: '确认删除',
+                positiveText: '取消',
+                onNegativeClick: () => {
+                    host.remove(info.id).then(res => {
+                        if (res.state) {
+                            window.$message.success("删除成功");
+                            this.refresh()
+                        } else {
+                            window.$message.warning(
+                                res.message ? res.message : "删除失败, 发生意料之外的错误"
+                            );
+                        }
+                    }).catch(err => {
+                        console.log(err)
+                        window.$message.warning("主机删除失败, 发生意料之外的错误");
+                    })
+                }
+            });
         },
         buildPeriod(now, period) {
             let oneDay = 1000 * 60 * 60 * 24
