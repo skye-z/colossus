@@ -7,7 +7,7 @@
             <div class="no-select" style="overflow: hidden;">
                 <div id="host-head" class="border-bottom">
                     <div class="flex align-center">
-                        <div class="host-name mr-10">{{ info.name }}{{ hostId }}</div>
+                        <div class="host-name mr-10">{{ info.name }}</div>
                         <n-tag size="small" class="mr-5" :bordered="false" type="info" v-if="info.platform">{{ info.platform
                         }}</n-tag>
                         <n-tag size="small" class="mr-5" :bordered="false" type="success" v-if="info.system">{{ info.system
