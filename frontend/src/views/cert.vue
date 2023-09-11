@@ -25,7 +25,7 @@
                         }}</n-tag>
                     </div>
                     <div class="cert-tool flex align-center justify-center">
-                        <n-button class="mr-5" size="small" type="primary" @click="copyCert(item)">
+                        <n-button class="mr-5" size="small" type="primary" @click="copyCert(item)" v-if="item.publicKey">
                             <template #icon>
                                 <n-icon size="20">
                                     <Copy16Regular />
@@ -157,10 +157,8 @@ export default {
             });
         },
         copyCert(item) {
-            let content = item.privateKey
-            if (item.publicKey) content += item.publicKey
-            this.$goSetClipboard(content)
-            window.$message.success('凭证已复制到剪切板')
+            this.$goSetClipboard(item.publicKey)
+            window.$message.success('凭证公钥已复制到剪切板')
         },
         refresh() {
             this.getCertList()

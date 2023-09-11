@@ -25,7 +25,7 @@
           <n-select v-model:value="form.type" placeholder="请选择" :options="options.type" style="width: 80px" />
           <n-select v-model:value="form.level" placeholder="请选择" :options="options.level" class="ml-10"
             style="width: 80px" />
-          <n-button class="ml-10" :disabled="form.type != 'RSA'" @click="getKey">生成</n-button>
+          <n-button class="ml-10" :disabled="form.type != 'RSA'" @click="getKey" v-if="!form.edit">生成</n-button>
         </n-form-item>
         <n-form-item label="公钥" path="publicKey">
           <n-input v-model:value="form.publicKey" :rows="4" type="textarea" placeholder="请输入公钥" />
@@ -174,8 +174,8 @@ export default {
             window.$message.success("生成成功");
             this.form.type = res.data.type
             this.form.level = res.data.level
-            this.form.publicKey = res.data.publicKey
-            this.form.privateKey = res.data.privateKey
+            this.form.publicKey = res.data.publicKey.trim()
+            this.form.privateKey = res.data.privateKey.trim()
           } else {
             window.$message.warning(
               res.message ? res.message : "生成失败, 发生意料之外的错误"
