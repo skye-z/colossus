@@ -85,6 +85,25 @@ func (s *SocketService) Run(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusNotFound)
 		return
 	}
+	var secret string
+	// 判断是否使用证书登录
+	var certPrivateKey string
+	if host.AuthType == service.AUTH_TYPE_CERTIFICATE {
+		certModel := model.CertModel{DB: s.DB}
+		cert := &model.Cert{
+			Id: host.Cert,
+		}
+		certModel.GetItem(cert)
+		certPrivateKey = cert.PrivateKey
+		secret = cert.Passphrase
+		if len(certPrivateKey) == 0 {
+			ctx.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+	} else {
+		secret = host.Secret
+	}
+
 	// 升级连接
 	upgrade, err := upgrader.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
@@ -98,7 +117,8 @@ func (s *SocketService) Run(ctx *gin.Context) {
 		Port:     host.Port,
 		AuthType: host.AuthType,
 		User:     host.User,
-		Secret:   host.Secret,
+		Key:      certPrivateKey,
+		Secret:   secret,
 	}
 	// 创建客户端
 	client, err2 := config.CreateClient()
