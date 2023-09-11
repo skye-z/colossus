@@ -31,8 +31,14 @@ func (s *SSHService) CreateClient() (*ssh.Client, error) {
 		// 使用密码授权登录
 		auth = []ssh.AuthMethod{ssh.Password(s.Secret)}
 	} else if s.AuthType == AUTH_TYPE_CERTIFICATE {
+		var err error
+		var signer ssh.Signer
+		if len(s.Secret) == 0 {
+			signer, err = ssh.ParsePrivateKey([]byte(s.Key))
+		} else {
+			signer, err = ssh.ParsePrivateKeyWithPassphrase([]byte(s.Key), []byte(s.Secret))
+		}
 		// 使用证书授权登录
-		signer, err := ssh.ParsePrivateKeyWithPassphrase([]byte(s.Key), []byte(s.Secret))
 		if err != nil {
 			log.Fatalln("证书无效")
 			return nil, err

@@ -25,7 +25,7 @@ func (hs HostService) Add(ctx *gin.Context) {
 	if !check(ctx, form) {
 		return
 	}
-	if form.AuthType == "cert" && len(form.Cert) == 0 {
+	if form.AuthType == "cert" && form.Cert == 0 {
 		common.ReturnMessage(ctx, false, "证书私钥不能为空")
 		return
 	}
@@ -75,7 +75,7 @@ func (hs HostService) Edit(ctx *gin.Context) {
 	form.AuthType = cache.AuthType
 	form.User = cache.User
 	// 判断证书是否需要更新
-	if len(cache.Cert) > 0 && cache.Cert != form.Cert {
+	if cache.Cert == 0 && cache.Cert != form.Cert {
 		form.Cert = cache.Cert
 	}
 	// 判断密码是否需要更新

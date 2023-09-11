@@ -8,6 +8,7 @@ import (
 	"github.com/skye-z/colossus/backend/service"
 )
 
+// 启动服务
 func Start() (ok bool) {
 	// 关闭调试
 	gin.SetMode(gin.ReleaseMode)
@@ -18,6 +19,7 @@ func Start() (ok bool) {
 	return true
 }
 
+// 注册路由
 func register() *gin.Engine {
 	// 获取数据库引擎
 	engine := GetDBEngine()
@@ -87,9 +89,27 @@ func register() *gin.Engine {
 	// 接口 删除命令
 	route.DELETE("/code/:id", codeService.Del)
 
+	// 创建凭证模型
+	certModel := model.CertModel{DB: engine}
+	// 创建凭证服务
+	certService := service.CertService{CertModel: certModel}
+	// 接口 获取凭证列表
+	route.GET("/cert/list", certService.GetList)
+	// 接口 获取简单凭证列表
+	route.GET("/cert/list/small", certService.GetList)
+	// 接口 获取初始化数据
+	route.GET("/cert/add", certService.InitAdd)
+	// 接口 添加凭证
+	route.POST("/cert/add", certService.Add)
+	// 接口 编辑凭证
+	route.POST("/cert/:id", certService.Edit)
+	// 接口 删除凭证
+	route.DELETE("/cert/:id", certService.Del)
+
 	return route
 }
 
+// 配置跨域
 func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		origin := c.Request.Header.Get("Origin")

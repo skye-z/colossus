@@ -33,7 +33,7 @@ type Host struct {
 	// 登录用户
 	User string `json:"user"`
 	// 证书
-	Cert string `json:"-"`
+	Cert int64 `json:"cert"`
 	// 密钥
 	Secret string `json:"-"`
 }
@@ -64,7 +64,7 @@ type AddHost struct {
 	// 登录用户
 	User string `json:"user"`
 	// 证书
-	Cert string `json:"cert"`
+	Cert int64 `json:"cert"`
 	// 密钥
 	Secret string `json:"secret"`
 }
