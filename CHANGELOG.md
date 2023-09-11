@@ -6,17 +6,16 @@
 
 > 重大更新: 加入证书登录、主机工具链、更新检测
 
-* [ ] Added 证书管理
+* [x] Added 证书管理
 * [ ] Added 证书登陆主机
 * [ ] Added 主机工具
 * [ ] Added 版本检查
 * [ ] Added 在线更新
 
-## v0.0.1-alpha4 - Unreleased
+## v0.0.1-alpha4 - 2023-09-08
 
 > 重大更新: 加入快捷指令
 
-* [ ] Added 快捷指令导入
 * [x] Added 快捷指令新增
 * [x] Added 快捷指令编辑
 * [x] Added 快捷指令删除

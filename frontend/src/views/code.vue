@@ -6,7 +6,7 @@
         <div class="border-bottom flex align-center justify-between pa-10 no-select">
             <div class="code-title">快捷命令</div>
             <n-button-group>
-                <n-button>导入</n-button>
+                <n-button @click="getCodeList">刷新</n-button>
                 <n-button @click="addCode">创建</n-button>
             </n-button-group>
         </div>

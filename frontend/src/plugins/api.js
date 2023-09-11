@@ -118,3 +118,26 @@ export const code = {
         })
     }
 }
+
+// 凭证接口
+export const cert = {
+    initAdd: level => {
+        return get('/cert/add?level=' + level)
+    },
+    add: form => {
+        return post('/cert/add', form)
+    },
+    edit: (id, form) => {
+        return post('/cert/' + id, form)
+    },
+    getList: form => {
+        let query = buildQuery(form)
+        return get('/cert/list' + query)
+    },
+    remove: id => {
+        return request({
+            url: '/cert/' + id,
+            method: 'DELETE'
+        })
+    }
+}
