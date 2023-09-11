@@ -2,12 +2,16 @@
 
 本项目的所有变更都将记录在此文件中, 书写规范请参照[保留变更日志](https://keepachangelog.com/zh-CN/1.0.0/).
 
+## v0.0.1-beta1 - Unreleased
+
+* [ ] Added ED25519证书支持
+
 ## v0.0.1-alpha5 - Unreleased
 
 > 重大更新: 加入证书登录、主机工具链、更新检测
 
 * [x] Added 证书管理
-* [ ] Added 证书登陆主机
+* [x] Added 证书登陆主机
 * [ ] Added 主机工具
 * [ ] Added 版本检查
 * [ ] Added 在线更新

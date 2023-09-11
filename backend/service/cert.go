@@ -40,22 +40,8 @@ func (cs CertService) GetList(ctx *gin.Context) {
 }
 
 // 获取凭证列表
-func (cs CertService) GetIdList(ctx *gin.Context) {
-	page := ctx.Query("page")
-	iPage, err1 := strconv.Atoi(page)
-	num := ctx.Query("number")
-	iNum, err2 := strconv.Atoi(num)
-	if err1 != nil || err2 != nil {
-		common.ReturnError(ctx, common.Errors.ParamIllegalError)
-		return
-	}
-	if iNum == 0 {
-		iNum = 20
-	}
-
-	keyword := ctx.Query("keyword")
-
-	list, err := cs.CertModel.GetList(keyword, iPage, iNum)
+func (cs CertService) GetAllList(ctx *gin.Context) {
+	list, err := cs.CertModel.GetList("", 1, 1000)
 	if err != nil {
 		log.Println(err)
 		common.ReturnError(ctx, common.Errors.UnexpectedError)

@@ -5,7 +5,10 @@
         </div>
         <host-search @btn-search="search" @btn-add="addHost" />
         <host-form ref="form" @update="refresh" />
-        <n-scrollbar>
+        <div v-if="list.length == 0" class="null no-select flex align-center justify-center">
+            <div>无可用主机</div>
+        </div>
+        <n-scrollbar v-else>
             <div id="host-list" class="pl-10 pt-10 no-select">
                 <host-item v-for="item in list" :info="item" @edit-host="editHost" />
             </div>
@@ -106,10 +109,27 @@ export default {
 };
 </script>
 <style scoped>
+#app-home{
+    position: relative;
+}
+
 #app-home:deep(.n-scrollbar) {
     max-height: calc(100vh - 77px) !important;
     height: calc(100vh - 77px) !important;
     --wails-draggable: no-drag;
+}
+
+.null {
+    color: rgba(255, 255, 255, .2);
+    height: calc(100vh - 75px);
+    position: absolute;
+    font-weight: bold;
+    font-size: 42px;
+    cursor: default;
+    width: 100%;
+    z-index: 3;
+    top: 75px;
+    left: 0;
 }
 
 .loading {

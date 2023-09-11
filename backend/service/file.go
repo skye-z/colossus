@@ -341,13 +341,34 @@ func (fs FileService) getSFTP(hostId int64, ctx *gin.Context) *SFTPService {
 		common.ReturnMessage(ctx, false, "主机不存在")
 		return nil
 	}
+
+	var secret string
+	// 判断是否使用证书登录
+	var certPrivateKey string
+	if host.AuthType == AUTH_TYPE_CERTIFICATE {
+		certModel := model.CertModel{DB: fs.HostModel.DB}
+		cert := &model.Cert{
+			Id: host.Cert,
+		}
+		certModel.GetItem(cert)
+		certPrivateKey = cert.PrivateKey
+		secret = cert.Passphrase
+		if len(certPrivateKey) == 0 {
+			common.ReturnMessage(ctx, false, "凭证无效")
+			return nil
+		}
+	} else {
+		secret = host.Secret
+	}
+
 	// 组装SSH连接配置
 	sshConfig := SSHService{
 		Address:  host.Address,
 		Port:     host.Port,
 		AuthType: host.AuthType,
 		User:     host.User,
-		Secret:   host.Secret,
+		Key:      certPrivateKey,
+		Secret:   secret,
 	}
 	// 创建SSH客户端
 	sshClient, err := sshConfig.CreateClient()

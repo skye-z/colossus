@@ -4,7 +4,7 @@
             <n-spin size="small" />
         </div>
         <div v-if="show">
-            <div class="no-select">
+            <div class="no-select" style="overflow: hidden;">
                 <div id="host-head" class="border-bottom">
                     <div class="flex align-center">
                         <div class="host-name mr-10">{{ info.name }}{{ hostId }}</div>

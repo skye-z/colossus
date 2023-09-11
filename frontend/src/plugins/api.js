@@ -134,6 +134,9 @@ export const cert = {
         let query = buildQuery(form)
         return get('/cert/list' + query)
     },
+    getAllList: () => {
+        return get('/cert/list/all')
+    },
     remove: id => {
         return request({
             url: '/cert/' + id,

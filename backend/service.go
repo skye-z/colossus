@@ -96,7 +96,7 @@ func register() *gin.Engine {
 	// 接口 获取凭证列表
 	route.GET("/cert/list", certService.GetList)
 	// 接口 获取简单凭证列表
-	route.GET("/cert/list/small", certService.GetList)
+	route.GET("/cert/list/all", certService.GetAllList)
 	// 接口 获取初始化数据
 	route.GET("/cert/add", certService.InitAdd)
 	// 接口 添加凭证

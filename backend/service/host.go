@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -126,6 +127,7 @@ func (hs HostService) GetList(ctx *gin.Context) {
 
 	list, err1 := hs.HostModel.GetList(keyword, platform, system, region, usage, period, iPage, iNum)
 	if err1 != nil {
+		log.Panic(err1)
 		common.ReturnError(ctx, common.Errors.UnexpectedError)
 		return
 	}
