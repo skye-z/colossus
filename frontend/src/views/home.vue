@@ -21,10 +21,11 @@ import HostSearch from '../components/hostSearch.vue'
 import HostForm from '../components/hostForm.vue'
 import HostItem from '../components/hostItem.vue'
 import { host } from '../plugins/api'
+import util from "../plugins/util"
 
 export default {
     name: "Home",
-    components: { HostSearch, HostItem },
+    components: { HostSearch, HostForm, HostItem },
     data: () => ({
         loading: true,
         now: null,
@@ -48,7 +49,7 @@ export default {
                     setTimeout(() => {
                         for (let i in res.data) {
                             if(res.data[i].period)
-                                res.data[i].periodTxt = this.buildPeriod(now, res.data[i].period)
+                                res.data[i].periodTxt = util.buildPeriod(now, res.data[i].period)
                             else res.data[i].period = null
                         }
                         this.list = res.data
@@ -92,38 +93,6 @@ export default {
                     })
                 }
             });
-        },
-        buildPeriod(now, period) {
-            let oneDay = 1000 * 60 * 60 * 24
-            let offset = parseInt(period) - now
-            if (offset <= 0) return '已过期'
-            else {
-                let txt = ''
-                let num = 0
-                if (offset >= (oneDay * 365)) {
-                    txt += (offset / (oneDay * 365)).toFixed(0) + '年'
-                    offset = offset % (oneDay * 365)
-                    num++
-                }
-                if (offset >= (oneDay * 30)) {
-                    txt += (offset / (oneDay * 30)).toFixed(0) + '月'
-                    offset = offset % (oneDay * 30)
-                    num++
-                }
-                if (num == 2) return txt
-                if (offset >= (oneDay * 7)) {
-                    txt += (offset / (oneDay * 7)).toFixed(0) + '周'
-                    offset = offset % (oneDay * 7)
-                    num++
-                }
-                if (num == 2) return txt
-                if (offset >= oneDay) {
-                    txt += (offset / oneDay).toFixed(0) + '天'
-                    offset = offset % oneDay
-                    num++
-                }
-                return txt
-            }
         }
     },
     mounted() {

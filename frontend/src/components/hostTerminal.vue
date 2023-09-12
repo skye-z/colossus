@@ -87,8 +87,6 @@ export default {
         addPlugins() {
             // 加载Canvas渲染
             this.term.loadAddon(new CanvasAddon())
-            // 加载WebGL渲染 (卡顿暂时屏蔽)
-            // this.term.loadAddon(new WebglAddon())
             // 加载窗口自适应插件
             this.fitAddon = new FitAddon()
             this.term.loadAddon(this.fitAddon)
@@ -137,7 +135,6 @@ export default {
                 console.log(err)
             }
             document.getElementById('xterm' + this.id).innerHTML = "";
-            // document.getElementsByClassName("xterm")[0].innerHTML = "";
             window.dispatchEvent(new CustomEvent("cache:connect", { detail: { id: this.id, connect: false } }))
             console.log('Terminal Close')
         },

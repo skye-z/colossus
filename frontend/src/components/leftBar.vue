@@ -63,6 +63,11 @@ export default {
     }),
     methods: {
         init() {
+            this.initHistory()
+            this.initHistoryEvent();
+            this.initConnectEvent();
+        },
+        initHistory(){
             let cache = localStorage.getItem('cache:history')
             if (cache == undefined || cache == '') localStorage.setItem('cache:history', "[]")
             else {
@@ -70,7 +75,8 @@ export default {
                 for (let i in list) list[i].connect = false
                 this.connect = list
             }
-
+        },
+        initHistoryEvent(){
             window.addEventListener("cache:history", ({ detail }) => {
                 let cache = localStorage.getItem('cache:history')
                 if (cache == undefined || cache == '') cache = []
@@ -94,6 +100,8 @@ export default {
                 this.connect = connect;
                 localStorage.setItem('cache:history', JSON.stringify(cache))
             })
+        },
+        initConnectEvent(){
             window.addEventListener("cache:connect", ({ detail }) => {
                 for (let i in this.connect) {
                     if (this.connect[i].id == detail.id) {

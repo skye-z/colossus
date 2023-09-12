@@ -15,7 +15,7 @@
       <n-form ref="formRef" class="pa-20 pb-0" :model="form" :rules="rules" :disabled="loading" label-placement="left"
         label-width="auto" require-mark-placement="right-hanging">
         <n-form-item v-if="form.edit" label="编号" path="id">
-          <n-input v-model:value="form.id" disabled style="width: 110px"/>
+          <n-input v-model:value="form.id" disabled style="width: 110px" />
         </n-form-item>
         <n-form-item label="命令名" path="name">
           <n-input v-model:value="form.name" placeholder="便于记忆与识别的命令名称" />
@@ -48,6 +48,7 @@
 import { CloseRound } from "@vicons/material";
 import { code } from "../plugins/api";
 import { Base64 } from 'js-base64';
+import options from "../plugins/options"
 
 export default {
   name: "CodeForm",
@@ -63,91 +64,7 @@ export default {
       system: null,
       content: null,
     },
-    options: {
-      platform: [
-        {
-          label: "Linux",
-          value: "Linux",
-        },
-        {
-          label: "MacOS",
-          value: "MacOS",
-        },
-        {
-          label: "Windows",
-          value: "Windows",
-        },
-      ],
-      system: [
-        {
-          label: "RedHat",
-          value: "RedHat",
-        },
-        {
-          label: "Ubuntu",
-          value: "Ubuntu",
-        },
-        {
-          label: "CentOS",
-          value: "CentOS",
-        },
-        {
-          label: "Debian",
-          value: "Debian",
-        },
-        {
-          label: "Oracle",
-          value: "Oracle",
-        },
-        {
-          label: "SUSE",
-          value: "SUSE",
-        },
-        {
-          label: "Fedora",
-          value: "Fedora",
-        },
-        {
-          label: "Arch",
-          value: "Arch",
-        },
-        ,
-        {
-          label: "FreeBSD",
-          value: "FreeBSD",
-        },
-      ],
-      region: [
-        {
-          label: "内网",
-          value: "内网",
-        },
-        {
-          label: "亚洲",
-          value: "亚洲",
-        },
-        {
-          label: "欧洲",
-          value: "欧洲",
-        },
-        {
-          label: "北美洲",
-          value: "北美洲",
-        },
-        {
-          label: "南美洲",
-          value: "南美洲",
-        },
-        {
-          label: "大洋洲",
-          value: "大洋洲",
-        },
-        {
-          label: "非洲",
-          value: "非洲",
-        },
-      ],
-    },
+    options: {},
     rules: {
       name: {
         required: true,
@@ -171,7 +88,7 @@ export default {
     open(type, old) {
       this.form.show = true;
       this.form.edit = type == "edit";
-      
+
       for (let key in old) {
         if (typeof old[key] == "string" && old[key] != "") this.form[key] = old[key];
         else if (typeof old[key] == "number") this.form[key] = old[key];
@@ -247,6 +164,9 @@ export default {
         });
     },
   },
+  mounted() {
+    this.options = options(["platform", "system", "region"])
+  }
 };
 </script>
 <style scoped>

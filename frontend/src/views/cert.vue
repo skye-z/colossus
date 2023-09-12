@@ -56,7 +56,8 @@
 <script>
 import { Copy16Regular, CalendarEdit16Regular, Delete16Regular } from '@vicons/fluent'
 import CertForm from '../components/certForm.vue'
-import { cert } from "../plugins/api";
+import { cert } from "../plugins/api"
+import util from "../plugins/util"
 
 export default {
     name: "Cert",
@@ -76,7 +77,7 @@ export default {
                     setTimeout(() => {
                         for (let i in res.data) {
                             if (res.data[i].period)
-                                res.data[i].periodTxt = this.buildPeriod(now, res.data[i].period)
+                                res.data[i].periodTxt = util.buildPeriod(now, res.data[i].period)
                             else {
                                 res.data[i].periodTxt = "长期"
                                 res.data[i].period = null
@@ -94,38 +95,6 @@ export default {
                 this.loading = false
                 window.$message.warning('获取命令列表失败, 发生意料之外的错误')
             })
-        },
-        buildPeriod(now, period) {
-            let oneDay = 1000 * 60 * 60 * 24
-            let offset = parseInt(period) - now
-            if (offset <= 0) return '已过期'
-            else {
-                let txt = ''
-                let num = 0
-                if (offset >= (oneDay * 365)) {
-                    txt += (offset / (oneDay * 365)).toFixed(0) + '年'
-                    offset = offset % (oneDay * 365)
-                    num++
-                }
-                if (offset >= (oneDay * 30)) {
-                    txt += (offset / (oneDay * 30)).toFixed(0) + '月'
-                    offset = offset % (oneDay * 30)
-                    num++
-                }
-                if (num == 2) return txt
-                if (offset >= (oneDay * 7)) {
-                    txt += (offset / (oneDay * 7)).toFixed(0) + '周'
-                    offset = offset % (oneDay * 7)
-                    num++
-                }
-                if (num == 2) return txt
-                if (offset >= oneDay) {
-                    txt += (offset / oneDay).toFixed(0) + '天'
-                    offset = offset % oneDay
-                    num++
-                }
-                return txt
-            }
         },
         addCert() {
             this.$refs.form.open('add', undefined)

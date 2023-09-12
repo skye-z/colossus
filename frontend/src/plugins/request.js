@@ -10,7 +10,7 @@ request.interceptors.response.use(
         return response.data
     }, () => {
         window.$message.error('网络异常')
-        throw "网络异常";
+        throw new Error("网络异常");
     }
 )
 
