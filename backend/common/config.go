@@ -6,11 +6,20 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/spf13/viper"
 )
 
-func InitConfig() {
+var (
+	VersionCode   = ""
+	VersionStage  = ""
+	VersionNumber = ""
+)
+
+func InitConfig(versionData []byte) {
+	initVersion(versionData)
+
 	// 获取用户配置文件目录
 	configDir, _ := os.UserConfigDir()
 	configDir = fmt.Sprintf("%s/Colossus", configDir)
@@ -32,6 +41,14 @@ func InitConfig() {
 			fmt.Println(err)
 		}
 	}
+}
+
+func initVersion(versionData []byte) {
+	versionText := string(versionData)
+	versionList := strings.Split(versionText, " ")
+	VersionCode = versionList[0]
+	VersionStage = versionList[1]
+	VersionNumber = versionList[2]
 }
 
 func Set(key string, value interface{}) {
@@ -67,12 +84,6 @@ func GetInt(key string) int {
 func GetInt32(key string) int32 {
 	return viper.GetInt32(key)
 }
-
-const (
-	VersionCode   = "0.0.1"
-	VersionStage  = "alpha"
-	VersionNumber = "4"
-)
 
 func createDefault() {
 	// 终端背景颜色

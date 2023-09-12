@@ -21,6 +21,9 @@ var assets embed.FS
 //go:embed build/appicon.png
 var icon []byte
 
+//go:embed VERSION
+var version []byte
+
 func main() {
 	// 加载日志文件地址
 	cacheDir, _ := os.UserCacheDir()
@@ -28,7 +31,7 @@ func main() {
 	fmt.Println("Log path: " + logPath)
 	fileLogger := NewFileLogger(logPath)
 	// 初始化配置文件
-	common.InitConfig()
+	common.InitConfig(version)
 	// 创建应用程序实例
 	app := NewApp()
 	// 分平台加载配置
