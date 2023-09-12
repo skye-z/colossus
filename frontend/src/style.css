@@ -1,5 +1,5 @@
 html {
-    font-family: v-sans, v-mono;
+    font-family: v-sans, v-mono, sans-serif;
     --wails-draggable: drag;
     color: #f4f4f4;
     font-size: 14px;

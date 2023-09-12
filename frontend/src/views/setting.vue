@@ -75,7 +75,7 @@
       <div>
         <div class="card setting-info">
           <div class="text-center">
-            <img class="info-logo" src="../assets/logo.png" />
+            <img class="info-logo" src="../assets/logo.png" alt="logo" />
             <div class="info-name">Colossus</div>
             <div class="border-bottom pa-10 pt-0">
               Version {{ version.code }} {{ version.stage }} {{ version.number }}
