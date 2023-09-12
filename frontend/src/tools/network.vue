@@ -9,7 +9,7 @@
                         </n-icon>
                     </template>
                 </n-button>
-                <n-card style="width: 100vw;height: calc(100vh - 2px);" header-style="text-align: center" title="网络连接"
+                <n-card style="width: 100vw;height: calc(100vh - 2px);" header-style="text-align: center" :title="'网络连接 ('+result.length+')'"
                     :bordered="false" size="small" role="dialog" aria-modal="true">
                     <n-data-table size="small" max-height="calc(100vh - 105px)" :loading="loading" virtual-scroll
                         :columns="columns" :data="result" :bordered="false" />
@@ -175,7 +175,36 @@ export default {
             else return text.toUpperCase()
         },
         showProcess(row) {
-            console.log(row)
+            let cache = row.process
+            if (cache.indexOf('users:((') != 0) {
+                window.$dialog.warning({
+                    title: "网络进程",
+                    content: "进程信息(“" + row.process + "”)无法解析",
+                    positiveText: '关闭'
+                });
+            } else {
+                let text = ""
+                let number = 0
+                cache = cache.substring(9, cache.length - 2)
+                if (cache.indexOf('),("') == -1) {
+                    text += "\nPID-" + cache.substring(cache.indexOf('pid=') + 4, cache.lastIndexOf(','))
+                    text += "\t\t\t" + cache.substring(0, cache.indexOf('"'))
+                    number = 1
+                } else {
+                    cache = cache.split('),("')
+                    number = cache.length
+                    for (let i in cache) {
+                        text += "\nPID-" + cache[i].substring(cache[i].indexOf('pid=') + 4, cache[i].lastIndexOf(','))
+                        text += "\t\t\t" + cache[i].substring(0, cache[i].indexOf('"'))
+                    }
+                }
+                window.$dialog.warning({
+                    title: "网络进程",
+                    content: "检测到 " + number + " 个关联进程" + text,
+                    style: "white-space: pre-wrap",
+                    positiveText: '关闭'
+                });
+            }
         }
     }
 };
