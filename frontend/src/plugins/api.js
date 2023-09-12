@@ -148,9 +148,31 @@ export const cert = {
 // 凭证接口
 export const github = {
     getVersion: () => {
-        return get('https://raw.githubusercontent.com/skye-z/colossus/main/VERSION')
+        return request({
+            url: 'https://raw.githubusercontent.com/skye-z/colossus/main/VERSION',
+            timeout: 50000,
+            method: 'GET'
+        })
     },
     getChangeLog: () => {
-        return get('https://raw.githubusercontent.com/skye-z/colossus/main/CHANGELOG.md')
+        return request({
+            url: 'https://raw.githubusercontent.com/skye-z/colossus/main/CHANGELOG.md',
+            timeout: 50000,
+            method: 'GET'
+        })
+    },
+    getProxyVersion: () => {
+        return request({
+            url: 'https://ghproxy.com/https://raw.githubusercontent.com/skye-z/colossus/main/VERSION',
+            timeout: 50000,
+            method: 'GET'
+        })
+    },
+    getProxyChangeLog: () => {
+        return request({
+            url: 'https://ghproxy.com/https://raw.githubusercontent.com/skye-z/colossus/main/CHANGELOG.md',
+            timeout: 50000,
+            method: 'GET'
+        })
     },
 }

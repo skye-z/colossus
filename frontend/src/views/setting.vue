@@ -47,9 +47,10 @@
             <div class="text-small text-gray ml-10">开启后默认显示隐藏文件</div>
           </div>
         </div>
-        <div class="card mb-10">
-          <n-scrollbar style="max-height: calc(100vh - 385px)">
-            <div class="pa-10" v-html="changeLog"></div>
+        <div class="card" v-if="changeLog">
+          <div class="pa-10 border-bottom">更新记录</div>
+          <n-scrollbar style="max-height: calc(100vh - 430px)">
+            <div class="change-log" v-html="changeLog"></div>
           </n-scrollbar>
         </div>
       </div>
@@ -241,48 +242,54 @@ export default {
     },
     checkUpdate() {
       this.checking = true
-      github.getVersion().then((res) => {
-        if (res) {
-          setTimeout(() => {
-            let versionList = res.split(" ");
-            let versionMap = {
-              code: versionList[0],
-              stage: versionList[1],
-              number: versionList[2],
-            }
-            if (versionMap.code != this.version.code || versionMap.stage != this.version.stage || versionMap.number != this.version.number) {
-              window.$dialog.success({
-                title: "新版本可用",
-                content: "检测到存在新的版本(v" + versionMap.code + " " + versionMap.stage + " " + versionMap.number + "), 点击确认前往下载.",
-                negativeText: '确认',
-                positiveText: '取消',
-                onNegativeClick: () => {
-
-                }
-              });
-            } else window.$message.success("当前已是最新版本");
-            this.checking = false
-          }, 500)
-        } else {
+      github.getVersion().then((res) => this.checkUpdateSuccess(res)).catch(() => {
+        github.getProxyVersion().then((res) => this.checkUpdateSuccess(res)).catch(() => {
           this.checking = false
           window.$message.warning("获取最新版本号失败");
-        }
-      }).catch(() => {
-        this.checking = false
-        window.$message.warning("获取最新版本号失败");
+        });
       });
     },
+    checkUpdateSuccess(res) {
+      if (res) {
+        setTimeout(() => {
+          let versionList = res.split(" ");
+          let versionMap = {
+            code: versionList[0],
+            stage: versionList[1],
+            number: versionList[2],
+          }
+          if (versionMap.code != this.version.code || versionMap.stage != this.version.stage || versionMap.number != this.version.number) {
+            window.$dialog.success({
+              title: "新版本可用",
+              content: "检测到存在新的版本(v" + versionMap.code + " " + versionMap.stage + " " + versionMap.number + "), 点击确认前往下载.",
+              negativeText: '确认',
+              positiveText: '取消',
+              onNegativeClick: () => {
+                this.$goBrowserOpenURL("https://github.com/skye-z/colossus/releases")
+              }
+            });
+          } else window.$message.success("当前已是最新版本");
+          this.checking = false
+        }, 500)
+      } else {
+        this.checking = false
+        window.$message.warning("获取最新版本号失败");
+      }
+    },
     getChangeLog() {
-      github.getChangeLog().then((res) => {
-        if (res) {
-          const md = new MarkdownIt();
-          this.changeLog = md.render(res)
-        } else {
+      github.getChangeLog().then((res) => this.getChangeLogSuccess(res)).catch(() => {
+        github.getProxyChangeLog().then((res) => this.getChangeLogSuccess(res)).catch(() => {
           window.$message.warning("获取更新记录失败");
-        }
-      }).catch(() => {
-        window.$message.warning("获取更新记录失败");
+        });
       });
+    },
+    getChangeLogSuccess(res) {
+      if (res) {
+        const md = new MarkdownIt();
+        this.changeLog = md.render(res)
+      } else {
+        window.$message.warning("获取更新记录失败");
+      }
     }
   },
   mounted() {
@@ -326,5 +333,36 @@ export default {
   text-align: right;
   min-width: 60px;
   width: 60px;
+}
+
+.change-log{
+  padding: 0 10px 10px 10px
+}
+
+.change-log:deep(p),
+.change-log:deep(h2),
+.change-log:deep(h3),
+.change-log:deep(h4),
+.change-log:deep(h5),
+.change-log:deep(ul),
+.change-log:deep(blockquote) {
+  font-family: v-mono, v-sans, sans-serif;
+  margin: 0;
+}
+
+.change-log:deep(h1) {
+  display: none;
+}
+
+.change-log:deep(h2) {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #63e2b7;
+  font-weight: normal;
+}
+
+.change-log:deep(blockquote) {
+  border-left: 5px solid #63e2b7;
+  padding: 5px 0 5px 10px;
 }
 </style>

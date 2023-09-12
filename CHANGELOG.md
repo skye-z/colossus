@@ -1,8 +1,13 @@
 # 变更记录
 
-## v0.0.1-beta1 - Unreleased
+## v0.0.1-beta2 - Unreleased
 
 * [ ] Added ED25519证书支持
+
+## v0.0.1-beta1 - Unreleased
+
+* [ ] Added 一键打包脚本
+* [ ] Changed 优化产物体积
 
 ## v0.0.1-alpha5 - Unreleased
 
@@ -11,8 +16,8 @@
 * [x] Added 证书管理
 * [x] Added 证书登陆主机
 * [ ] Added 主机工具
-* [ ] Added 版本检查
-* [ ] Added 在线更新
+* [x] Added 版本检查
+* [x] Added 更新记录
 
 ## v0.0.1-alpha4 - 2023-09-08
 
