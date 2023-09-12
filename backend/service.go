@@ -106,6 +106,9 @@ func register() *gin.Engine {
 	// 接口 删除凭证
 	route.DELETE("/cert/:id", certService.Del)
 
+	// 接口 执行命令
+	route.POST("/host/run", fileService.RunCMD)
+
 	return route
 }
 

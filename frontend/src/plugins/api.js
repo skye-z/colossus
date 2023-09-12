@@ -59,6 +59,9 @@ export const host = {
             url: '/host/' + id,
             method: 'DELETE'
         })
+    },
+    runCMD: (id, command) => {
+        return post('/host/run', { id, command })
     }
 }
 

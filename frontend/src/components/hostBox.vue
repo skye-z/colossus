@@ -31,10 +31,11 @@
             <div v-show="tab === 'file'">
                 <host-file :ref="'file' + hostId" @send="sendTerminal" />
             </div>
-            <div v-if="tab === 'tool'">
-                <div class="tips text-center">
-                    <div>等待开发</div>
-                    <div class="text-small text-gray">配置检测、链路跟踪、性能测试、开放端口、路由表、笔记、流量监控、应用可视化安装器、Docker容器管理</div>
+            <div v-if="tab === 'tool'" id="tool-list" class="pa-10">
+                <div class="tool-item pa-5 no-drag" @click="openTool('toolNetwork', info.id)">
+                    <div>网络连接扫描</div>
+                    <div class="text-small text-gray">检测主机开放端口与建立的连接</div>
+                    <tool-network ref="toolNetwork" />
                 </div>
             </div>
         </div>
@@ -44,11 +45,12 @@
 <script>
 import HostTerminal from "../components/hostTerminal.vue";
 import HostFile from "../components/hostFile.vue";
+import ToolNetwork from "../tools/network.vue";
 import { host } from "../plugins/api";
 
 export default {
     name: "HostBox",
-    components: { HostTerminal, HostFile },
+    components: { HostTerminal, HostFile, ToolNetwork },
     data: () => ({
         info: {},
         tab: 'shell',
@@ -106,6 +108,9 @@ export default {
         },
         updateTab(e) {
             if (e == 'file') this.$refs["file" + this.hostId].init(this.hostId)
+        },
+        openTool(tag, param) {
+            this.$refs[tag].open(param)
         }
     },
     mounted() {
@@ -140,5 +145,24 @@ export default {
 
 .tips {
     padding-top: 40vh;
+}
+
+#tool-list {
+    flex-wrap: wrap;
+    display: flex;
+}
+
+.tool-item {
+    background-color: rgba(255, 255, 255, .08);
+    margin: 0 10px 10px 0;
+    border-radius: 8px;
+    position: relative;
+    min-width: 180px;
+    cursor: pointer;
+}
+
+
+.tool-item:hover {
+    background-color: rgba(255, 255, 255, .12);
 }
 </style>

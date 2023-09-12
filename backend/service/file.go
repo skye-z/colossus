@@ -163,6 +163,33 @@ func (fs FileService) GetFileInfo(ctx *gin.Context) {
 	common.ReturnData(ctx, true, results)
 }
 
+type CmdParam struct {
+	Id      int64  `json:"id"`
+	Command string `json:"command"`
+}
+
+// 获取文件信息
+func (fs FileService) RunCMD(ctx *gin.Context) {
+	var param CmdParam
+	if err := ctx.ShouldBindJSON(&param); err != nil {
+		common.ReturnMessage(ctx, false, "传入参数非法")
+		return
+	}
+
+	// 获取SFTP操作对象
+	sftp := fs.getSFTP(param.Id, ctx)
+	if sftp == nil {
+		return
+	}
+	// 执行查询
+	result := sftp.RunShell(param.Command)
+	if result == "" || result == "ERROR" {
+		common.ReturnMessage(ctx, false, "命令执行失败")
+		return
+	}
+	common.ReturnData(ctx, true, result)
+}
+
 type EditParam struct {
 	Id         int64  `json:"id"`
 	Model      string `json:"model"`
