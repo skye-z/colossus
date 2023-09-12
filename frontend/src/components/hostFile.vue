@@ -5,23 +5,11 @@
       <n-spin size="small" />
     </div>
     <div class="file-tool pa-5 border-bottom flex align-center justify-between">
-      <n-input
-        v-if="edit"
-        class="mr-5"
-        size="small"
-        v-model:value="path"
-        :autofocus="edit"
-        type="text"
-        placeholder="请输入目录路径"
-        @keyup.enter="switchEdit(0)"
-      />
+      <n-input v-if="edit" class="mr-5" size="small" v-model:value="path" :autofocus="edit" type="text"
+        placeholder="请输入目录路径" @keyup.enter="switchEdit(0)" />
       <n-breadcrumb class="full-width" v-else>
-        <n-breadcrumb-item
-          v-for="(item, index) in pathList"
-          :clickable="item != '...'"
-          @click="jump(index)"
-          >{{ item }}</n-breadcrumb-item
-        >
+        <n-breadcrumb-item v-for="(item, index) in pathList" :clickable="item != '...'" @click="jump(index)">{{ item
+        }}</n-breadcrumb-item>
       </n-breadcrumb>
       <n-tooltip v-if="edit" trigger="hover" :delay="1000" :show-arrow="false">
         <template #trigger>
@@ -117,32 +105,13 @@
       </n-button-group>
     </div>
     <div class="file-list">
-      <n-data-table
-        :columns="columns"
-        :data="fileList"
-        size="small"
-        max-height="calc(100vh - 127px)"
-        :bordered="false"
-        :row-props="touchRow"
-      />
+      <n-data-table :columns="columns" :data="fileList" size="small" max-height="calc(100vh - 127px)" :bordered="false"
+        :row-props="touchRow" />
     </div>
-    <n-dropdown
-      placement="bottom-start"
-      trigger="manual"
-      :x="menu.x"
-      :y="menu.y"
-      :options="menu.options"
-      :show="menu.show"
-      @select="selectMenu"
-    />
+    <n-dropdown placement="bottom-start" trigger="manual" :x="menu.x" :y="menu.y" :options="menu.options"
+      :show="menu.show" @select="selectMenu" />
     <n-modal :mask-closable="false" :close-on-esc="false" v-model:show="rename.show">
-      <n-card
-        style="width: 300px"
-        :bordered="false"
-        size="small"
-        role="dialog"
-        aria-modal="true"
-      >
+      <n-card style="width: 300px" :bordered="false" size="small" role="dialog" aria-modal="true">
         <div class="text-center mb-10 text-gray">重命名</div>
         <div class="flex align-center mb-10">
           <div class="file-label">原名称</div>
@@ -150,65 +119,34 @@
         </div>
         <div class="flex align-center mb-10">
           <div class="file-label">新名称</div>
-          <n-input
-            v-model:value="rename.name"
-            placeholder="请输入新的名称"
-            @keyup.enter="submitRename"
-          />
+          <n-input v-model:value="rename.name" placeholder="请输入新的名称" @keyup.enter="submitRename" />
         </div>
         <div>
-          <n-button type="primary" class="float-right" @click="submitRename"
-            >提交重命名</n-button
-          >
-          <n-button
-            @click="
-              () => {
-                rename.show = false;
-              }
-            "
-            >取消</n-button
-          >
+          <n-button type="primary" class="float-right" @click="submitRename">提交重命名</n-button>
+          <n-button @click="() => {
+            rename.show = false;
+          }
+            ">取消</n-button>
         </div>
       </n-card>
     </n-modal>
     <n-modal :mask-closable="false" :close-on-esc="false" v-model:show="directory.show">
-      <n-card
-        style="width: 300px"
-        :bordered="false"
-        size="small"
-        role="dialog"
-        aria-modal="true"
-      >
+      <n-card style="width: 300px" :bordered="false" size="small" role="dialog" aria-modal="true">
         <div class="text-center mb-10 text-gray">创建目录</div>
         <div class="flex align-center mb-10">
           <div class="file-label">目录名</div>
-          <n-input
-            v-model:value="directory.name"
-            placeholder="支持递归创建子文件夹"
-            @keyup.enter="submitDirectory"
-          />
+          <n-input v-model:value="directory.name" placeholder="支持递归创建子文件夹" @keyup.enter="submitDirectory" />
         </div>
         <div>
-          <n-button type="primary" class="float-right" @click="submitDirectory"
-            >提交创建</n-button
-          >
-          <n-button
-            @click="
-              () => {
-                directory.show = false;
-              }
-            "
-            >取消</n-button
-          >
+          <n-button type="primary" class="float-right" @click="submitDirectory">提交创建</n-button>
+          <n-button @click="() => {
+            directory.show = false;
+          }
+            ">取消</n-button>
         </div>
       </n-card>
     </n-modal>
-    <n-drawer
-      class="no-select no-drag"
-      v-model:show="fileInfo.show"
-      :width="350"
-      placement="right"
-    >
+    <n-drawer class="no-select no-drag" v-model:show="fileInfo.show" :width="350" placement="right">
       <div class="tips" v-if="fileInfo.list.length == 0">文件详情</div>
       <!-- 文件名 索引节号 文件大小 I/O块大小 文件占用的块数 块大小 硬链接数量 文件类型 所有者id 所有者 
                 用户组id 用户组 权限位 权限位和文件类型 主要设备类型 次要设备类型 最后访问时间 最后修改时间 最后更改时间 -->
@@ -240,10 +178,6 @@
           <div class="info-label">硬链接</div>
           <div>{{ fileInfo.list[6] }} 个</div>
         </div>
-        <!-- <div class="flex align-center pa-10">
-                    <div class="info-label">文件类型</div>
-                    <div>{{ fileInfo.list[7] }}</div>
-                </div> -->
         <div class="flex align-center pa-10">
           <div class="info-label">所有者</div>
           <div>{{ fileInfo.list[9] }} / {{ fileInfo.list[8] }}</div>
@@ -487,72 +421,75 @@ export default {
     // 点击右键菜单
     selectMenu(key) {
       this.menu.show = false;
-      if (key === "directDownload" || key === "zipDownload") {
-        let item = this.menu.file;
-        let directory = localStorage.getItem("download.directory");
-        let tips = window.$message.loading("正在下载中...", { duration: 1000 * 60 * 30 });
-        file
-          .download(this.id, key.replace("Download", ""), directory, this.path, item.name)
-          .then((res) => {
-            if (res.state) {
-              tips.type = "success";
-              tips.content = "下载成功";
-            } else {
-              tips.type = "warning";
-              tips.content = res.message ? res.message : "下载失败, 发生意料之外的错误";
-            }
-            setTimeout(() => {
-              tips.destroy();
-            }, 2000);
-          })
-          .catch((err) => util.funcErrorDIYTips(err, tips, "文件下载"));
-      } else if (key === "rename") {
+      if (key === "directDownload" || key === "zipDownload") this.menuDownload(key);
+      else if (key === "rename") {
         this.rename = {
           show: true,
           file: this.menu.file,
           name: "",
         };
-      } else if (key === "remove") {
-        window.$dialog.warning({
-          title: "危险操作警告",
-          content:
-            "你正在尝试删除‘" +
-            this.menu.file.name +
-            "’" +
-            (this.menu.file.type == 2 || this.menu.file.type == 4
-              ? ", 删除目录将会一并删除目录下的所有文件"
-              : "") +
-            ", 此项操作不可逆, 确认要删除吗?",
-          negativeText: "确认删除",
-          positiveText: "取消",
-          onNegativeClick: () => {
-            file
-              .remove(this.id, this.path, this.menu.file.name)
-              .then((res) => {
-                if (res.state) {
-                  window.$message.success("删除成功");
-                  this.getFileList();
-                } else {
-                  window.$message.warning(
-                    res.message ? res.message : "删除失败, 发生意料之外的错误"
-                  );
-                }
-              })
-              .catch((err) => util.funcErrorNoLoading(err, "文件删除"));
-          },
-        });
-      } else if (key === "copyPath") {
-        let path = "";
-        if (this.menu.file.type == 4) path = this.menu.file.path;
-        else path = this.menu.file.name;
-        this.$goSetClipboard(this.path + "/" + path);
+      } else if (key === "remove") this.menuRemove();
+      else if (key === "copyPath" || key === "sendTerminal") this.menuPath(key)
+    },
+    menuDownload(key) {
+      let item = this.menu.file;
+      let directory = localStorage.getItem("download.directory");
+      let tips = window.$message.loading("正在下载中...", { duration: 1000 * 60 * 30 });
+      file
+        .download(this.id, key.replace("Download", ""), directory, this.path, item.name)
+        .then((res) => {
+          if (res.state) {
+            tips.type = "success";
+            tips.content = "下载成功";
+          } else {
+            tips.type = "warning";
+            tips.content = res.message ? res.message : "下载失败, 发生意料之外的错误";
+          }
+          setTimeout(() => {
+            tips.destroy();
+          }, 2000);
+        })
+        .catch((err) => util.funcErrorDIYTips(err, tips, "文件下载"));
+    },
+    menuRemove() {
+      window.$dialog.warning({
+        title: "危险操作警告",
+        content:
+          "你正在尝试删除‘" +
+          this.menu.file.name +
+          "’" +
+          (this.menu.file.type == 2 || this.menu.file.type == 4
+            ? ", 删除目录将会一并删除目录下的所有文件"
+            : "") +
+          ", 此项操作不可逆, 确认要删除吗?",
+        negativeText: "确认删除",
+        positiveText: "取消",
+        onNegativeClick: () => {
+          file
+            .remove(this.id, this.path, this.menu.file.name)
+            .then((res) => {
+              if (res.state) {
+                window.$message.success("删除成功");
+                this.getFileList();
+              } else {
+                window.$message.warning(
+                  res.message ? res.message : "删除失败, 发生意料之外的错误"
+                );
+              }
+            })
+            .catch((err) => util.funcErrorNoLoading(err, "文件删除"));
+        },
+      });
+    },
+    menuPath(key) {
+      let path = "";
+      if (this.menu.file.type == 4) path = this.menu.file.path;
+      else path = this.menu.file.name;
+      path = this.path + "/" + path
+      if (key === "copyPath") {
+        this.$goSetClipboard(path);
         window.$message.success("路径已复制到剪切板");
-      } else if (key === "sendTerminal") {
-        let path = "";
-        if (this.menu.file.type == 2) path = this.menu.file.name;
-        else if (this.menu.file.type == 4) path = this.menu.file.path;
-        this.$emit("send", this.path + "/" + path);
-      }
+      } else this.$emit("send", path);
     },
     // 关闭右键菜单难
     closeMenu() {

@@ -105,33 +105,7 @@ export default {
       period: null,
     },
     options: {},
-    rules: {
-      name: {
-        required: true,
-        message: "请输入主机名",
-        trigger: "blur",
-      },
-      address: {
-        required: true,
-        message: "请输入主机访问地址",
-        trigger: "blur",
-      },
-      platform: {
-        required: true,
-        message: "请选择主机运行平台",
-        trigger: "blur",
-      },
-      cert: {
-        required: true,
-        message: "请选择数字证书",
-        trigger: "blur",
-      },
-      secret: {
-        required: true,
-        message: "请输入主机登录用户密码",
-        trigger: "blur",
-      },
-    },
+    rules: {},
     certs: [],
   }),
   methods: {
