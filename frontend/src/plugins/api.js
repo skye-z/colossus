@@ -144,3 +144,13 @@ export const cert = {
         })
     }
 }
+
+// 凭证接口
+export const github = {
+    getVersion: () => {
+        return get('https://raw.githubusercontent.com/skye-z/colossus/main/VERSION')
+    },
+    getChangeLog: () => {
+        return get('https://raw.githubusercontent.com/skye-z/colossus/main/CHANGELOG.md')
+    },
+}

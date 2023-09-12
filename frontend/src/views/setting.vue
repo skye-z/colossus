@@ -9,29 +9,18 @@
         <div class="card pa-10 mb-10">
           <div class="flex align-center">
             <div class="setting-label">终端背景</div>
-            <n-color-picker
-              v-model:value="terminalBgColor"
-              style="width: 200px"
-              @complete="updateValue('terminal.background_color')"
-            />
+            <n-color-picker v-model:value="terminalBgColor" style="width: 200px"
+              @complete="updateValue('terminal.background_color')" />
           </div>
           <div class="flex align-center mt-10">
             <div class="setting-label">文字颜色</div>
-            <n-color-picker
-              v-model:value="terminalTextColor"
-              style="width: 200px"
-              @complete="updateValue('terminal.text_color')"
-            />
+            <n-color-picker v-model:value="terminalTextColor" style="width: 200px"
+              @complete="updateValue('terminal.text_color')" />
           </div>
           <div class="flex align-center mt-10">
             <div class="setting-label">文字大小</div>
-            <n-input-number
-              v-model:value="terminalTextSize"
-              :min="12"
-              :max="32"
-              @blur="updateValue('terminal.text_size')"
-              style="width: 80px"
-            />
+            <n-input-number v-model:value="terminalTextSize" :min="12" :max="32" @blur="updateValue('terminal.text_size')"
+              style="width: 80px" />
             <div class="text-small text-gray ml-10">px</div>
           </div>
           <div class="text-small text-gray mt-10">
@@ -42,34 +31,26 @@
           <div class="flex align-center">
             <div class="setting-label">下载目录</div>
             <n-input-group>
-              <n-input
-                v-model:value="downloadPath"
-                :disabled="downloadSelect"
-                type="text"
-                placeholder="请选择下载目录"
-                @blur="updateValue('download.directory')"
-              />
-              <n-button type="primary" :loading="downloadSelect" @click="selectDirectory"
-                >选取目录</n-button
-              >
+              <n-input v-model:value="downloadPath" :disabled="downloadSelect" type="text" placeholder="请选择下载目录"
+                @blur="updateValue('download.directory')" />
+              <n-button type="primary" :loading="downloadSelect" @click="selectDirectory">选取目录</n-button>
             </n-input-group>
           </div>
           <div class="flex align-center mt-10">
             <div class="setting-label">自动解压</div>
-            <n-switch
-              v-model:value="autoUnzip"
-              @update:value="updateValue('download.auto_unzip')"
-            />
+            <n-switch v-model:value="autoUnzip" @update:value="updateValue('download.auto_unzip')" />
             <div class="text-small text-gray ml-10">打包下载完成后自动解压</div>
           </div>
           <div class="flex align-center mt-10">
             <div class="setting-label">显示隐藏</div>
-            <n-switch
-              v-model:value="showHide"
-              @update:value="updateValue('file.show_hide')"
-            />
+            <n-switch v-model:value="showHide" @update:value="updateValue('file.show_hide')" />
             <div class="text-small text-gray ml-10">开启后默认显示隐藏文件</div>
           </div>
+        </div>
+        <div class="card mb-10">
+          <n-scrollbar style="max-height: calc(100vh - 385px)">
+            <div class="pa-10" v-html="changeLog"></div>
+          </n-scrollbar>
         </div>
       </div>
       <div>
@@ -155,7 +136,7 @@
             </div>
           </div>
         </div>
-        <n-button class="full-width mt-10" strong secondary>检查更新</n-button>
+        <n-button class="full-width mt-10" strong secondary :loading="checking" @click="checkUpdate">检查更新</n-button>
         <div class="text-small text-gray mt-5 text-center">
           Copyright &copy; 2023 Skye Zhang
         </div>
@@ -166,7 +147,8 @@
 
 <script>
 import { LogoDevFilled, HomeRound } from "@vicons/material";
-import { config } from "../plugins/api";
+import { config, github } from "../plugins/api";
+import MarkdownIt from 'markdown-it';
 
 export default {
   name: "Setting",
@@ -189,6 +171,8 @@ export default {
     downloadSelect: false,
     autoUnzip: false,
     showHide: true,
+    checking: false,
+    changeLog: ""
   }),
   methods: {
     getConfig() {
@@ -255,9 +239,55 @@ export default {
       else if (key === "download.auto_unzip") this.updateConfig(key, "" + this.autoUnzip);
       else if (key === "file.show_hide") this.updateConfig(key, "" + this.showHide);
     },
+    checkUpdate() {
+      this.checking = true
+      github.getVersion().then((res) => {
+        if (res) {
+          setTimeout(() => {
+            let versionList = res.split(" ");
+            let versionMap = {
+              code: versionList[0],
+              stage: versionList[1],
+              number: versionList[2],
+            }
+            if (versionMap.code != this.version.code || versionMap.stage != this.version.stage || versionMap.number != this.version.number) {
+              window.$dialog.success({
+                title: "新版本可用",
+                content: "检测到存在新的版本(v" + versionMap.code + " " + versionMap.stage + " " + versionMap.number + "), 点击确认前往下载.",
+                negativeText: '确认',
+                positiveText: '取消',
+                onNegativeClick: () => {
+
+                }
+              });
+            } else window.$message.success("当前已是最新版本");
+            this.checking = false
+          }, 500)
+        } else {
+          this.checking = false
+          window.$message.warning("获取最新版本号失败");
+        }
+      }).catch(() => {
+        this.checking = false
+        window.$message.warning("获取最新版本号失败");
+      });
+    },
+    getChangeLog() {
+      github.getChangeLog().then((res) => {
+        if (res) {
+          const md = new MarkdownIt();
+          this.changeLog = md.render(res)
+        } else {
+          window.$message.warning("获取更新记录失败");
+        }
+      }).catch(() => {
+        window.$message.warning("获取更新记录失败");
+      });
+    }
   },
   mounted() {
     this.getConfig();
+    setTimeout(() => this.getChangeLog(), 1000)
   },
 };
 </script>

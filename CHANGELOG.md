@@ -1,6 +1,4 @@
-# 变更日志
-
-本项目的所有变更都将记录在此文件中, 书写规范请参照[保留变更日志](https://keepachangelog.com/zh-CN/1.0.0/).
+# 变更记录
 
 ## v0.0.1-beta1 - Unreleased
 
