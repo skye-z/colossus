@@ -9,6 +9,7 @@
 
 * [x] Added 一键打包脚本
 * [x] Added 扩展工具动态加载器
+* [x] Added 扩展 磁盘统计工具
 * [x] Changed 优化产物体积
 
 ## v0.0.1-alpha5 - 2023-09-12
@@ -17,7 +18,7 @@
 
 * [x] Added 证书管理
 * [x] Added 证书登陆主机
-* [x] Added 主机网络工具
+* [x] Added 扩展 网络端口工具
 * [x] Added 版本检查
 * [x] Added 更新记录
 
