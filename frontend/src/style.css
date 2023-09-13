@@ -199,3 +199,9 @@ body {
     height: calc(100vh - 2px);
     width: 100vw;
 }
+
+.full-screen .loading{
+    width: 100vw;
+    left: 0;
+    top: 0;
+}

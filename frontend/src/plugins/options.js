@@ -9,11 +9,7 @@ const options = (group, addAll) => {
             {
                 label: "MacOS",
                 value: "MacOS"
-            },
-            {
-                label: "Windows",
-                value: "Windows"
-            },
+            }
         ],
         system: [
             {
@@ -81,7 +77,7 @@ const options = (group, addAll) => {
             {
                 label: "非洲",
                 value: "非洲"
-            },
+            }
         ],
         usage: [
             {
@@ -107,7 +103,7 @@ const options = (group, addAll) => {
             {
                 label: "企业测试",
                 value: "企业测试"
-            },
+            }
         ],
         period: [
             {
@@ -125,7 +121,7 @@ const options = (group, addAll) => {
             {
                 label: "近30天过期",
                 value: "近30天过期"
-            },
+            }
         ]
     }
     for (let i in group) {

@@ -35,13 +35,11 @@ import { host } from "../plugins/api"
 
 export default {
     name: "Example",
-    data: () => ({
-        id: 0
-    }),
+    data: () => ({ }),
     methods: {
         // 必须提供此函数
         // 加载器会在动态挂载后调用此函数并传入主机编号
-        init(id) {}
+        init(id) { }
     }
 };
 </script>
