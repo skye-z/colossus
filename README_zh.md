@@ -1,6 +1,6 @@
-# Colossus - SSH Remote Server Management Tool
+# Colossus - SSH远程服务器管理工具
 
-[中文](README_zh.md)
+[English](README.md)
 
 [![](https://img.shields.io/badge/Go-1.21+-%2300ADD8?style=flat&logo=go)](go.work)
 [![](https://img.shields.io/badge/Version-0.0.1%20beta1-green)](control)
@@ -13,14 +13,14 @@
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=skye-z_colossus&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=skye-z_colossus)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=skye-z_colossus&metric=bugs)](https://sonarcloud.io/summary/new_code?id=skye-z_colossus)
 
-## Features
+## 特性
 
-* Compact: application size is less than 30MB, core process memory overhead is less than 50MB
-* Extension: built-in extension tools dynamic loader, can quickly develop extension tools
-* Efficient: built-in shortcut commands, file management and other efficient tools
-* Security: support for SSH certificate authentication, and built-in certificate manager
-* Aesthetics: optimized for MacOS, providing system-specific styles
+* 小巧: 应用体积小于30MB, 核心进程内存开销小于50MB
+* 扩展: 内置扩展工具动态加载器, 可快速开发扩展工具
+* 高效: 内置快捷命令、文件管理等高效工具
+* 安全: 支持SSH证书认证, 同时内置证书管理器
+* 美观: 针对MacOS优化, 提供系统专属样式
 
-## Extension Development
+## 扩展工具开发
 
-If you want to develop extension tools for Colossus, check out this [guide](frontend/src/tools/README.md).
+如果你想为Colossus开发扩展工具, 可以查看这一份[指南](frontend/src/tools/README_zh.md).

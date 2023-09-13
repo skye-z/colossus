@@ -1,6 +1,6 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "colossus",
+  "name": "Colossus",
   "outputfilename": "Colossus",
   "frontend:install": "yarn install",
   "frontend:build": "yarn run build",
