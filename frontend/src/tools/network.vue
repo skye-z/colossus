@@ -1,7 +1,7 @@
 <template>
     <div>
-        <n-card style="width: 100vw;height: calc(100vh - 2px);" header-style="text-align: center"
-            :title="'网络连接 (' + result.length + ')'" :bordered="false" size="small" role="dialog" aria-modal="true">
+        <n-card class="full-screen" header-style="text-align: center"
+            :title="'网络连接 (' + result.length + ')'" :bordered="false" size="small">
             <n-data-table size="small" max-height="calc(100vh - 105px)" :loading="loading" virtual-scroll :columns="columns"
                 :data="result" :bordered="false" />
         </n-card>

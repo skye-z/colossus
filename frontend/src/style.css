@@ -194,3 +194,8 @@ body {
 .n-drawer-header {
     padding: 15px !important;
 }
+
+.full-screen{
+    height: calc(100vh - 2px);
+    width: 100vw;
+}

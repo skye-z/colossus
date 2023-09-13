@@ -23,7 +23,7 @@
 ```html
 <template>
     <div>
-        <n-card style="width: 100vw;height: calc(100vh - 2px);" header-style="text-align: center" title="示例工具" :bordered="false" size="small" role="dialog" aria-modal="true">
+        <n-card class="full-screen" title="示例工具" header-style="text-align: center" :bordered="false" size="small">
             这是一个全屏卡片, 带有居中的卡片标题
         </n-card>
     </div>
