@@ -2,6 +2,8 @@
 
 [中文](README_zh.md)
 
+> Currently only supports Simplified Chinese, other languages are waiting for development.
+
 [![](https://img.shields.io/badge/Go-1.21+-%2300ADD8?style=flat&logo=go)](go.work)
 [![](https://img.shields.io/badge/Version-0.0.1%20beta1-green)](control)
 [![CodeQL](https://github.com/skye-z/colossus/workflows/CodeQL/badge.svg)](https://github.com/skye-z/colossus/security/code-scanning)

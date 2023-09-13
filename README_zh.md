@@ -2,6 +2,8 @@
 
 [English](README.md)
 
+> 目前仅支持简体中文, 其他语言等待后续开发
+
 [![](https://img.shields.io/badge/Go-1.21+-%2300ADD8?style=flat&logo=go)](go.work)
 [![](https://img.shields.io/badge/Version-0.0.1%20beta1-green)](control)
 [![CodeQL](https://github.com/skye-z/colossus/workflows/CodeQL/badge.svg)](https://github.com/skye-z/colossus/security/code-scanning)
