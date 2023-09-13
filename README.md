@@ -25,4 +25,4 @@
 
 ## Extension Development
 
-If you want to develop extension tools for Colossus, check out this [guide](frontend/src/tools/README.md).
+If you want to develop extension tools for Colossus, check out this [guide](https://github.com/skye-z/colossus-frontend/blob/main/src/tools/README.md).

@@ -25,4 +25,4 @@
 
 ## 扩展工具开发
 
-如果你想为Colossus开发扩展工具, 可以查看这一份[指南](frontend/src/tools/README_zh.md).
+如果你想为Colossus开发扩展工具, 可以查看这一份[指南](https://github.com/skye-z/colossus-frontend/blob/main/src/tools/README_zh.md).
