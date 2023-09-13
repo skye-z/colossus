@@ -5,19 +5,19 @@
 !include "FileFunc.nsh"
 
 !ifndef INFO_PROJECTNAME
-    !define INFO_PROJECTNAME "{{.Name}}"
+    !define INFO_PROJECTNAME "Colossus"
 !endif
 !ifndef INFO_COMPANYNAME
-    !define INFO_COMPANYNAME "{{.Info.CompanyName}}"
+    !define INFO_COMPANYNAME "BetaX Dev Group"
 !endif
 !ifndef INFO_PRODUCTNAME
-    !define INFO_PRODUCTNAME "{{.Info.ProductName}}"
+    !define INFO_PRODUCTNAME "Colossus"
 !endif
 !ifndef INFO_PRODUCTVERSION
-    !define INFO_PRODUCTVERSION "{{.Info.ProductVersion}}"
+    !define INFO_PRODUCTVERSION "0.0.1"
 !endif
 !ifndef INFO_COPYRIGHT
-    !define INFO_COPYRIGHT "{{.Info.Copyright}}"
+    !define INFO_COPYRIGHT "Copyright 2023 SkyeZhang"
 !endif
 !ifndef PRODUCT_EXECUTABLE
     !define PRODUCT_EXECUTABLE "${INFO_PROJECTNAME}.exe"
