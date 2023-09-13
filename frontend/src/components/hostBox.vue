@@ -32,31 +32,35 @@
                 <host-file :ref="'file' + hostId" @send="sendTerminal" />
             </div>
             <div v-if="tab === 'tool'" id="tool-list" class="pa-10">
-                <div class="tool-item pa-5 no-drag" @click="openTool('toolNetwork', info.id)">
-                    <div>网络连接扫描</div>
-                    <div class="text-small text-gray">检测主机开放端口与建立的连接</div>
-                    <tool-network ref="toolNetwork" />
+                <dynamic-tool ref="dynamicTool" :id="info.id" />
+                <div class="tool-item pa-5 no-drag" v-for="item in tools" @click="openTool(item.name)">
+                    <div>{{ item.title }}</div>
+                    <div class="text-small text-gray">{{ item.profile }}</div>
+                    <div class="text-small text-gray float-right">v{{ item.version }}</div>
+                    <div class="text-small text-gray">@{{ item.author }}</div>
                 </div>
             </div>
         </div>
     </div>
 </template>
-  
+
 <script>
 import HostTerminal from "../components/hostTerminal.vue";
+import DynamicTool from "../components/dynamicTool.vue";
 import HostFile from "../components/hostFile.vue";
-import ToolNetwork from "../tools/network.vue";
+import directory from "../tools/directory";
 import { host } from "../plugins/api";
 
 export default {
     name: "HostBox",
-    components: { HostTerminal, HostFile, ToolNetwork },
+    components: { HostTerminal, HostFile, DynamicTool },
     data: () => ({
         info: {},
         tab: 'shell',
         show: false,
         loading: true,
-        lastUpdate: 0
+        lastUpdate: 0,
+        tools: []
     }),
     props: {
         hostId: {
@@ -72,6 +76,7 @@ export default {
         init() {
             this.show = true
             this.getHostInfo()
+            this.tools = directory
         },
         getHostInfo() {
             host.getInfo(this.hostId).then(res => {
@@ -109,8 +114,8 @@ export default {
         updateTab(e) {
             if (e == 'file') this.$refs["file" + this.hostId].init(this.hostId)
         },
-        openTool(tag, param) {
-            this.$refs[tag].open(param)
+        openTool(name) {
+            this.$refs.dynamicTool.open(name)
         }
     },
     mounted() {

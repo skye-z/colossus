@@ -1,37 +1,23 @@
 <template>
     <div>
-        <n-modal v-model:show="show" @update:show="updateShow">
-            <div class="no-select">
-                <n-button class="close" quaternary circle size="small" @click="close">
-                    <template #icon>
-                        <n-icon>
-                            <CloseRound />
-                        </n-icon>
-                    </template>
-                </n-button>
-                <n-card style="width: 100vw;height: calc(100vh - 2px);" header-style="text-align: center" :title="'网络连接 ('+result.length+')'"
-                    :bordered="false" size="small" role="dialog" aria-modal="true">
-                    <n-data-table size="small" max-height="calc(100vh - 105px)" :loading="loading" virtual-scroll
-                        :columns="columns" :data="result" :bordered="false" />
-                </n-card>
-            </div>
-        </n-modal>
+        <n-card style="width: 100vw;height: calc(100vh - 2px);" header-style="text-align: center"
+            :title="'网络连接 (' + result.length + ')'" :bordered="false" size="small" role="dialog" aria-modal="true">
+            <n-data-table size="small" max-height="calc(100vh - 105px)" :loading="loading" virtual-scroll :columns="columns"
+                :data="result" :bordered="false" />
+        </n-card>
     </div>
 </template>
   
 <script>
-import { CloseRound } from "@vicons/material";
 import { host } from "../plugins/api";
 import { NButton } from 'naive-ui'
-import { h, getCurrentInstance } from "vue"
+import { h } from "vue"
 
 export default {
     name: "ToolNetword",
-    components: { CloseRound },
     data: vm => ({
         id: 0,
-        show: false,
-        loading: false,
+        loading: true,
         command: "ss -np",
         columns: [{
             title: "类型",
@@ -99,20 +85,11 @@ export default {
         result: []
     }),
     methods: {
-        open(id) {
+        init(id) {
             this.id = id;
-            this.show = true
             this.getData()
         },
-        close() {
-            this.show = false
-        },
-        updateShow(show) {
-            if (!show) this.result = []
-        },
         getData() {
-            this.result = []
-            this.loading = true
             host.runCMD(this.id, this.command).then(res => {
                 this.loading = false
                 if (res.state) {
@@ -210,11 +187,6 @@ export default {
 };
 </script>
 <style scoped>
-.close {
-    position: fixed;
-    z-index: 999;
-    right: 10px;
-    top: 10px;
-}
+
 </style>
   
