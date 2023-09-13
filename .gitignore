@@ -1,5 +1,2 @@
 build/bin
-node_modules
-frontend/dist
 out
-*.md5
