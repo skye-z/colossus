@@ -3,11 +3,13 @@
 ## v0.0.1-beta2 - Unreleased
 
 * [ ] Added ED25519证书支持
+* [ ] Added i18n英文支持
 
-## v0.0.1-beta1 - Unreleased
+## v0.0.1-beta1 - 2023-09-13
 
-* [ ] Added 一键打包脚本
-* [ ] Changed 优化产物体积
+* [x] Added 一键打包脚本
+* [x] Added 扩展工具动态加载器
+* [x] Changed 优化产物体积
 
 ## v0.0.1-alpha5 - 2023-09-12
 
