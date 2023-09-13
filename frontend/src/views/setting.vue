@@ -5,7 +5,7 @@
       <div class="text-gray" v-if="version.stage">{{ stage[version.stage] }}</div>
     </div>
     <div class="setting-box flex justify-between pa-10">
-      <div class="full-width mr-10">
+      <div class="full-width mr-10 no-drag">
         <div class="card pa-10 mb-10">
           <div class="flex align-center">
             <div class="setting-label">终端背景</div>
