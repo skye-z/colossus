@@ -37,7 +37,7 @@ func (fs FileService) GetHomePath(ctx *gin.Context) {
 		return
 	}
 	// 执行查询
-	result := sftp.RunShell(CMD_GET_HOME)
+	result := sftp.RunShell(CMD_GET_HOME, false)
 	if result == "" || result == "ERROR" {
 		common.ReturnMessage(ctx, false, "寻址不可用")
 		return
@@ -64,7 +64,7 @@ func (fs FileService) GetFileList(ctx *gin.Context) {
 		showAll = ""
 	}
 	// 执行查询
-	result := sftp.RunShell(fmt.Sprintf(CMD_GET_FILE_LIST, showAll, fs.cleanPath(param.Path)))
+	result := sftp.RunShell(fmt.Sprintf(CMD_GET_FILE_LIST, showAll, fs.cleanPath(param.Path)), false)
 	if result == "" || result == "ERROR" {
 		common.ReturnMessage(ctx, false, "目录地址不可用")
 		return
@@ -153,7 +153,7 @@ func (fs FileService) GetFileInfo(ctx *gin.Context) {
 		return
 	}
 	// 执行查询
-	result := sftp.RunShell(fmt.Sprintf(CMD_GET_FILE_INFO, fs.cleanPath(param.Path)))
+	result := sftp.RunShell(fmt.Sprintf(CMD_GET_FILE_INFO, fs.cleanPath(param.Path)), false)
 	if result == "" || result == "ERROR" {
 		common.ReturnMessage(ctx, false, "目录地址不可用")
 		return
@@ -165,6 +165,7 @@ func (fs FileService) GetFileInfo(ctx *gin.Context) {
 
 type CmdParam struct {
 	Id      int64  `json:"id"`
+	Ignore  string `json:"ignore"`
 	Command string `json:"command"`
 }
 
@@ -176,14 +177,20 @@ func (fs FileService) RunCMD(ctx *gin.Context) {
 		return
 	}
 
+	ignore := false
+	if len(param.Ignore) != 0 && param.Ignore == "true" {
+		ignore = true
+	}
+
 	// 获取SFTP操作对象
 	sftp := fs.getSFTP(param.Id, ctx)
 	if sftp == nil {
 		return
 	}
 	// 执行查询
-	result := sftp.RunShell(param.Command)
+	result := sftp.RunShell(param.Command, ignore)
 	if result == "" || result == "ERROR" {
+		log.Println(result)
 		common.ReturnMessage(ctx, false, "命令执行失败")
 		return
 	}
@@ -216,14 +223,14 @@ func (fs FileService) DownloadFile(ctx *gin.Context) {
 	switch param.Model {
 	case "zip":
 		now := time.Now()
-		result := sftp.RunShell(fmt.Sprintf(CMD_ZIP_FILE, param.ServerPath, now.Unix(), param.FileName))
+		result := sftp.RunShell(fmt.Sprintf(CMD_ZIP_FILE, param.ServerPath, now.Unix(), param.FileName), false)
 		if result == "ERROR" {
 			common.ReturnMessage(ctx, false, "压缩出错")
 			return
 		}
 		zipName := fmt.Sprintf("%v.tar.gz", now.Unix())
 		sftp.Download(param.LocalPath, param.ServerPath, zipName)
-		result = sftp.RunShell(fmt.Sprintf(CMD_RM_FILE, fs.cleanPath(param.ServerPath+"/"+zipName)))
+		result = sftp.RunShell(fmt.Sprintf(CMD_RM_FILE, fs.cleanPath(param.ServerPath+"/"+zipName)), false)
 		if result == "ERROR" {
 			common.ReturnMessage(ctx, false, "残留文件删除出错")
 			return
@@ -274,13 +281,13 @@ func (fs FileService) UploadFile(ctx *gin.Context) {
 		// 上传压缩包
 		sftp.Upload(param.LocalPath, param.ServerPath, zipName)
 		// 解压目录
-		result := sftp.RunShell(fmt.Sprintf(CMD_UNZIP_FILE, zipName, fs.cleanPath(param.ServerPath)))
+		result := sftp.RunShell(fmt.Sprintf(CMD_UNZIP_FILE, zipName, fs.cleanPath(param.ServerPath)), false)
 		if result == "ERROR" {
 			common.ReturnMessage(ctx, false, "解压文件出错")
 			return
 		}
 		// 清理垃圾
-		result = sftp.RunShell(fmt.Sprintf(CMD_RM_FILE, fs.cleanPath(param.ServerPath+"/"+zipName)))
+		result = sftp.RunShell(fmt.Sprintf(CMD_RM_FILE, fs.cleanPath(param.ServerPath+"/"+zipName)), false)
 		if result == "ERROR" {
 			common.ReturnMessage(ctx, false, "残留文件删除出错")
 			return
@@ -307,7 +314,7 @@ func (fs FileService) MoveFile(ctx *gin.Context) {
 		return
 	}
 
-	result := sftp.RunShell(fmt.Sprintf(CMD_MV_FILE, fs.cleanPath(param.LocalPath), fs.cleanPath(param.ServerPath)))
+	result := sftp.RunShell(fmt.Sprintf(CMD_MV_FILE, fs.cleanPath(param.LocalPath), fs.cleanPath(param.ServerPath)), false)
 	if result == "ERROR" {
 		common.ReturnMessage(ctx, false, "重命名出错")
 		return
@@ -329,7 +336,7 @@ func (fs FileService) RemoveFile(ctx *gin.Context) {
 		return
 	}
 
-	result := sftp.RunShell(fmt.Sprintf(CMD_RM_FILE, fs.cleanPath(param.ServerPath+"/"+param.FileName)))
+	result := sftp.RunShell(fmt.Sprintf(CMD_RM_FILE, fs.cleanPath(param.ServerPath+"/"+param.FileName)), false)
 	if result == "ERROR" {
 		common.ReturnMessage(ctx, false, "删除出错")
 		return
@@ -351,7 +358,7 @@ func (fs FileService) CreateDirectory(ctx *gin.Context) {
 		return
 	}
 
-	result := sftp.RunShell(fmt.Sprintf(CMD_CREATE_DIR, fs.cleanPath(param.ServerPath)))
+	result := sftp.RunShell(fmt.Sprintf(CMD_CREATE_DIR, fs.cleanPath(param.ServerPath)), false)
 	if result == "ERROR" {
 		common.ReturnMessage(ctx, false, "目录创建出错")
 		return

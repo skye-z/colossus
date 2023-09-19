@@ -72,13 +72,13 @@ func (s *SFTPService) CreateClient() {
 
 // 关闭客户端
 func (s *SFTPService) CloseClient() {
-	s.RunShell("exit")
+	s.RunShell("exit", false)
 	s.sftpClient.Close()
 	s.sshClient.Close()
 }
 
 // 执行命令
-func (s *SFTPService) RunShell(shell string) string {
+func (s *SFTPService) RunShell(shell string, ignore bool) string {
 	log.Println("Run:", shell)
 	var (
 		session *ssh.Session
@@ -89,8 +89,12 @@ func (s *SFTPService) RunShell(shell string) string {
 		return "ERROR"
 	}
 	if output, err := session.CombinedOutput(shell); err != nil {
-		log.Println("Shell error:", err)
-		return "ERROR"
+		if ignore {
+			return string(output)
+		} else {
+			log.Println("Shell error:", err)
+			return "ERROR"
+		}
 	} else {
 		return string(output)
 	}
